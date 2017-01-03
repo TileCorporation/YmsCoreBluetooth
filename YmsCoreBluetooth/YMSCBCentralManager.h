@@ -16,14 +16,11 @@
 //  Author: Charles Y. Choi <charles.choi@yummymelon.com>
 //
 
-#import <Foundation/Foundation.h>
-#if TARGET_OS_IPHONE
-#import <CoreBluetooth/CoreBluetooth.h>
-#elif TARGET_OS_MAC
-#import <IOBluetooth/IOBluetooth.h>
-#endif
-
+@import Foundation;
+@import CoreBluetooth;
 #import "YMSCBUtils.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 // iOS7
 #define kYMSCBVersionNumber 1090
@@ -33,8 +30,55 @@ extern NSString *const YMSCBVersion;
 @class YMSCBPeripheral;
 @class YMSCBCentralManager;
 
-typedef void (^YMSCBDiscoverCallbackBlockType)(CBPeripheral *, NSDictionary *, NSNumber *, NSError *);
+typedef void (^YMSCBDiscoverCallbackBlockType)(CBPeripheral *, NSDictionary *, NSNumber *, NSError *_Nullable);
+typedef BOOL (^YMSCBFilterCallbackBlockType)(CBPeripheral *, NSDictionary *, NSNumber *);
 typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
+
+// ------------------------------------------------------------------------
+
+@protocol YMSCBCentralManagerInterface
+
+@property(nonatomic, assign, readonly) BOOL isScanning NS_AVAILABLE(NA, 9_0);
+
+- (nullable instancetype)init;
+
+- (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
+                                    queue:(nullable dispatch_queue_t)queue;
+
+- (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
+                                    queue:(nullable dispatch_queue_t)queue
+                                  options:(nullable NSDictionary<NSString *, id> *)options;
+
+- (nullable NSArray<CBPeripheral *> *)retrievePeripheralsWithIdentifiers:(nullable NSArray<NSUUID *> *)identifiers;
+
+- (nullable NSArray<CBPeripheral *> *)retrieveConnectedPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs;
+
+- (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options;
+
+- (void)stopScan;
+
+- (void)connectPeripheral:(CBPeripheral *)peripheral options:(nullable NSDictionary<NSString *, id> *)options;
+
+- (void)cancelPeripheralConnection:(CBPeripheral *)peripheral;
+
+@end
+
+// ------------------------------------------------------------------------
+
+
+@protocol YMSCBCentralManagerDelegate
+@required
+- (void)centralManagerDidUpdateState:(YMSCBCentralManager *)central;
+@optional
+- (void)centralManager:(YMSCBCentralManager *)central willRestoreState:(NSDictionary<NSString *, id> *)dict;
+- (void)centralManager:(YMSCBCentralManager *)central didDiscoverPeripheral:(YMSCBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *, id> *)advertisementData RSSI:(NSNumber *)RSSI;
+- (void)centralManager:(YMSCBCentralManager *)central didConnectPeripheral:(YMSCBPeripheral *)peripheral;
+- (void)centralManager:(YMSCBCentralManager *)central didFailToConnectPeripheral:(YMSCBPeripheral *)peripheral error:(nullable NSError *)error;
+- (void)centralManager:(YMSCBCentralManager *)central didDisconnectPeripheral:(YMSCBPeripheral *)peripheral error:(nullable NSError *)error;
+@end
+
+// ------------------------------------------------------------------------
+
 
 /**
  Base class for defining a Bluetooth LE central.
@@ -63,7 +107,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  The delegate object will be sent CBCentralManagerDelegate messages received by manager.
  */
-@property (nonatomic, weak) id<CBCentralManagerDelegate> delegate;
+@property (atomic, weak) id <CBCentralManagerDelegate> _Nullable delegate;
 
 /**
  The CBCentralManager object.
@@ -71,7 +115,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  In typical practice, there is only one instance of CBCentralManager and it is located in a singleton instance of YMSCBCentralManager.
  This class listens to CBCentralManagerDelegate messages sent by manager, which in turn forwards those messages to delegate.
  */
-@property (atomic, strong) CBCentralManager *manager;
+@property (nonatomic, strong) CBCentralManager *manager;
 
 /**
  Array of NSStrings to search to match CBPeripheral instances.
@@ -79,7 +123,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  Used in conjunction with isKnownPeripheral:.  
  This value is typically initialized using initWithKnownPeripheralNames:queue:.
  */
-@property (atomic, strong) NSArray *knownPeripheralNames;
+@property (atomic, strong, nullable) NSArray *knownPeripheralNames;
 
 /// Flag to determine if manager is scanning.
 @property (atomic, assign) BOOL isScanning;
@@ -99,10 +143,12 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 
 
 /// Peripheral Discovered Callback
-@property (atomic, copy) YMSCBDiscoverCallbackBlockType discoveredCallback;
+@property (atomic, copy, nullable) YMSCBDiscoverCallbackBlockType discoveredCallback;
+
+@property (atomic, copy, nullable) YMSCBFilterCallbackBlockType filteredCallback;
 
 /// Peripheral Retreived Callback
-@property (atomic, copy) YMSCBRetrieveCallbackBlockType retrievedCallback;
+@property (atomic, copy, nullable) YMSCBRetrieveCallbackBlockType retrievedCallback;
 
 /// If YES, then discovered peripheral UUIDs are stored in standardUserDefaults.
 @property (atomic, assign) BOOL useStoredPeripherals;
@@ -119,7 +165,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  If its value is nil, the central manager dispatches central role events using the main queue.
  @param delegate Delegate of this class instance.
  */
-- (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue delegate:(id<CBCentralManagerDelegate>) delegate;
+- (nullable instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue delegate:(nullable id<CBCentralManagerDelegate>) delegate;
 
 /**
  Constructor with array of known peripheral names.
@@ -129,7 +175,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @param useStore If YES, then discovered peripheral UUIDs are stored in standardUserDefaults.
  @param delegate Delegate of this class instance.
  */
-- (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue useStoredPeripherals:(BOOL)useStore delegate:(id<CBCentralManagerDelegate>) delegate;
+- (nullable instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue useStoredPeripherals:(BOOL)useStore delegate:(nullable id<CBCentralManagerDelegate>) delegate;
 
 #pragma mark - Peripheral Management
 /** @name Peripheral Management */
@@ -152,11 +198,12 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  */
 - (void)handleFoundPeripheral:(CBPeripheral *)peripheral;
 
+// TODO: Change to NSSet with GCD
 /**
  Returns the YSMCBPeripheral instance from ymsPeripherals at index.
  @param index An index within the bounds of ymsPeripherals.
  */
-- (YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index;
+- (nullable YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index;
 
 /**
  Add YMSCBPeripheral instance to ymsPeripherals.
@@ -164,6 +211,8 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  */
 - (void)addPeripheral:(YMSCBPeripheral *)yperipheral;
 
+
+// TODO: Change to NSSet with GCD
 /**
  Remove yperipheral in ymsPeripherals and from standardUserDefaults if stored.
  
@@ -187,7 +236,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @param peripheral peripheral corresponding with YMSCBPeripheral
  @return instance of YMSCBPeripheral
  */
-- (YMSCBPeripheral *)findPeripheral:(CBPeripheral *)peripheral;
+- (nullable YMSCBPeripheral *)findPeripheral:(nonnull CBPeripheral *)peripheral;
 
 #pragma mark - Scan Methods
 /** @name Scanning for Peripherals */
@@ -198,7 +247,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  scanForPeripheralsWithServices:options:
  
  */
-- (void)startScan;
+- (BOOL)startScan;
 
 /**
  Wrapper around the method scanForPeripheralWithServices:options: in CBCentralManager.
@@ -208,7 +257,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @param serviceUUIDs An array of CBUUIDs the app is interested in.
  @param options A dictionary to customize the scan, see CBCentralManagerScanOptionAllowDuplicatesKey.
  */
-- (void)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options;
+- (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs options:(nullable NSDictionary *)options;
 
 /**
  Scans for peripherals that are advertising service(s), invoking a callback block for each peripheral
@@ -225,7 +274,10 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  * `error` - The cause of a failure, if any.
  
  */
-- (void)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options withBlock:(void (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError *error))discoverCallback;
+- (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs
+                               options:(nullable NSDictionary *)options
+                             withBlock:(nullable void (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError * _Nullable error))discoverCallback
+                             withFilter:(nullable BOOL (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI))filterCallback;
 
 
 /**
@@ -259,7 +311,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @param serviceUUIDS A list of NSUUID services
  @return A list of CBPeripheral objects.
  */
-- (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDS;
+- (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDs;
 
 
 #pragma mark - CBCentralManager state handling methods
@@ -297,3 +349,4 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 
 @end
 
+NS_ASSUME_NONNULL_END
