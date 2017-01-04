@@ -336,40 +336,28 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         }
     }
     
-    BOOL isProcessed = YES;
+    BOOL shouldProcess = YES;
     if (self.filteredCallback) {
-        isProcessed = self.filteredCallback(peripheral, advertisementData, RSSI);
+        shouldProcess = self.filteredCallback(peripheral, advertisementData, RSSI);
     }
     
-    if (self.discoveredCallback) {
-        
-        if (isProcessed) {
-            self.discoveredCallback(peripheral, advertisementData, RSSI, nil);
-        }
-        
-        //if (peripheral.name && [peripheral.name isEqualToString:@"TI BLE Sensor Tag"]) {
-       // }
-        
-    } else {
-      
+    if (shouldProcess && self.discoveredCallback) {
+        self.discoveredCallback(peripheral, advertisementData, RSSI, nil);
     }
     
     __weak YMSCBCentralManager *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof (this) strongThis = this;
-        [strongThis handleFoundPeripheral:peripheral];
-    });
+    
+    [self handleFoundPeripheral:peripheral];
 
     if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
-        
-        if (isProcessed) {
-        _YMS_PERFORM_ON_MAIN_THREAD(^{
-            __strong typeof (this) strongThis = this;
-            [strongThis.delegate centralManager:central
-                          didDiscoverPeripheral:peripheral
-                              advertisementData:advertisementData
-                                           RSSI:RSSI];
-        });
+        if (shouldProcess) {
+            _YMS_PERFORM_ON_MAIN_THREAD(^{
+                __strong typeof (this) strongThis = this;
+                [strongThis.delegate centralManager:central
+                              didDiscoverPeripheral:peripheral
+                                  advertisementData:advertisementData
+                                               RSSI:RSSI];
+            });
         }
     }
 }
