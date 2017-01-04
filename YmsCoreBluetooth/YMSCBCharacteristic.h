@@ -116,7 +116,6 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  @param data Value returned from read request.
  @param error Error object, if failed.
  */
-// TODO: obsolete
 - (void)executeReadCallback:(NSData *)data error:(NSError *)error;
 
 /**

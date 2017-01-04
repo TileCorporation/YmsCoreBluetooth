@@ -166,7 +166,6 @@
 }
 
 
-// TODO: obsolete
 - (void)executeReadCallback:(NSData *)data error:(NSError *)error {
     YMSCBReadCallbackBlockType readCB = [self.readCallbacks pop];
     readCB(data, error);

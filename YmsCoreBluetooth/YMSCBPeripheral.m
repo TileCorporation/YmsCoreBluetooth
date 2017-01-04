@@ -21,6 +21,7 @@
 #import "YMSCBService.h"
 #import "YMSCBCharacteristic.h"
 #import "YMSCBDescriptor.h"
+#import "NSMutableArray+fifoQueue.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -76,6 +77,22 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     return result;
+}
+
+// TODO: is this needed?
+- (void)replaceCBPeripheral:(CBPeripheral *)peripheral {
+    for (NSString *key in self.serviceDict) {
+        YMSCBService *service = self.serviceDict[key];
+        service.cbService = nil;
+        
+        for (NSString *chKey in service.characteristicDict) {
+            YMSCBCharacteristic *ct = service.characteristicDict[chKey];
+            ct.cbCharacteristic = nil;
+        }
+    }
+    
+    self.cbPeripheral = peripheral;
+    peripheral.delegate = self;
 }
 
 
@@ -413,12 +430,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     if (ct.readCallbacks && (ct.readCallbacks.count > 0)) {
         self.lastValue = characteristic.value;
-        NSArray *readCallbacksCopy = [ct.readCallbacks copy];
-        [ct.readCallbacks removeAllObjects];
-        
-        for (YMSCBReadCallbackBlockType readCB in readCallbacksCopy) {
-            readCB(characteristic.value, error);
-        }
+        [ct executeReadCallback:characteristic.value error:error];
         
         if (ct.cbCharacteristic.isNotifying) {
             //message = [NSString stringWithFormat:@"WARNING: Read callback called for notifying characteristic %@", characteristic];
