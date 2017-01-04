@@ -122,7 +122,9 @@ float calcAccel(int16_t rawV) {
             NSLog(@"ERROR: %@", [error localizedDescription]);
             this.period = this.period;
         } else {
-            this.period = @(value);
+            _YMS_PERFORM_ON_MAIN_THREAD(^{
+                this.period = @(value);
+            });
         }
     }];
 }
