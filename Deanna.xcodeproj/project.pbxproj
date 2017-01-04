@@ -30,13 +30,13 @@
 		D93EAC5316E18748008B1BD3 /* DEAGyroscopeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D93EAC5216E18748008B1BD3 /* DEAGyroscopeViewCell.m */; };
 		D93EAC5616E1DAC8008B1BD3 /* DEAMagnetometerViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D93EAC5516E1DAC8008B1BD3 /* DEAMagnetometerViewCell.m */; };
 		D93EAC5916E1DAF5008B1BD3 /* DEAMagnetometerService.m in Sources */ = {isa = PBXBuildFile; fileRef = D93EAC5816E1DAF5008B1BD3 /* DEAMagnetometerService.m */; };
+		D9717E7F1E0B29CF00F59C24 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B8E167FA5140001E42C /* CoreBluetooth.framework */; };
 		D9718B46167F9F9F0001E42C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B45167F9F9F0001E42C /* UIKit.framework */; };
 		D9718B48167F9F9F0001E42C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B47167F9F9F0001E42C /* Foundation.framework */; };
 		D9718B4A167F9F9F0001E42C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B49167F9F9F0001E42C /* CoreGraphics.framework */; };
 		D9718B50167F9F9F0001E42C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D9718B4E167F9F9F0001E42C /* InfoPlist.strings */; };
 		D9718B52167F9F9F0001E42C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D9718B51167F9F9F0001E42C /* main.m */; };
 		D9718B56167F9F9F0001E42C /* DEAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D9718B55167F9F9F0001E42C /* DEAAppDelegate.m */; };
-		D9718B8F167FA5140001E42C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B8E167FA5140001E42C /* CoreBluetooth.framework */; };
 		D97EC6D0172B08AB00CAECFC /* DEABaseService.m in Sources */ = {isa = PBXBuildFile; fileRef = D97EC6CF172B08AB00CAECFC /* DEABaseService.m */; };
 		D97EC6D2172B1B8C00CAECFC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D97EC6D1172B1B8C00CAECFC /* README.md */; };
 		D9812904173F3804008EA8D5 /* YMSCBStoredPeripherals.m in Sources */ = {isa = PBXBuildFile; fileRef = D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */; };
@@ -232,8 +232,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9717E7F1E0B29CF00F59C24 /* CoreBluetooth.framework in Frameworks */,
 				D9C6137A177672BA00826EBF /* QuartzCore.framework in Frameworks */,
-				D9718B8F167FA5140001E42C /* CoreBluetooth.framework in Frameworks */,
 				D9718B46167F9F9F0001E42C /* UIKit.framework in Frameworks */,
 				D9718B48167F9F9F0001E42C /* Foundation.framework in Frameworks */,
 				D9718B4A167F9F9F0001E42C /* CoreGraphics.framework in Frameworks */,
@@ -591,11 +591,15 @@
 			attributes = {
 				CLASSPREFIX = DEA;
 				LastTestingUpgradeCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Yummy Melon Software";
 				TargetAttributes = {
+					D9718B40167F9F9F0001E42C = {
+						DevelopmentTeam = N5X6YV9N92;
+					};
 					D997AC8F175B245800C91B0D = {
 						DevelopmentTeam = N5X6YV9N92;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -765,24 +769,37 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -796,16 +813,29 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
@@ -821,10 +851,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = N5X6YV9N92;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Deanna/Deanna-Prefix.pch";
 				INFOPLIST_FILE = "Deanna/Deanna-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -838,10 +869,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = N5X6YV9N92;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Deanna/Deanna-Prefix.pch";
 				INFOPLIST_FILE = "Deanna/Deanna-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -855,6 +887,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -865,7 +898,7 @@
 				GCC_PREFIX_HEADER = "DeannaMac/DeannaMac-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "DeannaMac/DeannaMac-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -879,6 +912,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -890,7 +924,7 @@
 				GCC_PREFIX_HEADER = "DeannaMac/DeannaMac-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "DeannaMac/DeannaMac-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
