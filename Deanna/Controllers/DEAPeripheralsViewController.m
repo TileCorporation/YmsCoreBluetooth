@@ -53,7 +53,7 @@
     [self.navigationController setToolbarHidden:NO];
 
 
-    self.scanButton = [[UIBarButtonItem alloc] initWithTitle:@"Start Scanning" style:UIBarButtonItemStyleBordered target:self action:@selector(scanButtonAction:)];
+    self.scanButton = [[UIBarButtonItem alloc] initWithTitle:@"Start Scanning" style:UIBarButtonItemStylePlain target:self action:@selector(scanButtonAction:)];
     
     self.toolbarItems = @[self.scanButton];
     
@@ -112,8 +112,14 @@
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     
     if (centralManager.isScanning == NO) {
-        [centralManager startScan];
-        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+        BOOL result = [centralManager startScan];
+        if (result) {
+            [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+        } else {
+            NSLog(@"ERROR: Scan failed; BT Server not on");
+        }
+            
+        
     }
     else {
         [centralManager stopScan];
@@ -218,11 +224,12 @@
         yp.isRenderedInViewCell = YES;
     }
     
+    // SensorTag 2.0 Service UUID AA80
     if (centralManager.isScanning) {
         for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
             if (cell.yperipheral.cbPeripheral == peripheral) {
                 if (peripheral.state == CBPeripheralStateDisconnected) {
-                    cell.rssiLabel.text = [NSString stringWithFormat:@"%d", [RSSI integerValue]];
+                    cell.rssiLabel.text = [NSString stringWithFormat:@"%ld", (long)[RSSI integerValue]];
                     cell.peripheralStatusLabel.text = @"ADVERTISING";
                     [cell.peripheralStatusLabel setTextColor:[[DEATheme sharedTheme] advertisingColor]];
                 } else {
@@ -271,37 +278,32 @@
 
 }
 
-
-- (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error {
-
+- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
     if (error) {
         NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
-        
         if (peripheral.state == CBPeripheralStateConnected) {
-            NSArray *args = @[peripheral];
-            [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:2.0];
+            [peripheral readRSSI];
         }
-
-        return;
     }
+    
     
     for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
         if (cell.yperipheral) {
             if (cell.yperipheral.isConnected) {
                 if (cell.yperipheral.cbPeripheral == peripheral) {
-                    cell.rssiLabel.text = [NSString stringWithFormat:@"%@", peripheral.RSSI];
+                    cell.rssiLabel.text = [NSString stringWithFormat:@"%@", RSSI];
                     break;
                 }
             }
         }
     }
     
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-    
-    NSArray *args = @[peripheral];
-    [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:yp.rssiPingPeriod];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [peripheral readRSSI];
+    });
 }
+
+
 
 #pragma mark - UITableViewDelegate and UITableViewDataSource methods
 
