@@ -18,7 +18,7 @@
 
 #import "YMSCBUtils.h"
 
-
+NSString *const kYMSCBErrorDomain = @"com.yummymelon.ymscorebluetooth.error";
 
 
 @implementation YMSCBUtils
