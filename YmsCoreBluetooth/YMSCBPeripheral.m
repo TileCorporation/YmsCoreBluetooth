@@ -311,32 +311,36 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occurred, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(nullable NSError *)error {
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
+    //NSString *message = [NSString stringWithFormat:@"< didDiscoverServices:%@", error.description];
+    //[[TILLocalFileManager sharedManager] log:message peripheral:peripheral];
+    
+    if (self.discoverServicesCallback) {
+        NSMutableArray *services = [NSMutableArray new];
         
-        if (this.discoverServicesCallback) {
-            NSMutableArray *services = [NSMutableArray new];
-            
-            // TODO: add method syncServices
-            
-            @synchronized(self) {
-                for (CBService *service in peripheral.services) {
-                    YMSCBService *btService = [this findService:service];
-                    if (btService) {
-                        btService.cbService = service;
-                        [services addObject:btService];
-                    }
+        @synchronized(self) {
+            for (CBService *service in peripheral.services) {
+                YMSCBService *btService = [self findService:service];
+                if (btService) {
+                    btService.cbService = service;
+                    [services addObject:btService];
                 }
             }
-            
-            this.discoverServicesCallback(services, error);
-            this.discoverServicesCallback = nil;
         }
         
-        if ([this.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
-            [this.delegate peripheral:peripheral didDiscoverServices:error];
+        self.discoverServicesCallback(services, error);
+        self.discoverServicesCallback = nil;
+    }
+    
+    __weak NSError *weakError = error;
+    __weak YMSCBPeripheral *this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        __strong typeof(this) strongThis = this;
+        typeof(weakError) strongError = weakError;
+        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
+            [strongThis.delegate peripheral:strongThis.cbPeripheral didDiscoverServices:strongError];
         }
     });
+
 }
 
 /**
