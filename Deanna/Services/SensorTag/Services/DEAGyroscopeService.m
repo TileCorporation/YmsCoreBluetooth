@@ -70,13 +70,34 @@ float calcGyro(int16_t v, float c, int16_t d) {
     return self;
 }
 
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error {
-    if (error) {
-        return;
-    }
 
-    if ([yc.name isEqualToString:@"data"]) {
-        NSData *data = yc.cbCharacteristic.value;
+- (void)turnOn {
+    __weak DEABaseService *this = self;
+    
+    YMSCBCharacteristic *configCt = self.characteristicDict[@"config"];
+    [configCt writeByte:0x7 withBlock:^(NSError *error) {
+        if (error) {
+            return;
+        }
+        NSLog(@"Turned On: %@", this.name);
+    }];
+    
+    YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification for %@ on", this.name);
+        
+    } withNotificationBlock:^(NSData * _Nonnull data, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification received %@ for %@", data, this.name);
         
         char val[data.length];
         [data getBytes:&val length:data.length];
@@ -104,11 +125,12 @@ float calcGyro(int16_t v, float c, int16_t d) {
             this.yaw = @(self.lastYaw);
             [self didChangeValueForKey:@"sensorValues"];
         });
-        
-        
-    } else if ([yc.name isEqualToString:@"config"]) {
-    }
 
+    }];
+    
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        this.isOn = YES;
+    });
 }
 
 
@@ -118,32 +140,6 @@ float calcGyro(int16_t v, float c, int16_t d) {
     self.cYaw = self.lastYaw;
 }
 
-- (void)turnOn {
-    YMSCBCharacteristic *configCt = self.characteristicDict[@"config"];
-    YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
-        
-    __weak DEAGyroscopeService *this = self;
-    
-    [configCt writeByte:0x7 withBlock:^(NSError *error) {
-        if (error) {
-            return;
-        }
-        NSLog(@"Turned On: %@", this.name);
-    }];
-    
-    [dataCt setNotifyValue:YES withBlock:^(NSError *error) {
-        if (error) {
-            return;
-        }
-        NSLog(@"Notification for data of %@ turned on", this.name);
-    }];
-    
-    
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        this.isOn = YES;
-    });
-
-}
 
 - (NSDictionary *)sensorValues
 {

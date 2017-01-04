@@ -47,41 +47,19 @@
 }
 
 
-
-
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error {
-    if (error) {
-        return;
-    }
-
-    if ([yc.name isEqualToString:@"data"]) {
-        NSData *data = yc.cbCharacteristic.value;
-        
-        char val[data.length];
-        [data getBytes:&val length:data.length];
-        
-        
-        int16_t value = val[0];
-        
-        __weak DEASimpleKeysService *this = self;
-        _YMS_PERFORM_ON_MAIN_THREAD(^{
-            [self willChangeValueForKey:@"sensorValues"];
-            this.keyValue = [NSNumber numberWithInt:value];
-            [self didChangeValueForKey:@"sensorValues"];
-        });
-    }
-}
-
-
 - (void)turnOff {
     __weak DEASimpleKeysService *this = self;
     YMSCBCharacteristic *ct = self.characteristicDict[@"data"];
-    [ct setNotifyValue:NO withBlock:^(NSError *error) {
+    [ct setNotifyValue:NO withStateChangeBlock:^(NSError * _Nonnull error) {
         if (error) {
+            NSLog(@"ERROR: %@", error);
             return;
         }
-        NSLog(@"Turned Off: %@", this.name);
-    }];
+        
+        NSLog(@"Data notification for %@ off", this.name);
+
+      
+    } withNotificationBlock:nil];
     
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         this.isOn = NO;
@@ -89,19 +67,56 @@
 }
 
 - (void)turnOn {
-    __weak DEASimpleKeysService *this = self;
-    YMSCBCharacteristic *ct = self.characteristicDict[@"data"];
-    [ct setNotifyValue:YES withBlock:^(NSError *error) {
+    __weak DEABaseService *this = self;
+    
+    YMSCBCharacteristic *configCt = self.characteristicDict[@"config"];
+    [configCt writeByte:0x1 withBlock:^(NSError *error) {
         if (error) {
+            NSLog(@"ERROR: %@", error);
             return;
         }
-        NSLog(@"Turned On: %@", this.name);
+        
+        NSLog(@"TURNED ON: %@", this.name);
+    }];
+    
+    YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification for %@ on", this.name);
+        
+    } withNotificationBlock:^(NSData * _Nonnull data, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification received %@ for %@", data, this.name);
+        
+        char val[data.length];
+        [data getBytes:&val length:data.length];
+        
+        
+        int16_t value = val[0];
+        
+        __weak typeof(self) this = self;
+        _YMS_PERFORM_ON_MAIN_THREAD(^{
+            __strong typeof(this) strongThis = this;
+            
+            [strongThis willChangeValueForKey:@"sensorValues"];
+            strongThis.keyValue = [NSNumber numberWithInt:value];
+            [strongThis didChangeValueForKey:@"sensorValues"];
+        });
     }];
     
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         this.isOn = YES;
     });
 }
+
 
 - (NSDictionary *)sensorValues
 {
