@@ -317,10 +317,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  */
 - (nullable id)objectForKeyedSubscript:(id)key;
 
-// TODO: TBD implementation
 - (void)replaceCBPeripheral:(CBPeripheral *)peripheral;
 
-// TODO: TBD implementation
 - (void)reset;
 
 /**
@@ -328,7 +326,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  
  @param services Array of CBService objects, typical CBPeripheral.services
  */
-// TODO: TBD implementation
 - (void)syncServices:(NSArray *)services;
 
 @end
