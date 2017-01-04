@@ -19,6 +19,10 @@
 
 #import "YMSCBCentralManager.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class YMSCBPeripheral;
+
 /**
  Application CoreBluetooth central manager service for Deanna.
  
@@ -40,4 +44,19 @@
 
 + (DEACentralManager *)sharedService;
 
+/**
+ Returns the YSMCBPeripheral instance from ymsPeripherals at index.
+ @param index An index within the bounds of ymsPeripherals.
+ */
+- (nullable YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index;
+
+/**
+ Remove yperipheral in ymsPeripherals and from standardUserDefaults if stored.
+ 
+ @param yperipheral Instance of YMSCBPeripheral
+ */
+- (void)removePeripheral:(YMSCBPeripheral *)yperipheral;
+
+
+NS_ASSUME_NONNULL_END
 @end

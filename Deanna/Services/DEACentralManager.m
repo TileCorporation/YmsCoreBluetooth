@@ -33,10 +33,10 @@ static DEACentralManager *sharedCentralManager;
     if (sharedCentralManager == nil) {
         dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", 0);
 
-        NSArray *nameList = @[@"TI BLE Sensor Tag", @"SensorTag"];
+        NSArray *nameList = @[@"TI BLE Sensor Tag", @"SensorTag", @"CC2650 SensorTag", @"SensorTag 2.0"];
         sharedCentralManager = [[super allocWithZone:NULL] initWithKnownPeripheralNames:nameList
                                                                                   queue:queue
-                                                                   useStoredPeripherals:YES
+                                                                   useStoredPeripherals:NO
                                                                                delegate:delegate];
     }
     return sharedCentralManager;
@@ -52,7 +52,7 @@ static DEACentralManager *sharedCentralManager;
 }
 
 
-- (void)startScan {
+- (BOOL)startScan {
     /*
      Setting CBCentralManagerScanOptionAllowDuplicatesKey to YES will allow for repeated updates of the RSSI via advertising.
      */
@@ -69,8 +69,7 @@ static DEACentralManager *sharedCentralManager;
      */
     
 #ifdef CALLBACK_EXAMPLE
-    __weak DEACentralManager *this = self;
-    [self scanForPeripheralsWithServices:nil
+    BOOL result = [self scanForPeripheralsWithServices:nil
                                  options:options
                                withBlock:^(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError *error) {
                                    if (error) {
@@ -79,13 +78,26 @@ static DEACentralManager *sharedCentralManager;
                                    }
                                    
                                    NSLog(@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI);
-                                   [this handleFoundPeripheral:peripheral];
-                               }];
+                               }
+     
+                              withFilter:^BOOL(CBPeripheral * _Nonnull peripheral, NSDictionary * _Nonnull advertisementData, NSNumber * _Nonnull RSSI) {
+                                  
+                                  BOOL result = NO;
+                                  if (peripheral.name &&
+                                      (RSSI.integerValue < 0) &&
+                                      (RSSI.integerValue > -55) &&
+                                      ([peripheral.name isEqualToString:@"TI BLE Sensor Tag"] ||
+                                       [peripheral.name isEqualToString:@"SensorTag 2.0"])
+                                      ) {
+                                      result = YES;
+                                  }
+                                  return result;
+                              }];
     
 #else
-    [self scanForPeripheralsWithServices:nil options:options];
+    BOOL result = [self scanForPeripheralsWithServices:nil options:options];
 #endif
-
+    return result;
 }
 
 - (void)handleFoundPeripheral:(CBPeripheral *)peripheral {
@@ -108,11 +120,13 @@ static DEACentralManager *sharedCentralManager;
             
         }
         
+        /*
         if (isUnknownPeripheral) {
             //TODO: Handle unknown peripheral
             yp = [[YMSCBPeripheral alloc] initWithPeripheral:peripheral central:self baseHi:0 baseLo:0];
             [self addPeripheral:yp];
         }
+         */
     }
 
 }
@@ -128,7 +142,8 @@ static DEACentralManager *sharedCentralManager;
     if (self.useStoredPeripherals) {
 #if TARGET_OS_IPHONE
         NSArray *identifiers = [YMSCBStoredPeripherals genIdentifiers];
-        [self retrievePeripheralsWithIdentifiers:identifiers];
+        NSArray *hey = [self retrievePeripheralsWithIdentifiers:identifiers];
+        //NSLog(@"hey %@", hey);
 #endif
     }
 }
