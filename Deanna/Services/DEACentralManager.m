@@ -86,8 +86,7 @@ static DEACentralManager *sharedCentralManager;
                                   if (peripheral.name &&
                                       (RSSI.integerValue < 0) &&
                                       (RSSI.integerValue > -55) &&
-                                      ([peripheral.name isEqualToString:@"TI BLE Sensor Tag"] ||
-                                       [peripheral.name isEqualToString:@"SensorTag 2.0"])
+                                      [peripheral.name containsString:@"Sensor"]
                                       ) {
                                       result = YES;
                                   }
