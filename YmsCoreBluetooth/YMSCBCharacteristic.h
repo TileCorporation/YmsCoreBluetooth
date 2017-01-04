@@ -16,21 +16,34 @@
 //  Author: Charles Y. Choi <charles.choi@yummymelon.com>
 //
 
-#import <Foundation/Foundation.h>
-#if TARGET_OS_IPHONE
-#import <CoreBluetooth/CoreBluetooth.h>
-#elif TARGET_OS_MAC
-#import <IOBluetooth/IOBluetooth.h>
-#endif
-
+@import Foundation;
+@import CoreBluetooth;
 #import "YMSCBUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class YMSCBPeripheral;
+@class YMSCBService;
 
-typedef void (^YMSCBDiscoverDescriptorsCallbackBlockType)(NSArray *, NSError *);
+@protocol YMSCBCharacteristicInterface
 
-typedef void (^YMSCBReadCallbackBlockType)(NSData *, NSError *);
-typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
+@property(assign, readonly, nonatomic) CBService *service;
+@property(readonly, nonatomic) CBUUID *UUID;
+
+@property(readonly, nonatomic) CBCharacteristicProperties properties;
+@property(retain, readonly, nullable) NSData *value;
+@property(retain, readonly, nullable) NSArray<CBDescriptor *> *descriptors;
+@property(readonly) BOOL isBroadcasted;
+@property(readonly) BOOL isNotifying;
+
+@end
+
+
+
+typedef void (^YMSCBDiscoverDescriptorsCallbackBlockType)(NSArray * _Nullable, NSError * _Nullable);
+
+typedef void (^YMSCBReadCallbackBlockType)(NSData * _Nullable, NSError * _Nullable);
+typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
 
 /**
  Base class for defining a Bluetooth LE characteristic.
@@ -52,7 +65,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 @property (atomic, strong) CBUUID *uuid;
 
 /// Pointer to actual CBCharacterisic.
-@property (atomic, strong) CBCharacteristic *cbCharacteristic;
+@property (atomic, strong, nullable) CBCharacteristic *cbCharacteristic;
 
 /// Pointer to parent peripheral.
 @property (nonatomic, weak) YMSCBPeripheral *parent;
@@ -64,14 +77,19 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 @property (atomic, strong) NSArray *descriptors;
 
 /// Notification state callback
-@property (atomic, copy) YMSCBWriteCallbackBlockType notificationStateCallback;
+@property (atomic, copy, nullable) YMSCBWriteCallbackBlockType notificationStateCallback;
+
+/// Notification callback
+@property (atomic, copy, nullable) YMSCBReadCallbackBlockType notificationCallback;
 
 /// Callback for descriptors that are discovered.
-@property (atomic, copy) YMSCBDiscoverDescriptorsCallbackBlockType discoverDescriptorsCallback;
+@property (atomic, copy, nullable) YMSCBDiscoverDescriptorsCallbackBlockType discoverDescriptorsCallback;
 
+/// When YES, logging is enabled
+@property (atomic, assign) BOOL logEnabled;
 
 /**
- FIFO queue for reads.
+* FIFO queue for reads.
  
  Each element is a block of type YMSCBReadCallbackBlockType.
  */
@@ -98,6 +116,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  @param data Value returned from read request.
  @param error Error object, if failed.
  */
+// TODO: obsolete
 - (void)executeReadCallback:(NSData *)data error:(NSError *)error;
 
 /**
@@ -131,19 +150,16 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 /**
  Set notification value of cbCharacteristic.
  
- When notifyValue is YES, then cbCharacterisic is set to notify upon any changes to its value. 
+ When notifyValue is YES, then cbCharacterisic is set to notify upon any changes to its value.
  When notifyValue is NO, then no notifications are sent.
- 
- An implementation of the method [YMSCBService notifyCharacteristicHandler:error:] is used to handle
- updates to cbCharacteristic. Note that notification handling is done at the YMSCBService level via 
- method handler and not by callback blocks. The reason for this is opinion: It is more convenient to
- write a method handler to deal with non-deterministic, asynchronous notification events than it is with blocks.
  
  @param notifyValue Set notification enable.
  @param notifyStateCallback Callback to execute upon change in notification state.
+ @param notificationCallback Callback to execute upon receiving notification.
  */
-- (void)setNotifyValue:(BOOL)notifyValue withBlock:(void (^)(NSError *error))notifyStateCallback;
-
+- (void)setNotifyValue:(BOOL)notifyValue
+  withStateChangeBlock:(void (^)(NSError * _Nullable error))notifyStateCallback
+ withNotificationBlock:(nullable void (^)(NSData *data, NSError * _Nullable error))notificationCallback;
 
 /** @name Issuing a Write Request */
 /**
@@ -210,5 +226,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 
 - (void)syncDescriptors:(NSArray *)foundDescriptors;
 
+- (void)reset;
 
+NS_ASSUME_NONNULL_END
 @end

@@ -16,24 +16,33 @@
 //  Author: Charles Y. Choi <charles.choi@yummymelon.com>
 //
 
-#import <Foundation/Foundation.h>
-#if TARGET_OS_IPHONE
-#import <CoreBluetooth/CoreBluetooth.h>
-#elif TARGET_OS_MAC
-#import <IOBluetooth/IOBluetooth.h>
-#endif
-
+@import Foundation;
+@import CoreBluetooth;
 #import "YMSCBUtils.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  Callback type for discovered characteristics.
  */
-typedef void (^YMSCBDiscoverCharacteristicsCallbackBlockType)(NSDictionary *, NSError *);
+typedef void (^YMSCBDiscoverCharacteristicsCallbackBlockType)(NSDictionary * _Nullable, NSError * _Nullable);
 
 typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
     YMSCBWriteCallbackType,
     YMSCBReadCallbackType,
 };
+
+
+@protocol YMSCBServiceInterface
+
+@property(assign, readonly, nonatomic, nonnull) CBPeripheral *peripheral;
+@property(readonly, nonatomic) CBUUID *UUID;
+@property(readonly, nonatomic) BOOL isPrimary;
+@property(retain, readonly, nullable) NSArray<CBService *> *includedServices;
+@property(retain, readonly, nullable) NSArray<CBCharacteristic *> *characteristics;
+
+
+@end
 
 
 @class YMSCBCharacteristic;
@@ -53,15 +62,15 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 
 /** @name Properties */
 /// Human-friendly name for this BLE service
-@property (atomic, strong) NSString *name;
+@property (atomic, strong, nullable) NSString *name;
 
 /**
  Pointer to CBService. Note that access to the peripheral is available via the `peripheral` property of cbService.
  */
-@property (atomic, strong) CBService *cbService;
+@property (atomic, strong, nullable) CBService *cbService;
 
 /// Pointer to parent peripheral.
-@property (nonatomic, weak) YMSCBPeripheral *parent;
+@property (nonatomic, weak, nullable) YMSCBPeripheral *parent;
 
 /// 128 bit base address struct
 @property (atomic, assign) yms_u128_t base;
@@ -78,10 +87,10 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 @property (atomic, assign) BOOL isEnabled;
 
 /// Dictionary of (`key`, `value`) pairs of (NSString, YMSCBCharacteristic) instances
-@property (atomic, strong) NSMutableDictionary *characteristicDict;
+@property (atomic, strong, nullable) NSMutableDictionary *characteristicDict;
 
 /// Callback for characteristics that are discovered.
-@property (atomic, copy) YMSCBDiscoverCharacteristicsCallbackBlockType discoverCharacteristicsCallback;
+@property (atomic, copy, nullable) YMSCBDiscoverCharacteristicsCallbackBlockType discoverCharacteristicsCallback;
 
 
 /**
@@ -146,7 +155,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  
  @return array of CBUUIDs
  */
-- (NSArray *)characteristics;
+- (nullable NSArray *)characteristics;
 
 /**
  Return array of CBUUIDs for YMSCBCharacteristic instances in characteristicDict whose key is included in keys.
@@ -163,7 +172,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  
  @param foundCharacteristics array of CBCharacteristics
  */
-- (void)syncCharacteristics:(NSArray *)foundCharacteristics;
+- (void)syncCharacteristics:(nullable NSArray *)foundCharacteristics;
 
 /** @name Find a YMSCBCharacteristic */
 /**
@@ -195,15 +204,15 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  @param callback Callback block to execute upon response for discovered characteristics.
  
  */
-- (void)discoverCharacteristics:(NSArray *)characteristicUUIDs
-                      withBlock:(void (^)(NSDictionary *chDict, NSError *))callback;
+- (void)discoverCharacteristics:(nullable NSArray *)characteristicUUIDs
+                      withBlock:(nullable void (^)(NSDictionary *chDict, NSError * _Nullable error))callback;
 /**
  Handler method for discovered characteristics.
  
  @param chDict Dictionary of YMSCBCharacteristics that have been discovered.
  @param error Error object, if failure.
  */
-- (void)handleDiscoveredCharacteristicsResponse:(NSDictionary *)chDict withError:(NSError *)error;
+- (void)handleDiscoveredCharacteristicsResponse:(NSDictionary *)chDict withError:(nullable NSError *)error;
 
 /**
  Add dictionary style subscripting to YMSCBService instance to access objects in characteristicDict with key.
@@ -211,8 +220,11 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  @param key The key for which to return the corresponding value in characteristicDict.
  @return object in characteristicDict.
  */
-- (id)objectForKeyedSubscript:(id)key;
+- (nullable id)objectForKeyedSubscript:(id)key;
 
 //- (void)defaultDiscoveredCharacteristicsHandler:(NSDictionary *)chDict withError:(NSError *)error;
 
+- (void)reset;
+
+NS_ASSUME_NONNULL_END
 @end

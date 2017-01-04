@@ -121,8 +121,8 @@
 - (void)addCharacteristic:(NSString *)cname withAddress:(int)addr {
     
     YMSCBCharacteristic *yc;
-    NSString *addrString = [NSString stringWithFormat:@"%x", addr];
-    
+    NSString *addrString = [NSString stringWithFormat:@"%04x", addr];
+
     
     CBUUID *uuid = [CBUUID UUIDWithString:addrString];
     yc = [[YMSCBCharacteristic alloc] initWithName:cname
@@ -209,6 +209,20 @@
 - (void)discoverCharacteristics:(NSArray *)characteristicUUIDs withBlock:(void (^)(NSDictionary *, NSError *))callback {
     self.discoverCharacteristicsCallback = callback;
     
+    /*
+    TILLocalFileManager *localFileManager = [TILLocalFileManager sharedManager];
+    
+    NSMutableArray *bufArray = [NSMutableArray new];
+    [characteristicUUIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [bufArray addObject:[NSString stringWithFormat:@"%@", obj]];
+    }];
+    NSString *buf = [bufArray componentsJoinedByString:@","];
+    
+    NSString *message = [NSString stringWithFormat:@"> discoverCharacteristics:%@ forService: %@", buf, self.cbService];
+    
+    [localFileManager log:message peripheral:self.parent.cbPeripheral];
+     */
+    
     [self.parent.cbPeripheral discoverCharacteristics:characteristicUUIDs
                                            forService:self.cbService];
 
@@ -227,5 +241,15 @@
     
 }
 
+- (void)reset {
+    self.cbService = nil;
+    self.isEnabled = NO;
+    self.isOn = NO;
+    
+    for (id key in self.characteristicDict) {
+        YMSCBCharacteristic *ct = self.characteristicDict[key];
+        [ct reset];
+    }
+}
 
 @end
