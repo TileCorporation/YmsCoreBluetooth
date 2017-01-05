@@ -23,8 +23,6 @@
 
 @implementation YMSCBDescriptor
 
-
-
 - (CBUUID *)UUID {
     CBUUID *result = nil;
     if (self.cbDescriptor) {
@@ -34,31 +32,14 @@
     return result;
 }
 
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *))writeCallback {
-    [self.writeCallbacks push:[writeCallback copy]];
-    [self.parent.cbPeripheral writeValue:data forDescriptor:self.cbDescriptor];
-}
-
-
-- (void)writeByte:(int8_t)val withBlock:(void (^)(NSError *))writeCallback {
-    NSData *data = [NSData dataWithBytes:&val length:1];
-    [self writeValue:data withBlock:writeCallback];
-}
-
-
-- (void)readValueWithBlock:(void (^)(NSData *, NSError *))readCallback {
-    [self.readCallbacks push:[readCallback copy]];
-    [self.parent.cbPeripheral readValueForDescriptor:self.cbDescriptor];
-}
-
-- (void)executeReadCallback:(NSData *)data error:(NSError *)error {
-    YMSCBReadCallbackBlockType readCB = [self.readCallbacks pop];
-    readCB(data, error);
-}
-
-- (void)executeWriteCallback:(NSError *)error {
-    YMSCBWriteCallbackBlockType writeCB = [self.writeCallbacks pop];
-    writeCB(error);
+- (id)value {
+    id result = nil;
+    
+    if (self.cbDescriptor) {
+        result = self.cbDescriptor.value;
+    }
+    
+    return result;
 }
 
 @end

@@ -205,7 +205,6 @@
     for (CBDescriptor *cbDescriptor in foundDescriptors) {
         YMSCBDescriptor *yd = [YMSCBDescriptor new];
         yd.cbDescriptor = cbDescriptor;
-        yd.parent = self.parent;
         [tempList addObject:yd];
     }
     

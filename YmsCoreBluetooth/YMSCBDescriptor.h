@@ -20,7 +20,14 @@
 @import CoreBluetooth;
 #import "YMSCBUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class YMSCBCharacteristic;
+
 @protocol YMSCBDescriptorInterface
+@property(readonly, nonatomic) CBUUID *UUID;
+@property(assign, readonly, nonatomic) YMSCBCharacteristic *characteristic;
+@property(retain, readonly) id value;
 @end
 
 
@@ -41,85 +48,9 @@
 /// Descriptor UUID
 @property (atomic, readonly) CBUUID *UUID;
 
-/// Pointer to parent peripheral.
-@property (atomic, weak) YMSCBPeripheral *parent;
-
-/**
- FIFO queue for reads.
- 
- Each element is a block of type YMSCBReadCallbackBlockType.
- */
-@property (atomic, strong) NSMutableArray *readCallbacks;
-
-/**
- FIFO queue for writes.
- 
- Each element is a block of type YMSCBWriteCallbackBlockType.
- */
-@property (atomic, strong) NSMutableArray *writeCallbacks;
+@property(retain, readonly) id value;
 
 
-/** @name Issuing a Write Request */
-/**
- 
- Issue write with value data and execute callback block writeCallback upon response.
- 
- The callback block writeCallback has one argument: `error`:
- 
- * `error` is populated with the returned `error` object from the delegate method
- peripheral:didWriteValueForCharacteristic:error: implemented in YMSCBPeripheral.
- 
- @param data The value to be written
- @param writeCallback Callback block to execute upon response.
- 
- */
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *error))writeCallback;
-
-/**
- Issue write with byte val and execute callback block writeCallback upon response.
- 
- The callback block writeCallback has one argument: `error`:
- 
- * `error` is populated with the returned `error` object from the delegate method
- peripheral:didWriteValueForCharacteristic:error: implemented in YMSCBPeripheral.
- 
- @param val Byte value to be written
- @param writeCallback Callback block to execute upon response.
- 
- */
-- (void)writeByte:(int8_t)val withBlock:(void (^)(NSError *error))writeCallback;
-
-
-/** @name Issuing a Read Request */
-/**
- Issue read and execute callback block readCallback upon response.
- 
- The callback block readCallback has two arguments: `data` and `error`:
- 
- * `data` is populated with the `value` property of [YMSCBCharacteristic cbCharacteristic].
- * `error` is populated with the returned `error` object from the delegate method peripheral:didUpdateValueForCharacteristic:error: implemented in YMSCBPeripheral.
- 
- 
- @param readCallback Callback block to execute upon response.
- */
-- (void)readValueWithBlock:(void (^)(NSData *data, NSError *error))readCallback;
-
-/** @name Callback Handler Methods */
-/**
- Handler method to process first callback in readCallbacks.
- 
- @param data Value returned from read request.
- @param error Error object, if failed.
- */
-- (void)executeReadCallback:(NSData *)data error:(NSError *)error;
-
-/**
- Handler method to process first callback in writeCallbacks.
- 
- @param error Error object, if failed.
- */
-- (void)executeWriteCallback:(NSError *)error;
-
-
+NS_ASSUME_NONNULL_END
 
 @end
