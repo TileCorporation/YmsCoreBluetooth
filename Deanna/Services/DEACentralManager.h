@@ -44,11 +44,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (DEACentralManager *)sharedService;
 
+- (NSArray *)peripherals ;
+
 /**
  Returns the YSMCBPeripheral instance from ymsPeripherals at index.
  @param index An index within the bounds of ymsPeripherals.
  */
 - (nullable YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index;
+
 
 /**
  Remove yperipheral in ymsPeripherals and from standardUserDefaults if stored.

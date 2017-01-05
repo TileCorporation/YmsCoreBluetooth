@@ -107,7 +107,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  The delegate object will be sent CBCentralManagerDelegate messages received by manager.
  */
-@property (atomic, weak) id <CBCentralManagerDelegate> _Nullable delegate;
+@property (atomic, weak, nullable) id <CBCentralManagerDelegate> delegate;
 
 /**
  The CBCentralManager object.
@@ -125,7 +125,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  This array holds all YMSCBPeripheral instances discovered or retrieved by manager.
  */
-@property (atomic, readonly, strong) NSArray *ymsPeripherals;
+@property (nonatomic, strong) NSMutableSet *ymsPeripherals;
 
 /// Count of ymsPeripherals.
 @property (atomic, readonly, assign) NSUInteger count;
@@ -174,38 +174,22 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  */
 - (void)handleFoundPeripheral:(CBPeripheral *)peripheral;
 
-// TODO: Change to NSSet with GCD
-/**
- Returns the YSMCBPeripheral instance from ymsPeripherals at index.
- @param index An index within the bounds of ymsPeripherals.
- */
-- (nullable YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index;
+- (NSUInteger)countOfYmsPeripherals;
 
-/**
- Add YMSCBPeripheral instance to ymsPeripherals.
- @param yperipheral Instance of YMSCBPeripheral
- */
-- (void)addPeripheral:(YMSCBPeripheral *)yperipheral;
+- (NSEnumerator *)enumeratorOfYmsPeripherals;
 
+- (YMSCBPeripheral *)memberOfYmsPeripherals:(YMSCBPeripheral *)yp;
 
-// TODO: Change to NSSet with GCD
-/**
- Remove yperipheral in ymsPeripherals and from standardUserDefaults if stored.
- 
- @param yperipheral Instance of YMSCBPeripheral
- */
-- (void)removePeripheral:(YMSCBPeripheral *)yperipheral;
+- (void)addYmsPeripherals:(NSSet *)objects;
 
-/**
- Remove YMSCBPeripheral instance at index
- @param index The index from which to remove the object in ymsPeripherals. The value must not exceed the bounds of the array.
- */
-- (void)removePeripheralAtIndex:(NSUInteger)index;
+- (void)addYmsPeripheralsObject:(YMSCBPeripheral *)object;
 
-/**
- Remove all YMSCBPeripheral instances
- */
-- (void)removeAllPeripherals;
+- (void)removeYmsPeripherals:(NSSet *)objects;
+
+- (void)removeYmsPeripheralsObject:(YMSCBPeripheral *)object;
+
+- (void)intersectYmsPeripherals:(NSSet *)objects;
+
 
 /**
  Find YMSCBPeripheral instance matching peripheral

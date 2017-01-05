@@ -60,10 +60,12 @@
     [self.peripheralsTableView reloadData];
     
     [centralManager addObserver:self
-                  forKeyPath:@"isScanning"
-                     options:NSKeyValueObservingOptionNew
-                     context:NULL];
+                     forKeyPath:@"isScanning"
+                        options:NSKeyValueObservingOptionNew
+                        context:NULL];
     
+    [centralManager addObserver:self forKeyPath:@"ymsPeripherals" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
+
     
     UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editButtonAction:)];
     
@@ -97,6 +99,10 @@
             } else {
                 self.scanButton.title = @"Start Scan";
             }
+        } else if ([keyPath isEqualToString:@"ymsPeripherals"]) {
+            NSLog(@"Change in ymsPeripherals detected.");
+            
+            
         }
     }
 }
@@ -399,7 +405,7 @@
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     
-    DEASensorTag *sensorTag = (DEASensorTag *)[centralManager.ymsPeripherals objectAtIndex:indexPath.row];
+    DEASensorTag *sensorTag = (DEASensorTag *)[centralManager peripheralAtIndex:indexPath.row];
     
     DEASensorTagViewController *stvc = [[DEASensorTagViewController alloc] initWithNibName:@"DEASensorTagViewController" bundle:nil];
     stvc.sensorTag = sensorTag;

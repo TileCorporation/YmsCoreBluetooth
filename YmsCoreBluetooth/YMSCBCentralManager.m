@@ -26,15 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
-@interface YMSCBCentralManager () {
-    NSMutableArray *_ymsPeripherals;
-}
-
-
-// TODO: Change to use NSSet with GCD
-@property (atomic, strong) NSMutableArray *ymsPeripherals;
+@interface YMSCBCentralManager ()
 
 @property (nonatomic, strong) dispatch_queue_t queue;
+@property (nonatomic, strong) dispatch_queue_t ymsPeripheralsQueue;
 
 @end
 
@@ -54,10 +49,11 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
                                   options:(nullable NSDictionary<NSString *, id> *)options {
     self = [super init];
     if (self) {
-        _ymsPeripherals = [NSMutableArray new];
+        _ymsPeripherals = [NSMutableSet new];
         _delegate = delegate;
         _queue = queue;
         _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
+        _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
         _discoveredCallback = nil;
         _retrievedCallback = nil;
     }
@@ -66,70 +62,92 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 
-
-
 #pragma mark - Peripheral Management
 
-// TODO: Use NSSet with GCD
+
 - (NSUInteger)count {
-    return  [self countOfYmsPeripherals];
+    NSUInteger result = [self countOfYmsPeripherals];
+    return result;
 }
 
-// TODO: OBSOLETE
-- (nullable YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index {
-    return [self objectInYmsPeripheralsAtIndex:index];
-}
+///// Unordered Collection Getters
 
-// TODO: Use NSSet with GCD
-- (void)addPeripheral:(YMSCBPeripheral *)yperipheral {
-    [self insertObject:yperipheral inYmsPeripheralsAtIndex:self.countOfYmsPeripherals];
-}
-
-// TODO: Use NSSet with GCD
-- (void)removePeripheral:(YMSCBPeripheral *)yperipheral {
-    [self removeObjectFromYmsPeripheralsAtIndex:[self.ymsPeripherals indexOfObject:yperipheral]];
-}
-
-// TODO: OBSOLETE
-- (void)removePeripheralAtIndex:(NSUInteger)index {
-    [self removeObjectFromYmsPeripheralsAtIndex:index];
-}
-
-// TODO: Use NSSet with GCD
-- (void)removeAllPeripherals {
-    while ([self countOfYmsPeripherals] > 0) {
-        [self removePeripheralAtIndex:0];
-    }
-}
-
-// TODO: Use NSSet with GCD
 - (NSUInteger)countOfYmsPeripherals {
-    return _ymsPeripherals.count;
+    __block NSUInteger result;
+    __weak typeof(self) this = self;
+    dispatch_sync(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        result = strongThis.ymsPeripherals.count;
+    });
+
+    return result;
+}
+
+- (NSEnumerator *)enumeratorOfYmsPeripherals {
+    __block NSEnumerator *result;
+    __weak typeof(self) this = self;
+    dispatch_sync(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        result = [strongThis.ymsPeripherals objectEnumerator];
+    });
+    
+    return result;
+}
+
+- (YMSCBPeripheral *)memberOfYmsPeripherals:(YMSCBPeripheral *)yp {
+    __block YMSCBPeripheral *result;
+    __weak typeof(self) this = self;
+    dispatch_sync(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        result = [strongThis.ymsPeripherals member:yp];
+    });
+    
+    return result;
+}
+
+///// Unordered Collection Mutators
+
+- (void)addYmsPeripherals:(NSSet *)objects {
+    __weak typeof(self) this = self;
+    dispatch_async(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis.ymsPeripherals unionSet:objects];
+    });
+}
+
+- (void)addYmsPeripheralsObject:(YMSCBPeripheral *)object {
+    __weak typeof(self) this = self;
+    dispatch_async(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis.ymsPeripherals addObject:object];
+    });
 }
 
 
-// TODO: Use NSSet with GCD
-- (id)objectInYmsPeripheralsAtIndex:(NSUInteger)index {
-    return [_ymsPeripherals objectAtIndex:index];
+- (void)removeYmsPeripherals:(NSSet *)objects {
+    __weak typeof(self) this = self;
+    dispatch_async(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis.ymsPeripherals minusSet:objects];
+    });
 }
 
-
-// TODO: Use NSSet with GCD
-- (void)insertObject:(YMSCBPeripheral *)object inYmsPeripheralsAtIndex:(NSUInteger)index {
-    [_ymsPeripherals insertObject:object atIndex:index];
+- (void)removeYmsPeripheralsObject:(YMSCBPeripheral *)object {
+    __weak typeof(self) this = self;
+    dispatch_async(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis.ymsPeripherals removeObject:object];
+    });
 }
 
-
-// TODO: Use NSSet with GCD
-- (void)removeObjectFromYmsPeripheralsAtIndex:(NSUInteger)index {
-    if (self.useStoredPeripherals) {
-        YMSCBPeripheral *yperipheral = [self.ymsPeripherals objectAtIndex:index];
-        if (yperipheral.cbPeripheral.identifier != nil) {
-            [YMSCBStoredPeripherals deleteUUID:yperipheral.cbPeripheral.identifier];
-        }
-    }
-    [_ymsPeripherals removeObjectAtIndex:index];
+- (void)intersectYmsPeripherals:(NSSet *)objects {
+    __weak typeof(self) this = self;
+    dispatch_async(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis.ymsPeripherals intersectSet:objects];
+    });
 }
+
 
 #pragma mark - Scan Methods
 
@@ -185,17 +203,26 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 - (nullable YMSCBPeripheral *)findPeripheral:(nonnull CBPeripheral *)peripheral {
-    // TODO: Use NSSet with GCD
+    __block YMSCBPeripheral *result = nil;
     
-    YMSCBPeripheral *result = nil;
-    NSArray *peripheralsCopy = [NSArray arrayWithArray:self.ymsPeripherals];
-    
-    for (YMSCBPeripheral *yPeripheral in peripheralsCopy) {
-        if (yPeripheral.cbPeripheral == peripheral) {
-            result = yPeripheral;
-            break;
+    __weak typeof(self) this = self;
+    dispatch_sync(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+
+        NSArray *peripheralsCopy = [strongThis.ymsPeripherals allObjects];
+        
+        for (YMSCBPeripheral *yPeripheral in peripheralsCopy) {
+            if (yPeripheral.cbPeripheral == peripheral) {
+                result = yPeripheral;
+                break;
+            }
         }
-    }
+        // TODO: Test if NSPredicate improves performance
+        //NSMutableSet *tempSet = [strongThis.ymsPeripherals mutableCopy];
+        //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"cbPeripheral = %@", peripheral];
+        //[tempSet filterUsingPredicate:predicate];
+        //result = [[tempSet allObjects] firstObject];
+    });
     
     return result;
 }

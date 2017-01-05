@@ -27,11 +27,17 @@
 
 static DEACentralManager *sharedCentralManager;
 
+@interface DEACentralManager()
+
+
+@end
+
+
 @implementation DEACentralManager
 
 + (DEACentralManager *)initSharedServiceWithDelegate:(id)delegate {
     if (sharedCentralManager == nil) {
-        dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", 0);
+        dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", DISPATCH_QUEUE_CONCURRENT);
         sharedCentralManager = [[super allocWithZone:NULL] initWithDelegate:delegate
                                                                       queue:queue
                                                                     options:nil];
@@ -108,7 +114,7 @@ static DEACentralManager *sharedCentralManager;
                                                                         baseHi:kSensorTag_BASE_ADDRESS_HI
                                                                         baseLo:kSensorTag_BASE_ADDRESS_LO];
             
-            [self addPeripheral:sensorTag];
+            [self addYmsPeripheralsObject:sensorTag];
             isUnknownPeripheral = NO;
             
         }
@@ -124,6 +130,20 @@ static DEACentralManager *sharedCentralManager;
 
 }
 
+- (NSArray *)peripherals {
+    NSArray *result = [self.ymsPeripherals allObjects];
+    return result;
+}
+
+- (YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index {
+    YMSCBPeripheral *result = nil;
+    result = [[self peripherals] objectAtIndex:index];
+    return result;
+}
+
+- (void)removePeripheral:(YMSCBPeripheral *)yperipheral {
+    [self removeYmsPeripheralsObject:yperipheral];
+}
 
 - (void)managerPoweredOnHandler {
     // TODO: Determine if peripheral retrieval works on stock Macs with BLE support.
