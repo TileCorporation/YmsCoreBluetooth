@@ -34,6 +34,8 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 // TODO: Change to use NSSet with GCD
 @property (atomic, strong) NSMutableArray *ymsPeripherals;
 
+@property (nonatomic, strong) dispatch_queue_t queue;
+
 @end
 
 
@@ -46,47 +48,25 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 #pragma mark - Constructors
 
-- (nullable instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue delegate:(nullable id<CBCentralManagerDelegate>) delegate {
 
+- (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
+                                    queue:(nullable dispatch_queue_t)queue
+                                  options:(nullable NSDictionary<NSString *, id> *)options {
     self = [super init];
-    
     if (self) {
-        // TODO: Use NSSet with GCD
-        // TODO: Persist `queue`
         _ymsPeripherals = [NSMutableArray new];
         _delegate = delegate;
+        _queue = queue;
         _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
-        _knownPeripheralNames = nameList;
         _discoveredCallback = nil;
         _retrievedCallback = nil;
-        _useStoredPeripherals = NO;
     }
     
     return self;
 }
 
-- (nullable instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue useStoredPeripherals:(BOOL)useStore delegate:(nullable id<CBCentralManagerDelegate>) delegate {
 
-    self = [super init];
-    
-    if (self) {
-        // TODO: Use NSSet with GCD
-        // TODO: Persist `queue`
-        _ymsPeripherals = [NSMutableArray new];
-        _delegate = delegate;
-        _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
-        _knownPeripheralNames = nameList;
-        _discoveredCallback = nil;
-        _retrievedCallback = nil;
-        _useStoredPeripherals = useStore;
-    }
-    
-    if (useStore) {
-        [YMSCBStoredPeripherals initializeStorage];
-    }
-    
-    return self;
-}
+
 
 #pragma mark - Peripheral Management
 
@@ -150,21 +130,6 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     }
     [_ymsPeripherals removeObjectAtIndex:index];
 }
-
-// TODO: OBSOLETE
-- (BOOL)isKnownPeripheral:(CBPeripheral *)peripheral {
-    BOOL result = NO;
-    
-    for (NSString *key in self.knownPeripheralNames) {
-        result = result || [peripheral.name isEqualToString:key];
-        if (result) {
-            break;
-        }
-    }
-    
-    return result;
-}
-
 
 #pragma mark - Scan Methods
 

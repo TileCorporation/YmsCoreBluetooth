@@ -117,14 +117,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  */
 @property (nonatomic, strong) CBCentralManager *manager;
 
-/**
- Array of NSStrings to search to match CBPeripheral instances.
- 
- Used in conjunction with isKnownPeripheral:.  
- This value is typically initialized using initWithKnownPeripheralNames:queue:.
- */
-@property (atomic, strong, nullable) NSArray *knownPeripheralNames;
-
 /// Flag to determine if manager is scanning.
 @property (atomic, assign) BOOL isScanning;
 
@@ -154,28 +146,23 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 @property (atomic, assign) BOOL useStoredPeripherals;
 
 #pragma mark - Constructors
+
 /** @name Initializing YMSCBCentralManager */
-/**
- Constructor with array of known peripheral names.
- 
- By default, this constructor will not use stored peripherals from standardUserDefaults.
- 
- @param nameList Array of peripheral names of type NSString.
- @param queue The dispatch queue to use to dispatch the central role events. 
- If its value is nil, the central manager dispatches central role events using the main queue.
- @param delegate Delegate of this class instance.
- */
-- (nullable instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue delegate:(nullable id<CBCentralManagerDelegate>) delegate;
 
 /**
- Constructor with array of known peripheral names.
- @param nameList Array of peripheral names of type NSString.
- @param queue The dispatch queue to use to dispatch the central role events.
- If its value is nil, the central manager dispatches central role events using the main queue.
- @param useStore If YES, then discovered peripheral UUIDs are stored in standardUserDefaults.
+ Constructor for YMSCBCentralManager
+ 
+ This is wrapper
+
  @param delegate Delegate of this class instance.
+ @param queue The dispatch queue for BLE central role events.
+ @param options CBCentralManager options
+ @return instance of YMSCBCentralManager
  */
-- (nullable instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue useStoredPeripherals:(BOOL)useStore delegate:(nullable id<CBCentralManagerDelegate>) delegate;
+- (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
+                                    queue:(nullable dispatch_queue_t)queue
+                                  options:(nullable NSDictionary<NSString *, id> *)options;
+
 
 #pragma mark - Peripheral Management
 /** @name Peripheral Management */

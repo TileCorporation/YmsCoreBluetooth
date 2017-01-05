@@ -32,12 +32,9 @@ static DEACentralManager *sharedCentralManager;
 + (DEACentralManager *)initSharedServiceWithDelegate:(id)delegate {
     if (sharedCentralManager == nil) {
         dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", 0);
-
-        NSArray *nameList = @[@"TI BLE Sensor Tag", @"SensorTag", @"CC2650 SensorTag", @"SensorTag 2.0"];
-        sharedCentralManager = [[super allocWithZone:NULL] initWithKnownPeripheralNames:nameList
-                                                                                  queue:queue
-                                                                   useStoredPeripherals:NO
-                                                                               delegate:delegate];
+        sharedCentralManager = [[super allocWithZone:NULL] initWithDelegate:delegate
+                                                                      queue:queue
+                                                                    options:nil];
     }
     return sharedCentralManager;
     
@@ -104,21 +101,18 @@ static DEACentralManager *sharedCentralManager;
     
     if (yp == nil) {
         BOOL isUnknownPeripheral = YES;
-        for (NSString *pname in self.knownPeripheralNames) {
-            if ([pname isEqualToString:peripheral.name]) {
-                DEASensorTag *sensorTag = [[DEASensorTag alloc] initWithPeripheral:peripheral
-                                                                           central:self
-                                                                            baseHi:kSensorTag_BASE_ADDRESS_HI
-                                                                            baseLo:kSensorTag_BASE_ADDRESS_LO];
-
-                [self addPeripheral:sensorTag];
-                isUnknownPeripheral = NO;
-                break;
-                
-            }
+        
+        if ([peripheral.name containsString:@"Sensor"]) {
+            DEASensorTag *sensorTag = [[DEASensorTag alloc] initWithPeripheral:peripheral
+                                                                       central:self
+                                                                        baseHi:kSensorTag_BASE_ADDRESS_HI
+                                                                        baseLo:kSensorTag_BASE_ADDRESS_LO];
+            
+            [self addPeripheral:sensorTag];
+            isUnknownPeripheral = NO;
             
         }
-        
+
         /*
         if (isUnknownPeripheral) {
             //TODO: Handle unknown peripheral
