@@ -39,7 +39,6 @@
 		D9718B56167F9F9F0001E42C /* DEAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D9718B55167F9F9F0001E42C /* DEAAppDelegate.m */; };
 		D97EC6D0172B08AB00CAECFC /* DEABaseService.m in Sources */ = {isa = PBXBuildFile; fileRef = D97EC6CF172B08AB00CAECFC /* DEABaseService.m */; };
 		D97EC6D2172B1B8C00CAECFC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D97EC6D1172B1B8C00CAECFC /* README.md */; };
-		D9812904173F3804008EA8D5 /* YMSCBStoredPeripherals.m in Sources */ = {isa = PBXBuildFile; fileRef = D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */; };
 		D988A5C616DD26A100D7D392 /* DEASensorTag.m in Sources */ = {isa = PBXBuildFile; fileRef = D988A5C516DD26A100D7D392 /* DEASensorTag.m */; };
 		D98D66611BB8CE7600E82BE4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66601BB8CE7600E82BE4 /* Foundation.framework */; };
 		D98D66631BB8CE9600E82BE4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66621BB8CE9500E82BE4 /* Cocoa.framework */; };
@@ -59,7 +58,6 @@
 		D997ACB9175B254500C91B0D /* YMSCBService.m in Sources */ = {isa = PBXBuildFile; fileRef = D933CECC16DDAFA700EDDAD6 /* YMSCBService.m */; };
 		D997ACBA175B254500C91B0D /* YMSCBCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = D933CEC816DDAFA700EDDAD6 /* YMSCBCharacteristic.m */; };
 		D997ACBB175B254500C91B0D /* YMSCBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D933CECE16DDAFA700EDDAD6 /* YMSCBUtils.m */; };
-		D997ACBC175B254500C91B0D /* YMSCBStoredPeripherals.m in Sources */ = {isa = PBXBuildFile; fileRef = D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */; };
 		D997ACBD175B254500C91B0D /* YMSCBDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */; };
 		D997ACBE175B254500C91B0D /* NSMutableArray+fifoQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = D9268B4217306295009C4284 /* NSMutableArray+fifoQueue.m */; };
 		D997ACBF175B255E00C91B0D /* DEACentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D906E5F016DCAC55001D7932 /* DEACentralManager.m */; };
@@ -160,8 +158,6 @@
 		D97EC6CE172B08AB00CAECFC /* DEABaseService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEABaseService.h; sourceTree = "<group>"; };
 		D97EC6CF172B08AB00CAECFC /* DEABaseService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEABaseService.m; sourceTree = "<group>"; };
 		D97EC6D1172B1B8C00CAECFC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		D9812902173F3804008EA8D5 /* YMSCBStoredPeripherals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBStoredPeripherals.h; sourceTree = "<group>"; };
-		D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBStoredPeripherals.m; sourceTree = "<group>"; };
 		D988A5C416DD26A100D7D392 /* DEASensorTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASensorTag.h; sourceTree = "<group>"; };
 		D988A5C516DD26A100D7D392 /* DEASensorTag.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASensorTag.m; sourceTree = "<group>"; };
 		D98D66601BB8CE7600E82BE4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -272,8 +268,6 @@
 				D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */,
 				D933CECD16DDAFA700EDDAD6 /* YMSCBUtils.h */,
 				D933CECE16DDAFA700EDDAD6 /* YMSCBUtils.m */,
-				D9812902173F3804008EA8D5 /* YMSCBStoredPeripherals.h */,
-				D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */,
 				D9268B4117306295009C4284 /* NSMutableArray+fifoQueue.h */,
 				D9268B4217306295009C4284 /* NSMutableArray+fifoQueue.m */,
 			);
@@ -686,7 +680,6 @@
 				D9268B4317306295009C4284 /* NSMutableArray+fifoQueue.m in Sources */,
 				D9268B46173081E2009C4284 /* DEADeviceInfoService.m in Sources */,
 				D9960A54173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m in Sources */,
-				D9812904173F3804008EA8D5 /* YMSCBStoredPeripherals.m in Sources */,
 				D9AA81C91753E00700C2836D /* YMSCBDescriptor.m in Sources */,
 				D9D70095177782CB0066AB1B /* DEATheme.m in Sources */,
 				D9D70098177783DB0066AB1B /* DEADefaultTheme.m in Sources */,
@@ -705,7 +698,6 @@
 				D997ACB9175B254500C91B0D /* YMSCBService.m in Sources */,
 				D997ACBA175B254500C91B0D /* YMSCBCharacteristic.m in Sources */,
 				D997ACBB175B254500C91B0D /* YMSCBUtils.m in Sources */,
-				D997ACBC175B254500C91B0D /* YMSCBStoredPeripherals.m in Sources */,
 				D997ACBD175B254500C91B0D /* YMSCBDescriptor.m in Sources */,
 				D997ACBE175B254500C91B0D /* NSMutableArray+fifoQueue.m in Sources */,
 				D997ACBF175B255E00C91B0D /* DEACentralManager.m in Sources */,

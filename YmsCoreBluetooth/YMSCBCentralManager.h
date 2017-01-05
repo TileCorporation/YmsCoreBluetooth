@@ -142,9 +142,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 /// Peripheral Retreived Callback
 @property (atomic, copy, nullable) YMSCBRetrieveCallbackBlockType retrievedCallback;
 
-/// If YES, then discovered peripheral UUIDs are stored in standardUserDefaults.
-@property (atomic, assign) BOOL useStoredPeripherals;
-
 #pragma mark - Constructors
 
 /** @name Initializing YMSCBCentralManager */

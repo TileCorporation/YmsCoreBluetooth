@@ -19,7 +19,6 @@
 
 #import "DEACentralManager.h"
 #import "DEASensorTag.h"
-#import "YMSCBStoredPeripherals.h"
 #include "TISensorTag.h"
 
 
@@ -146,19 +145,7 @@ static DEACentralManager *sharedCentralManager;
 }
 
 - (void)managerPoweredOnHandler {
-    // TODO: Determine if peripheral retrieval works on stock Macs with BLE support.
-    /* 
-       Using iMac with Cirago BLE USB adapter, retreival with return a CBPeripheral instance without properties 
-       correctly populated such as name. This behavior is not exhibited when running on iOS.
-     */
     
-    if (self.useStoredPeripherals) {
-#if TARGET_OS_IPHONE
-        NSArray *identifiers = [YMSCBStoredPeripherals genIdentifiers];
-        NSArray *hey = [self retrievePeripheralsWithIdentifiers:identifiers];
-        //NSLog(@"hey %@", hey);
-#endif
-    }
 }
 
 

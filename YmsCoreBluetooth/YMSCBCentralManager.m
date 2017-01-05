@@ -20,7 +20,6 @@
 #import "YMSCBPeripheral.h"
 #import "YMSCBService.h"
 #import "YMSCBCharacteristic.h"
-#import "YMSCBStoredPeripherals.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -317,11 +316,6 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
-    if (self.useStoredPeripherals) {
-        if (peripheral.identifier) {
-            [YMSCBStoredPeripherals saveUUID:peripheral.identifier];
-        }
-    }
     
     BOOL shouldProcess = YES;
     if (self.filteredCallback) {
