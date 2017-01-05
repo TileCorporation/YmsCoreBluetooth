@@ -96,7 +96,7 @@
 
 
 - (void)viewWillAppear:(BOOL)animated {
-    
+    [super viewWillAppear:animated];
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     centralManager.delegate = self;
     
@@ -122,6 +122,8 @@
             [cell performSelector:@selector(deconfigure)];
         }
     }
+    
+    [super viewWillDisappear:animated];
 }
 
 

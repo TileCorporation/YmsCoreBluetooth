@@ -75,6 +75,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     centralManager.delegate = self;
     
@@ -85,7 +87,7 @@
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
-    
+    [super viewDidDisappear:animated];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
