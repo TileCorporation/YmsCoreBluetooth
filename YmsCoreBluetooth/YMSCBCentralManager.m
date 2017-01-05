@@ -151,7 +151,6 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 #pragma mark - Scan Methods
 
-
 - (BOOL)startScan {
     /*
      * THIS METHOD IS TO BE OVERRIDDEN
@@ -168,7 +167,6 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 - (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs options:(nullable NSDictionary *)options {
     BOOL result = NO;
     
-    // TODO: test isScanning?
     if (self.manager.state == CBCentralManagerStatePoweredOn) {
         [self.manager scanForPeripheralsWithServices:serviceUUIDs options:options];
         self.isScanning = YES;
@@ -178,19 +176,16 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     return result;
 }
 
-
 - (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs
                                options:(nullable NSDictionary *)options
                              withBlock:(nullable void (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError * _Nullable error))discoverCallback
-                            withFilter:(nullable BOOL (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI))filterCallback{
+                            withFilter:(nullable BOOL (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI))filterCallback {
     BOOL result = NO;
     
     if (self.manager.state == CBCentralManagerStatePoweredOn) {
         self.discoveredCallback = discoverCallback;
         self.filteredCallback = filterCallback;
-        [self scanForPeripheralsWithServices:serviceUUIDs options:options];
-        self.isScanning = YES;
-        result = YES;
+        result = [self scanForPeripheralsWithServices:serviceUUIDs options:options];
     }
     return result;
 }
