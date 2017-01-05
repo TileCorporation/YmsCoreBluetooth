@@ -126,7 +126,7 @@
     }
     
     DEACentralManager *centralManager = [DEACentralManager sharedService];
-    YMSCBPeripheral *yp = centralManager.ymsPeripherals[row];
+    YMSCBPeripheral *yp = centralManager.peripherals[row];
     if (yp) {
         if ([yp isKindOfClass:[DEASensorTag class]]) {
             [result configureWithSensorTag:(DEASensorTag *)yp];
