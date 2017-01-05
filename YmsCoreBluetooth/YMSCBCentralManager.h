@@ -166,17 +166,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 
 #pragma mark - Peripheral Management
 /** @name Peripheral Management */
-/**
- Determines if peripheral is known by this app service.
-
- Used in conjunction with knownPeripheralNames. 
- 
- @param peripheral found or retrieved peripheral
- @return YES is peripheral is to be managed by this app service.
- */
-
-- (BOOL)isKnownPeripheral:(CBPeripheral *)peripheral;
-
 
 /**
  Handler for discovered or found peripheral. This method is to be overridden.
