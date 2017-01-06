@@ -585,13 +585,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 }
 
+
+
+#if TARGET_OS_MAC
+
 /**
  CBPeripheralDelegate implementation.
  
  @param peripheral The peripheral providing this information.
  @param error If an error occured, the cause of the failure.
  */
+- (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateRSSI:error:)]) {
+        __weak YMSCBPeripheral *this = self;
+        _YMS_PERFORM_ON_MAIN_THREAD(^{
+            __strong typeof(this) strongThis = this;
+            [strongThis.delegate peripheralDidUpdateRSSI:peripheral error:error];
+        });
+    }
+}
 
+#else
 
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
     if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
@@ -602,6 +616,8 @@ NS_ASSUME_NONNULL_BEGIN
         });
     }
 }
+
+#endif
 
 
 
