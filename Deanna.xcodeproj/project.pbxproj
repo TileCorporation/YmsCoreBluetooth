@@ -46,6 +46,8 @@
 		D98D66681BB8CEAA00E82BE4 /* IOBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66651BB8CEAA00E82BE4 /* IOBluetooth.framework */; };
 		D98D66691BB8CEAA00E82BE4 /* IOBluetoothUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66661BB8CEAA00E82BE4 /* IOBluetoothUI.framework */; };
 		D9960A54173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9960A53173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m */; };
+		D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = D99659141E1F569300F67BCA /* YMSCBLogger.m */; };
+		D99659161E1F569300F67BCA /* YMSCBLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = D99659141E1F569300F67BCA /* YMSCBLogger.m */; };
 		D9971AEA1720A9A100B1A068 /* DEAPeripheralTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9971AE91720A9A100B1A068 /* DEAPeripheralTableViewCell.xib */; };
 		D9971AEE1720AA7E00B1A068 /* DEAPeripheralTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9971AED1720AA7E00B1A068 /* DEAPeripheralTableViewCell.m */; };
 		D997AC9C175B245800C91B0D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D997AC9A175B245800C91B0D /* InfoPlist.strings */; };
@@ -167,6 +169,8 @@
 		D98D66661BB8CEAA00E82BE4 /* IOBluetoothUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOBluetoothUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/IOBluetoothUI.framework; sourceTree = DEVELOPER_DIR; };
 		D9960A52173B0A1B0013C8E7 /* DEADeviceInfoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEADeviceInfoViewCell.h; sourceTree = "<group>"; };
 		D9960A53173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEADeviceInfoViewCell.m; sourceTree = "<group>"; };
+		D99659131E1F569300F67BCA /* YMSCBLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBLogger.h; sourceTree = "<group>"; };
+		D99659141E1F569300F67BCA /* YMSCBLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBLogger.m; sourceTree = "<group>"; };
 		D9971AE91720A9A100B1A068 /* DEAPeripheralTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DEAPeripheralTableViewCell.xib; sourceTree = "<group>"; };
 		D9971AEC1720AA7E00B1A068 /* DEAPeripheralTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEAPeripheralTableViewCell.h; sourceTree = "<group>"; };
 		D9971AED1720AA7E00B1A068 /* DEAPeripheralTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEAPeripheralTableViewCell.m; sourceTree = "<group>"; };
@@ -254,22 +258,24 @@
 		D933CEC216DDAFA700EDDAD6 /* YmsCoreBluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				D933CEC416DDAFA700EDDAD6 /* YMS128.h */,
+				D9268B4117306295009C4284 /* NSMutableArray+fifoQueue.h */,
+				D9268B4217306295009C4284 /* NSMutableArray+fifoQueue.m */,
 				D933CEC316DDAFA700EDDAD6 /* YMS128.c */,
+				D933CEC416DDAFA700EDDAD6 /* YMS128.h */,
 				D933CEC516DDAFA700EDDAD6 /* YMSCBCentralManager.h */,
 				D933CEC616DDAFA700EDDAD6 /* YMSCBCentralManager.m */,
-				D933CEC916DDAFA700EDDAD6 /* YMSCBPeripheral.h */,
-				D933CECA16DDAFA700EDDAD6 /* YMSCBPeripheral.m */,
-				D933CECB16DDAFA700EDDAD6 /* YMSCBService.h */,
-				D933CECC16DDAFA700EDDAD6 /* YMSCBService.m */,
 				D933CEC716DDAFA700EDDAD6 /* YMSCBCharacteristic.h */,
 				D933CEC816DDAFA700EDDAD6 /* YMSCBCharacteristic.m */,
 				D9AA81C71753E00700C2836D /* YMSCBDescriptor.h */,
 				D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */,
+				D99659131E1F569300F67BCA /* YMSCBLogger.h */,
+				D99659141E1F569300F67BCA /* YMSCBLogger.m */,
+				D933CEC916DDAFA700EDDAD6 /* YMSCBPeripheral.h */,
+				D933CECA16DDAFA700EDDAD6 /* YMSCBPeripheral.m */,
+				D933CECB16DDAFA700EDDAD6 /* YMSCBService.h */,
+				D933CECC16DDAFA700EDDAD6 /* YMSCBService.m */,
 				D933CECD16DDAFA700EDDAD6 /* YMSCBUtils.h */,
 				D933CECE16DDAFA700EDDAD6 /* YMSCBUtils.m */,
-				D9268B4117306295009C4284 /* NSMutableArray+fifoQueue.h */,
-				D9268B4217306295009C4284 /* NSMutableArray+fifoQueue.m */,
 			);
 			path = YmsCoreBluetooth;
 			sourceTree = "<group>";
@@ -666,6 +672,7 @@
 				D933CED416DDAFA700EDDAD6 /* YMSCBUtils.m in Sources */,
 				D9F412F016DED0030094FEFA /* DEASensorTagViewController.m in Sources */,
 				D9F412F416DED7510094FEFA /* DEATemperatureViewCell.m in Sources */,
+				D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */,
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
 				D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */,
@@ -690,6 +697,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D99659161E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D997AC9E175B245800C91B0D /* main.m in Sources */,
 				D997ACA5175B245800C91B0D /* DEMAppDelegate.m in Sources */,
 				D997ACB6175B254500C91B0D /* YMS128.c in Sources */,
