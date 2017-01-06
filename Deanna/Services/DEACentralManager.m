@@ -128,15 +128,25 @@ static DEACentralManager *sharedCentralManager;
             
             [self addPeripheral:sensorTag];
         } else {
-            //yp = [[YMSCBPeripheral alloc] initWithPeripheral:peripheral central:self baseHi:0 baseLo:0];
-            //[self addPeripheral:yp];
+//            if (self.ymsPeripherals.count < 25) {
+//                yp = [[YMSCBPeripheral alloc] initWithPeripheral:peripheral central:self baseHi:0 baseLo:0];
+//                [self addPeripheral:yp];
+//            }
         }
 
     }
 }
 
 - (NSArray *)peripherals {
-    NSArray *result = [self.ymsPeripherals allValues];
+    NSArray *result = nil;
+
+    
+    NSArray *sortedKeys = [[self.ymsPeripherals allKeys] sortedArrayUsingSelector: @selector(compare:)];
+    NSMutableArray *sortedValues = [NSMutableArray array];
+    for (NSString *key in sortedKeys)
+        [sortedValues addObject: [self.ymsPeripherals objectForKey: key]];
+    
+    result = [NSArray arrayWithArray:sortedValues];
     return result;
 }
 
