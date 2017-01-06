@@ -119,32 +119,24 @@ static DEACentralManager *sharedCentralManager;
     YMSCBPeripheral *yp = [self findPeripheral:peripheral];
     
     if (yp == nil) {
-        BOOL isUnknownPeripheral = YES;
         
-        if ([peripheral.name containsString:@"Sensor"]) {
+        if ([peripheral.name containsString:@"Sensor"] && peripheral.identifier) {
             DEASensorTag *sensorTag = [[DEASensorTag alloc] initWithPeripheral:peripheral
                                                                        central:self
                                                                         baseHi:kSensorTag_BASE_ADDRESS_HI
                                                                         baseLo:kSensorTag_BASE_ADDRESS_LO];
             
-            [self addYmsPeripheralsObject:sensorTag];
-            isUnknownPeripheral = NO;
-            
+            [self addPeripheral:sensorTag];
+        } else {
+            //yp = [[YMSCBPeripheral alloc] initWithPeripheral:peripheral central:self baseHi:0 baseLo:0];
+            //[self addPeripheral:yp];
         }
 
-        /*
-        if (isUnknownPeripheral) {
-            //TODO: Handle unknown peripheral
-            yp = [[YMSCBPeripheral alloc] initWithPeripheral:peripheral central:self baseHi:0 baseLo:0];
-            [self addPeripheral:yp];
-        }
-         */
     }
-
 }
 
 - (NSArray *)peripherals {
-    NSArray *result = [self.ymsPeripherals allObjects];
+    NSArray *result = [self.ymsPeripherals allValues];
     return result;
 }
 
@@ -154,9 +146,6 @@ static DEACentralManager *sharedCentralManager;
     return result;
 }
 
-- (void)removePeripheral:(YMSCBPeripheral *)yperipheral {
-    [self removeYmsPeripheralsObject:yperipheral];
-}
 
 - (void)managerPoweredOnHandler {
     

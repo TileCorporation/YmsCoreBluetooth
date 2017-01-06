@@ -29,6 +29,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 @property (nonatomic, strong) dispatch_queue_t queue;
 @property (nonatomic, strong) dispatch_queue_t ymsPeripheralsQueue;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, YMSCBPeripheral *> *ymsPeripherals;
 
 @end
 
@@ -49,7 +50,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
                                    logger:(id<YMSCBLogging>)logger {
     self = [super init];
     if (self) {
-        _ymsPeripherals = [NSMutableSet new];
+        _ymsPeripherals = [NSMutableDictionary new];
         _delegate = delegate;
         _queue = queue;
         _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
@@ -67,85 +68,31 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (NSUInteger)count {
-    NSUInteger result = [self countOfYmsPeripherals];
-    return result;
-}
-
-///// Unordered Collection Getters
-
-- (NSUInteger)countOfYmsPeripherals {
-    __block NSUInteger result;
+    __block NSUInteger result = 0;
+    
     __weak typeof(self) this = self;
     dispatch_sync(self.ymsPeripheralsQueue, ^{
         __strong typeof(this) strongThis = this;
         result = strongThis.ymsPeripherals.count;
     });
-
-    return result;
-}
-
-- (NSEnumerator *)enumeratorOfYmsPeripherals {
-    __block NSEnumerator *result;
-    __weak typeof(self) this = self;
-    dispatch_sync(self.ymsPeripheralsQueue, ^{
-        __strong typeof(this) strongThis = this;
-        result = [strongThis.ymsPeripherals objectEnumerator];
-    });
     
     return result;
 }
 
-- (YMSCBPeripheral *)memberOfYmsPeripherals:(YMSCBPeripheral *)yp {
-    __block YMSCBPeripheral *result;
-    __weak typeof(self) this = self;
-    dispatch_sync(self.ymsPeripheralsQueue, ^{
-        __strong typeof(this) strongThis = this;
-        result = [strongThis.ymsPeripherals member:yp];
-    });
-    
-    return result;
-}
 
-///// Unordered Collection Mutators
-
-- (void)addYmsPeripherals:(NSSet *)objects {
+- (void)addPeripheral:(YMSCBPeripheral *)yp {
     __weak typeof(self) this = self;
     dispatch_async(self.ymsPeripheralsQueue, ^{
         __strong typeof(this) strongThis = this;
-        [strongThis.ymsPeripherals unionSet:objects];
+        [strongThis.ymsPeripherals setValue:yp forKey:yp.identifier.UUIDString];
     });
 }
 
-- (void)addYmsPeripheralsObject:(YMSCBPeripheral *)object {
+- (void)removePeripheral:(YMSCBPeripheral *)yp {
     __weak typeof(self) this = self;
     dispatch_async(self.ymsPeripheralsQueue, ^{
         __strong typeof(this) strongThis = this;
-        [strongThis.ymsPeripherals addObject:object];
-    });
-}
-
-
-- (void)removeYmsPeripherals:(NSSet *)objects {
-    __weak typeof(self) this = self;
-    dispatch_async(self.ymsPeripheralsQueue, ^{
-        __strong typeof(this) strongThis = this;
-        [strongThis.ymsPeripherals minusSet:objects];
-    });
-}
-
-- (void)removeYmsPeripheralsObject:(YMSCBPeripheral *)object {
-    __weak typeof(self) this = self;
-    dispatch_async(self.ymsPeripheralsQueue, ^{
-        __strong typeof(this) strongThis = this;
-        [strongThis.ymsPeripherals removeObject:object];
-    });
-}
-
-- (void)intersectYmsPeripherals:(NSSet *)objects {
-    __weak typeof(self) this = self;
-    dispatch_async(self.ymsPeripheralsQueue, ^{
-        __strong typeof(this) strongThis = this;
-        [strongThis.ymsPeripherals intersectSet:objects];
+        [strongThis.ymsPeripherals removeObjectForKey:yp.identifier.UUIDString];
     });
 }
 
@@ -204,20 +151,10 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     __weak typeof(self) this = self;
     dispatch_sync(self.ymsPeripheralsQueue, ^{
         __strong typeof(this) strongThis = this;
-
-        NSArray *peripheralsCopy = [strongThis.ymsPeripherals allObjects];
         
-        for (YMSCBPeripheral *yPeripheral in peripheralsCopy) {
-            if (yPeripheral.cbPeripheral == peripheral) {
-                result = yPeripheral;
-                break;
-            }
+        if (peripheral.identifier) {
+            result = strongThis.ymsPeripherals[peripheral.identifier.UUIDString];
         }
-        // TODO: Test if NSPredicate improves performance
-        //NSMutableSet *tempSet = [strongThis.ymsPeripherals mutableCopy];
-        //NSPredicate *predicate = [NSPredicate predicateWithFormat:@"cbPeripheral = %@", peripheral];
-        //[tempSet filterUsingPredicate:predicate];
-        //result = [[tempSet allObjects] firstObject];
     });
     
     return result;

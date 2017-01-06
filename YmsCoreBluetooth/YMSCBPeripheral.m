@@ -69,6 +69,15 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
+- (nullable NSUUID *)identifier {
+    NSUUID *result = nil;
+    if (self.cbPeripheral) {
+        result = self.cbPeripheral.identifier;
+    }
+    return result;
+}
+
+
 - (BOOL)isConnected {
     
     BOOL result = NO;

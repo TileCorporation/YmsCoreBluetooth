@@ -37,6 +37,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 @property(retain, readonly, nullable) NSString *name;
 
+@property(readonly, nonatomic) NSUUID *identifier;
+
 @property(retain, readonly, nullable) NSNumber *RSSI;
 
 @property(readonly) CBPeripheralState state;
@@ -143,6 +145,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 /// The CBPeripheral instance.
 @property (nonatomic, strong, nullable) CBPeripheral *cbPeripheral;
+
+@property(readonly, nonatomic, nullable) NSUUID *identifier;
 
 /**
  A Boolean value indicating whether the peripheral is currently connected to the central manager. (read-only)

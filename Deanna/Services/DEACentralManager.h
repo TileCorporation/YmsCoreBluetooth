@@ -53,13 +53,5 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index;
 
 
-/**
- Remove yperipheral in ymsPeripherals and from standardUserDefaults if stored.
- 
- @param yperipheral Instance of YMSCBPeripheral
- */
-- (void)removePeripheral:(YMSCBPeripheral *)yperipheral;
-
-
 NS_ASSUME_NONNULL_END
 @end

@@ -128,7 +128,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  This array holds all YMSCBPeripheral instances discovered or retrieved by manager.
  */
-@property (nonatomic, strong) NSMutableSet *ymsPeripherals;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, YMSCBPeripheral *> *ymsPeripherals;
 
 /// Count of ymsPeripherals.
 @property (atomic, readonly, assign) NSUInteger count;
@@ -175,22 +175,9 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  */
 - (void)handleFoundPeripheral:(CBPeripheral *)peripheral;
 
-- (NSUInteger)countOfYmsPeripherals;
+- (void)addPeripheral:(YMSCBPeripheral *)yp;
 
-- (NSEnumerator *)enumeratorOfYmsPeripherals;
-
-- (YMSCBPeripheral *)memberOfYmsPeripherals:(YMSCBPeripheral *)yp;
-
-- (void)addYmsPeripherals:(NSSet *)objects;
-
-- (void)addYmsPeripheralsObject:(YMSCBPeripheral *)object;
-
-- (void)removeYmsPeripherals:(NSSet *)objects;
-
-- (void)removeYmsPeripheralsObject:(YMSCBPeripheral *)object;
-
-- (void)intersectYmsPeripherals:(NSSet *)objects;
-
+- (void)removePeripheral:(YMSCBPeripheral *)yp;
 
 /**
  Find YMSCBPeripheral instance matching peripheral

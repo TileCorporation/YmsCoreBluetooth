@@ -64,9 +64,6 @@
                         options:NSKeyValueObservingOptionNew
                         context:NULL];
     
-    [centralManager addObserver:self forKeyPath:@"ymsPeripherals" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
-
-    
     UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editButtonAction:)];
     
     self.navigationItem.rightBarButtonItem = editButton;
@@ -101,10 +98,6 @@
             } else {
                 self.scanButton.title = @"Start Scan";
             }
-        } else if ([keyPath isEqualToString:@"ymsPeripherals"]) {
-            NSLog(@"Change in ymsPeripherals detected.");
-            
-            
         }
     }
 }
