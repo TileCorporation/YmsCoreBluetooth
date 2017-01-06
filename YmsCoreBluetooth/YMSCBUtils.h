@@ -33,6 +33,18 @@ typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
 #define _YMS_PERFORM_ON_MAIN_THREAD(block) dispatch_async(dispatch_get_main_queue(), block);
 #endif
 
+
+@protocol YMSCBLogging
+
+- (void)logError:(NSString *)message object:(id)object;
+- (void)logWarn:(NSString *)message object:(id)object;
+- (void)logInfo:(NSString *)message object:(id)object;
+- (void)logDebug:(NSString *)message object:(id)object;
+- (void)logVerbose:(NSString *)message object:(id)object;
+
+@end
+
+
 /**
  Utility class for YMS CoreBluetooth Framework
  */
