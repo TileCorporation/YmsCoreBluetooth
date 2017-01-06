@@ -167,15 +167,25 @@
     yp.delegate = self;
     
     if (self.oldCount == 0) {
-        self.oldCount = centralManager.count;
+        self.oldCount = (int)centralManager.count;
         [self.peripheralTableView reloadData];
     } else {
         if (centralManager.count != self.oldCount) {
             [self.peripheralTableView reloadData];
-            self.oldCount = centralManager.count;
+            self.oldCount = (int)centralManager.count;
         }
     }
     
+    [self.peripheralTableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rowView, NSInteger row) {
+        
+        DEMPeripheralViewCell *pvc = [rowView viewAtColumn:0];
+        
+        if (pvc.sensorTag == yp) {
+            pvc.rssiLabel.stringValue = [NSString stringWithFormat:@"%d", [RSSI intValue]];
+        }
+        
+    }];
+
     //[self.peripheralTableView reloadData];
     
     

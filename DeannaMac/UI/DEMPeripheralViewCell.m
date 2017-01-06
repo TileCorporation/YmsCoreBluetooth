@@ -33,7 +33,7 @@
         // Connect Button
         _connectButton = [[NSButton alloc] initWithFrame:CGRectMake(20, 9, 153, 49)];
         _connectButton.title = @"Connect";
-        [_connectButton setEnabled:NO];
+        [_connectButton setEnabled:YES];
         [_connectButton setTarget:self];
         [_connectButton setAction:@selector(connectButtonAction:)];
         
