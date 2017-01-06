@@ -20,6 +20,7 @@
 #import "DEACentralManager.h"
 #import "DEASensorTag.h"
 #include "TISensorTag.h"
+#import "YMSCBLogger.h"
 
 
 #define CALLBACK_EXAMPLE 1
@@ -39,7 +40,8 @@ static DEACentralManager *sharedCentralManager;
         dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", DISPATCH_QUEUE_CONCURRENT);
         sharedCentralManager = [[super allocWithZone:NULL] initWithDelegate:delegate
                                                                       queue:queue
-                                                                    options:nil];
+                                                                    options:nil
+                                                                     logger:[YMSCBLogger new]];
     }
     return sharedCentralManager;
     
@@ -70,16 +72,28 @@ static DEACentralManager *sharedCentralManager;
      This may not always be the case, where for example information from advertisementData and the RSSI are to be factored in.
      */
     
+    
 #ifdef CALLBACK_EXAMPLE
+    
+    __weak typeof(self) this = self;
     BOOL result = [self scanForPeripheralsWithServices:nil
                                  options:options
                                withBlock:^(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError *error) {
+                                   __strong typeof (this) strongThis = this;
+                                   
                                    if (error) {
                                        NSLog(@"Something bad happened with scanForPeripheralWithServices:options:withBlock:");
                                        return;
                                    }
                                    
-                                   NSLog(@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI);
+                                   //NSLog(@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI);
+                                   NSString *message = [NSString stringWithFormat:@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI];
+                                   
+                                   if (strongThis) {
+                                       [strongThis.logger logInfo:message object:nil];
+                                   }
+                                   
+                                   
                                }
      
                               withFilter:^BOOL(CBPeripheral * _Nonnull peripheral, NSDictionary * _Nonnull advertisementData, NSNumber * _Nonnull RSSI) {

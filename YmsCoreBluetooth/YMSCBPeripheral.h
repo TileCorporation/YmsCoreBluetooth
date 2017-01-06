@@ -182,10 +182,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 /**
  Helper flag to determine ViewCell updates.
- 
  */
+// TODO: Move to DEASensorTag
 @property (nonatomic, assign) BOOL isRenderedInViewCell;
-           
+
+@property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
 
 
 /** @name Initializing a YMSCBPeripheral */

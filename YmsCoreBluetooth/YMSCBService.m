@@ -48,6 +48,8 @@
         } else {
             _uuid = [YMSCBUtils createCBUUID:&_base withIntOffset:serviceOffset];
         }
+        
+        _logger = _parent.logger;
     }
     return self;
 }
@@ -209,9 +211,6 @@
 - (void)discoverCharacteristics:(NSArray *)characteristicUUIDs withBlock:(void (^)(NSDictionary *, NSError *))callback {
     self.discoverCharacteristicsCallback = callback;
     
-    /*
-    TILLocalFileManager *localFileManager = [TILLocalFileManager sharedManager];
-    
     NSMutableArray *bufArray = [NSMutableArray new];
     [characteristicUUIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [bufArray addObject:[NSString stringWithFormat:@"%@", obj]];
@@ -219,9 +218,7 @@
     NSString *buf = [bufArray componentsJoinedByString:@","];
     
     NSString *message = [NSString stringWithFormat:@"> discoverCharacteristics:%@ forService: %@", buf, self.cbService];
-    
-    [localFileManager log:message peripheral:self.parent.cbPeripheral];
-     */
+    [self.logger logInfo:message object:self.parent.cbPeripheral];
     
     [self.parent.cbPeripheral discoverCharacteristics:characteristicUUIDs
                                            forService:self.cbService];

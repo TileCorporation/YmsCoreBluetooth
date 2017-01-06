@@ -45,7 +45,8 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 - (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
                                     queue:(nullable dispatch_queue_t)queue
-                                  options:(nullable NSDictionary<NSString *, id> *)options {
+                                  options:(nullable NSDictionary<NSString *, id> *)options
+                                   logger:(id<YMSCBLogging>)logger {
     self = [super init];
     if (self) {
         _ymsPeripherals = [NSMutableSet new];
@@ -55,6 +56,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
         _discoveredCallback = nil;
         _retrievedCallback = nil;
+        _logger = logger;
     }
     
     return self;
@@ -389,6 +391,39 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
             __strong typeof(this) strongThis = this;
             [strongThis.delegate centralManager:central didFailToConnectPeripheral:peripheral error:error];
         });
+    }
+}
+
+
+#pragma mark - YMSCBLogger Protocol Methods
+
+- (void)logError:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logError:message object:object];
+    }
+}
+
+- (void)logWarn:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logWarn:message object:object];
+    }
+}
+
+- (void)logInfo:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logInfo:message object:object];
+    }
+}
+
+- (void)logDebug:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logDebug:message object:object];
+    }
+}
+
+- (void)logVerbose:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logVerbose:message object:object];
     }
 }
 

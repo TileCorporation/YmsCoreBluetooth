@@ -50,6 +50,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(retain, readonly) id value;
 
+@property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
+
+
+// TODO: need to make constructor 
+//- (instancetype)initWithName:(NSString *)oName parent:(YMSCBCharacteristic *)ct uuid:(CBUUID *)oUUID offset:(int)addrOffset;
+
 
 NS_ASSUME_NONNULL_END
 

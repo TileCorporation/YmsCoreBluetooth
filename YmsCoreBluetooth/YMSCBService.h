@@ -92,6 +92,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 /// Callback for characteristics that are discovered.
 @property (atomic, copy, nullable) YMSCBDiscoverCharacteristicsCallbackBlockType discoverCharacteristicsCallback;
 
+@property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
 
 /**
  Initialize class instance.

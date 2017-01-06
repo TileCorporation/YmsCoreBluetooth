@@ -102,6 +102,9 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  */
 @property (atomic, strong) NSMutableArray *writeCallbacks;
 
+@property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
+
+
 /** @name Callback Handler Methods */
 /**
  Handler method to process notificationStateCallback.

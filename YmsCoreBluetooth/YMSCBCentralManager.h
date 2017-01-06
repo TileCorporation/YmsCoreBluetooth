@@ -99,7 +99,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 
  Legacy Note: This class was previously named YMSCBAppService.
  */
-@interface YMSCBCentralManager : NSObject <CBCentralManagerDelegate>
+@interface YMSCBCentralManager : NSObject <CBCentralManagerDelegate, YMSCBLogging>
 
 /** @name Properties */
 /**
@@ -108,6 +108,9 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  The delegate object will be sent CBCentralManagerDelegate messages received by manager.
  */
 @property (atomic, weak, nullable) id <CBCentralManagerDelegate> delegate;
+
+@property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
+
 
 /**
  The CBCentralManager object.
@@ -158,7 +161,8 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  */
 - (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
                                     queue:(nullable dispatch_queue_t)queue
-                                  options:(nullable NSDictionary<NSString *, id> *)options;
+                                  options:(nullable NSDictionary<NSString *, id> *)options
+                                   logger:(id<YMSCBLogging>)logger;
 
 
 #pragma mark - Peripheral Management

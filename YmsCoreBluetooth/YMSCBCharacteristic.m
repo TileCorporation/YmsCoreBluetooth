@@ -35,6 +35,7 @@
         _offset = [NSNumber numberWithInt:addrOffset];
         _writeCallbacks = [NSMutableArray new];
         _readCallbacks = [NSMutableArray new];
+        _logger = _parent.logger;
     }
     
     return self;
@@ -123,7 +124,8 @@
     } else {
         if (!self.cbCharacteristic) {
             NSString *message = [NSString stringWithFormat:@"ERROR: %@", [self nilCBCharacteristicError:NSLocalizedString(@"Diagnose write without response in writeValue:withBlock:", nil)]];
-            //[[TILLocalFileManager sharedManager] log:message peripheral:self.parent.cbPeripheral];
+            
+            [self.logger logError:message object:self.parent.cbPeripheral];
             return;
         }
         
@@ -137,7 +139,7 @@
         }
     }
     if (self.logEnabled) {
-       // [[TILLocalFileManager sharedManager] log:message peripheral:self.parent.cbPeripheral];
+        [self.logger logInfo:message object:self.parent.cbPeripheral];
     }
 
     
@@ -160,7 +162,7 @@
     
     NSString *message = [NSString stringWithFormat:@"> readValueForCharacteristic:%@", self.cbCharacteristic];
     if (self.logEnabled) {
-//        [[TILLocalFileManager sharedManager] log:message peripheral:self.parent.cbPeripheral];
+        [self.logger logInfo:message object:self.parent.cbPeripheral];
     }
     [self.parent.cbPeripheral readValueForCharacteristic:self.cbCharacteristic];
 }

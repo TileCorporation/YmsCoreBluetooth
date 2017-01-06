@@ -59,10 +59,8 @@ NSString *const kYMSCBLoggerVerbosePrefix = @"V:";
     
     if (prefix && message) {
         tempBuf = [NSString stringWithFormat:@"%@: %@", prefix, message];
-        [tempList addObject:tempBuf];
     } else if (!prefix && message) {
         tempBuf = [NSString stringWithFormat:@"%@", message];
-        [tempList addObject:tempBuf];
     } else if (prefix && !message) {
         tempBuf = [NSString stringWithFormat:@"%@", prefix];
     } else {

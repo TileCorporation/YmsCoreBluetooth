@@ -51,6 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         //_peripheralConnectionState = YMSCBPeripheralConnectionStateUnknown;
         _watchdogTimerInterval = 5.0;
+        _logger = _central.logger;
     }
 
     return self;
