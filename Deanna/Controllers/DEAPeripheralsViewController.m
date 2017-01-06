@@ -220,9 +220,13 @@
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     
     YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-    if (yp.isRenderedInViewCell == NO) {
-        [self.peripheralsTableView reloadData];
-        yp.isRenderedInViewCell = YES;
+    
+    if ([yp isKindOfClass:[DEASensorTag class]]) {
+        DEASensorTag *sensorTag = (DEASensorTag *)yp;
+        if (sensorTag.isRenderedInViewCell == NO) {
+            [self.peripheralsTableView reloadData];
+            sensorTag.isRenderedInViewCell = YES;
+        }
     }
     
     // SensorTag 2.0 Service UUID AA80
@@ -326,6 +330,7 @@
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     YMSCBPeripheral *yp = [centralManager peripheralAtIndex:indexPath.row];
     
+    
     UITableViewCell *cell = nil;
     
     DEAPeripheralTableViewCell *pcell = (DEAPeripheralTableViewCell *)[tableView dequeueReusableCellWithIdentifier:SensorTagCellIdentifier];
@@ -336,7 +341,9 @@
         self.tvCell = nil;
     }
     
-    yp.isRenderedInViewCell = YES;
+    DEASensorTag *sensorTag = (DEASensorTag *)yp;
+    
+    sensorTag.isRenderedInViewCell = YES;
     
     [pcell configureWithPeripheral:yp];
     

@@ -34,6 +34,11 @@
  */
 @interface DEASensorTag : YMSCBPeripheral
 
+/**
+ Helper flag to determine ViewCell updates.
+ */
+@property (nonatomic, assign) BOOL isRenderedInViewCell;
+
 /// Convenience pointer to accelerometer service.
 @property (nonatomic, readonly) DEAAccelerometerService *accelerometer;
 /// Convenience pointer to barometer service.
