@@ -262,22 +262,20 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     }
     
     if (shouldProcess && self.discoveredCallback) {
+        [self handleFoundPeripheral:peripheral];
         self.discoveredCallback(peripheral, advertisementData, RSSI, nil);
-    }
-    
-    __weak YMSCBCentralManager *this = self;
-    
-    [self handleFoundPeripheral:peripheral];
-
-    if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
-        if (shouldProcess) {
-            _YMS_PERFORM_ON_MAIN_THREAD(^{
-                __strong typeof (this) strongThis = this;
-                [strongThis.delegate centralManager:central
-                              didDiscoverPeripheral:peripheral
-                                  advertisementData:advertisementData
-                                               RSSI:RSSI];
-            });
+        __weak YMSCBCentralManager *this = self;
+        
+        if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
+            if (shouldProcess) {
+                _YMS_PERFORM_ON_MAIN_THREAD(^{
+                    __strong typeof (this) strongThis = this;
+                    [strongThis.delegate centralManager:central
+                                  didDiscoverPeripheral:peripheral
+                                      advertisementData:advertisementData
+                                                   RSSI:RSSI];
+                });
+            }
         }
     }
 }
