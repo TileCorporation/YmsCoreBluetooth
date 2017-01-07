@@ -28,16 +28,11 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
-    
-    
-    DEACentralManager *centralManager = [DEACentralManager initSharedServiceWithDelegate:self];
-    centralManager.delegate = self;
-    [self.peripheralTableView reloadData];
-    
+    [DEACentralManager initSharedServiceWithDelegate:self];
 }
 
 - (void)applicationWillBecomeActive:(NSNotification *)notification {
-    
+
 }
 
 - (IBAction)scanAction:(id)sender {
@@ -259,8 +254,9 @@
 - (void)performUpdateRSSI:(NSArray *)args {
     CBPeripheral *peripheral = args[0];
     
-    [peripheral readRSSI];
-    
+    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+    [sensorTag readRSSI];
+
 }
 
 
@@ -269,7 +265,7 @@
     if (error) {
         NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
         
-        if (peripheral.isConnected) {
+        if (peripheral.state == CBPeripheralStateConnected) {
             NSArray *args = @[peripheral];
             [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:2.0];
         }
