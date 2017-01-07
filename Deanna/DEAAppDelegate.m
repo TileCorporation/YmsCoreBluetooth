@@ -73,6 +73,8 @@
 }
 
 - (void)initializeAppServices {
+    
+    [DEACentralManager initSharedServiceWithDelegate:self];
 }
 
 - (void)initializeAppearance {

@@ -189,8 +189,8 @@
 - (void)performUpdateRSSI:(NSArray *)args {
     CBPeripheral *peripheral = args[0];
     
-    [peripheral readRSSI];
-    
+    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+    [sensorTag readRSSI];
 }
 
 
@@ -200,7 +200,8 @@
         
         if (peripheral.state == CBPeripheralStateConnected) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [peripheral readRSSI];
+                DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+                [sensorTag readRSSI];
             });
         }
         
@@ -210,7 +211,8 @@
     self.rssiButton.title = [NSString stringWithFormat:@"%@ db", RSSI];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [peripheral readRSSI];
+        DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+        [sensorTag readRSSI];
     });
 }
 

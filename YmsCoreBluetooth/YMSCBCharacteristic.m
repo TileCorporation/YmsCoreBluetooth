@@ -57,17 +57,17 @@
     
     if (notificationCallback) {
         if (!notifyValue) {
-            //NSString *message = [NSString stringWithFormat:@"WARNING: attempt to unsubscribe from %@ with a notificationCallback defined", self.cbCharacteristic];
-            //[[TILLocalFileManager sharedManager] log:message peripheral:self.parent.cbPeripheral];
+            NSString *message = [NSString stringWithFormat:@"Attempt to unsubscribe from %@ with a notificationCallback defined", self.cbCharacteristic];
+            [self.logger logWarn:message object:self.parent.cbPeripheral];
             self.notificationCallback = nil;
         } else {
             self.notificationCallback = notificationCallback;
         }
     }
     
-    //NSString *message = [NSString stringWithFormat:@"> setNotifyValue:%@ forCharacteristic:%@", @(notifyValue), self.cbCharacteristic];
+    NSString *message = [NSString stringWithFormat:@"> setNotifyValue:%@ forCharacteristic:%@", @(notifyValue), self.cbCharacteristic];
     if (self.logEnabled) {
-        //[[TILLocalFileManager sharedManager] log:message peripheral:self.parent.cbPeripheral];
+        [self.logger logInfo:message object:self.parent.cbPeripheral];
     }
     [self.parent.cbPeripheral setNotifyValue:notifyValue forCharacteristic:self.cbCharacteristic];
 }

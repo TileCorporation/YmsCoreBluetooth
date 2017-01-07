@@ -279,15 +279,17 @@
 - (void)performUpdateRSSI:(NSArray *)args {
     CBPeripheral *peripheral = args[0];
     
-    [peripheral readRSSI];
-
+    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+    [sensorTag readRSSI];
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
+    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+    
     if (error) {
         NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
         if (peripheral.state == CBPeripheralStateConnected) {
-            [peripheral readRSSI];
+            [sensorTag readRSSI];
         }
     }
     
@@ -304,7 +306,7 @@
     }
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [peripheral readRSSI];
+        [sensorTag readRSSI];
     });
 }
 

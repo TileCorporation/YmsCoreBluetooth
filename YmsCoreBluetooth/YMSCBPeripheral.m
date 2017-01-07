@@ -135,7 +135,8 @@ NS_ASSUME_NONNULL_BEGIN
         if (btService) {
             [tempArray addObject:btService.uuid];
         } else {
-            NSLog(@"WARNING: service key '%@' is not found in peripheral '%@' for servicesSubset:", key, [self.cbPeripheral.identifier UUIDString]);
+            NSString *message = [NSString stringWithFormat:@"WARNING: service key %@ not found in servicesSubset", key];
+            [self.logger logWarn:message object:self.cbPeripheral];
         }
     }
     
@@ -246,6 +247,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(nullable void (^)(YMSCBPeripheral * _Nonnull yp, NSError * _Nullable error))connectCallback {
+    NSString *message = [NSString stringWithFormat:@"> connectPeripheral: %@", self.cbPeripheral];
+    [self.logger logInfo:message object:self.central];
+    
     self.connectCallback = connectCallback;
     [self.central.manager connectPeripheral:self.cbPeripheral options:options];
 }
@@ -255,6 +259,11 @@ NS_ASSUME_NONNULL_BEGIN
     if (self.connectCallback) {
         self.connectCallback = nil;
     }
+    
+    NSString *message = [NSString stringWithFormat:@"> cancelPeripheralConnection: %@", self.cbPeripheral];
+    [self.logger logInfo:message object:self.central];
+    
+    [self.logger logInfo:message object:self.cbPeripheral];
     [self.central.manager cancelPeripheralConnection:self.cbPeripheral];
 }
 
@@ -278,6 +287,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)readRSSI {
+    NSString *message = [NSString stringWithFormat:@"> readRSSI"];
+    [self.logger logInfo:message object:self.cbPeripheral];
+    
     [self.cbPeripheral readRSSI];
 }
 
@@ -297,6 +309,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)discoverServices:(nullable NSArray *)serviceUUIDs withBlock:(nullable void (^)(NSArray * _Nullable services, NSError * _Nullable error))callback {
     self.discoverServicesCallback = callback;
+    
+    
+    NSMutableArray *bufArray = [NSMutableArray new];
+    [serviceUUIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [bufArray addObject:[NSString stringWithFormat:@"%@", obj]];
+    }];
+    
+    NSString *buf = [bufArray componentsJoinedByString:@","];
+    NSString *message = [NSString stringWithFormat:@"> discoverServices: [%@]", buf];
+    [self.logger logInfo:message object:self.cbPeripheral];
     
     [self.cbPeripheral discoverServices:serviceUUIDs];
 }
@@ -321,8 +343,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occurred, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(nullable NSError *)error {
-    //NSString *message = [NSString stringWithFormat:@"< didDiscoverServices:%@", error.description];
-    //[[TILLocalFileManager sharedManager] log:message peripheral:peripheral];
+    NSString *message = [NSString stringWithFormat:@"< didDiscoverServices:%@", error.description];
+    [self.logger logInfo:message object:self.cbPeripheral];
     
     if (self.discoverServicesCallback) {
         NSMutableArray *services = [NSMutableArray new];
@@ -362,6 +384,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(nullable NSError *)error {
     // TBD
+    NSString *message = [NSString stringWithFormat:@"< didDiscoverIncludedServicesForService: %@ error:%@", service, error.description];
+    [self.logger logInfo:message object:self.cbPeripheral];
+    
     __weak YMSCBPeripheral *this = self;
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         if ([this.delegate respondsToSelector:@selector(peripheral:didDiscoverIncludedServicesForService:error:)]) {
@@ -378,7 +403,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occured, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(nullable NSError *)error {
-    //NSString *message = [NSString stringWithFormat:@"< didDiscoverCharacteristicsForService: %@ error:%@", service, error.description];
+    NSString *message = [NSString stringWithFormat:@"< didDiscoverCharacteristicsForService: %@ error:%@", service, error.description];
+    [self.logger logInfo:message object:self.cbPeripheral];
     
     YMSCBService *btService = [self findService:service];
     
@@ -405,6 +431,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occured, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
+     NSString *message = [NSString stringWithFormat:@"< didDiscoverDescriptorsForCharacteristic: %@ error:%@", characteristic, error.description];
+    [self.logger logInfo:message object:self.cbPeripheral];
+    
     YMSCBService *btService = [self findService:characteristic.service];
     YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
     
@@ -431,9 +460,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occured, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-    //TILLocalFileManager *localFileManager = [TILLocalFileManager sharedManager];
-    //NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristic, error];
-    //[localFileManager log:message peripheral:peripheral];
+    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristic, error];
+    [self.logger logInfo:message object:self.cbPeripheral];
     
     if (!self.valueValid) {
         self.valueValid = YES;
@@ -489,8 +517,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occured, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
-    //NSString *message = [NSString stringWithFormat:@"< didUpdateValueForDescriptor:%@ error:%@", descriptor, error.description];
-    //[[TILLocalFileManager sharedManager] log:message peripheral:peripheral];
+    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForDescriptor:%@ error:%@", descriptor, error.description];
+    [self.logger logInfo:message object:self.cbPeripheral];
     
     // TBD
     
@@ -513,8 +541,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occured, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-   // NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristic, error.description];
-   // [[TILLocalFileManager sharedManager] log:message peripheral:peripheral];
+    NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristic, error.description];
+    [self.logger logInfo:message object:self.cbPeripheral];
     
     YMSCBService *btService = [self findService:characteristic.service];
     YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
@@ -546,9 +574,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occured, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-    //NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristic, error.description];
-    //[[TILLocalFileManager sharedManager] log:message peripheral:peripheral];
-    
+    NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristic, error.description];
+    [self.logger logInfo:message object:self.cbPeripheral];
+
     YMSCBService *btService = [self findService:characteristic.service];
     YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
     
@@ -579,8 +607,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occured, the cause of the failure.
  */
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
-    //NSString *message = [NSString stringWithFormat:@"< didWriteValueForDescriptor: %@ error:%@", descriptor, error.description];
-    //[[TILLocalFileManager sharedManager] log:message peripheral:peripheral];
+    NSString *message = [NSString stringWithFormat:@"< didWriteValueForDescriptor: %@ error:%@", descriptor, error.description];
+    [self.logger logInfo:message object:self.cbPeripheral];
     
     __weak NSError *weakError = error;
     __weak YMSCBPeripheral *this = self;
@@ -605,6 +633,10 @@ NS_ASSUME_NONNULL_BEGIN
  @param error If an error occured, the cause of the failure.
  */
 - (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(nullable NSError *)error {
+    
+    NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateRSSI: %@ error:%@", self.cbPeripheral, error.description];
+    [self.logger logInfo:message object:nil];
+    
     if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateRSSI:error:)]) {
         __weak YMSCBPeripheral *this = self;
         _YMS_PERFORM_ON_MAIN_THREAD(^{
@@ -617,6 +649,9 @@ NS_ASSUME_NONNULL_BEGIN
 #else
 
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< peripheral: %@ didReadRSSI: %@ error:%@", self.cbPeripheral, RSSI, error];
+    [self.logger logInfo:message object:nil];
+    
     if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
         __weak YMSCBPeripheral *this = self;
         _YMS_PERFORM_ON_MAIN_THREAD(^{
@@ -638,7 +673,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param peripheral The peripheral providing this information.
  */
 - (void)peripheralDidUpdateName:(CBPeripheral *)peripheral {
-//    [[TILLocalFileManager sharedManager] log:@"< peripheralDidUpdateName" peripheral:peripheral];
+    NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateName: %@", self.cbPeripheral];
+    [self.logger logInfo:message object:nil];
     
 #if TARGET_OS_IPHONE
     // TBD
@@ -679,8 +715,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (void)peripheral:(CBPeripheral *)peripheral didModifyServices:(NSArray *)invalidatedServices {
-//    NSString *message = [NSString stringWithFormat:@"< didModifyServices: %@", invalidatedServices];
-//    [[TILLocalFileManager sharedManager] log:message peripheral:peripheral];
+    NSString *message = [NSString stringWithFormat:@"< didModifyServices: %@", invalidatedServices];
+    [self.logger logInfo:message object:self.cbPeripheral];
+
     __weak typeof(self) this = self;
     
     _YMS_PERFORM_ON_MAIN_THREAD(^{

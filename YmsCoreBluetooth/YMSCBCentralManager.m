@@ -115,10 +115,17 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 - (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs options:(nullable NSDictionary *)options {
     BOOL result = NO;
     
+    NSString *message = nil;
     if (self.manager.state == CBCentralManagerStatePoweredOn) {
+        message = [NSString stringWithFormat:@"BLE OPERATION: START SCAN serviceUUIDs: %@ options: %@", serviceUUIDs, options];
+        [self.logger logInfo:message object:self];
+        
         [self.manager scanForPeripheralsWithServices:serviceUUIDs options:options];
         self.isScanning = YES;
         result = YES;
+    } else {
+        message = [NSString stringWithFormat:@"Unable to start scan: CBCentralManagerState is not ON"];
+        [self.logger logError:message object:self];
     }
     
     return result;
@@ -140,6 +147,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)stopScan {
+    NSString *message = [NSString stringWithFormat:@"BLE OPERATION: STOP SCAN"];
+    [self.logger logInfo:message object:self];
+
     [self.manager stopScan];
     self.discoveredCallback = nil;
     self.isScanning = NO;
@@ -282,6 +292,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
+    NSString *message = [NSString stringWithFormat:@"< didConnectPeripheral: %@", peripheral];
+    [self.logger logInfo:message object:self.manager];
+    
     YMSCBPeripheral *yp = [self findPeripheral:peripheral];
     [yp handleConnectionResponse:nil];
     
@@ -296,6 +309,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< didDisconnectPeripheral: %@ error: %@", peripheral, error];
+    [self.logger logInfo:message object:self.manager];
+
     YMSCBPeripheral *yp = [self findPeripheral:peripheral];
     yp.connectCallback = nil;
     
@@ -316,6 +332,8 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< didFailToConnectPeripheral: %@ error: %@", peripheral, error];
+    [self.logger logInfo:message object:self.manager];
     
     YMSCBPeripheral *yp = [self findPeripheral:peripheral];
     yp.connectCallback = nil;
@@ -329,6 +347,11 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     }
 }
 
+
+- (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
+    NSString *message = [NSString stringWithFormat:@"< willRestoreState: %@", dict];
+    [self.logger logInfo:message object:self.manager];
+}
 
 #pragma mark - YMSCBLogger Protocol Methods
 

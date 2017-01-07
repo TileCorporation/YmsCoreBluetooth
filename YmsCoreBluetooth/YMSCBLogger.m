@@ -18,11 +18,11 @@
 
 #import "YMSCBLogger.h"
 
-NSString *const kYMSCBLoggerErrorPrefix = @"ERROR:";
-NSString *const kYMSCBLoggerWarnPrefix = @"WARN:";
-NSString *const kYMSCBLoggerInfoPrefix = nil;
-NSString *const kYMSCBLoggerDebugPrefix = @"DEBUG:";
-NSString *const kYMSCBLoggerVerbosePrefix = @"V:";
+NSString *const kYMSCBLoggerErrorPrefix = @"BLE: ERROR";
+NSString *const kYMSCBLoggerWarnPrefix = @"BLE: WARN";
+NSString *const kYMSCBLoggerInfoPrefix = @"BLE";
+NSString *const kYMSCBLoggerDebugPrefix = @"BLE: DEBUG";
+NSString *const kYMSCBLoggerVerbosePrefix = @"BLE VERBOSE";
 
 @implementation YMSCBLogger
 
