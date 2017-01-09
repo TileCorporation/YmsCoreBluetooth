@@ -46,30 +46,29 @@
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
     
-    switch (central.state) {
-        case CBCentralManagerStatePoweredOn:
-            break;
-        case CBCentralManagerStatePoweredOff:
-            break;
-            
-        case CBCentralManagerStateUnsupported: {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Dang."
-                                                            message:@"Unfortunately this device can not talk to Bluetooth Smart (Low Energy) Devices"
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"Dismiss"
-                                                  otherButtonTitles:nil];
-            
-            [alert show];
-            break;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        switch (central.state) {
+            case CBCentralManagerStatePoweredOn:
+                break;
+            case CBCentralManagerStatePoweredOff:
+                break;
+                
+            case CBCentralManagerStateUnsupported: {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Dang."
+                                                                message:@"Unfortunately this device can not talk to Bluetooth Smart (Low Energy) Devices"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"Dismiss"
+                                                      otherButtonTitles:nil];
+                
+                [alert show];
+                break;
+            }
+                
+                
+            default:
+                break;
         }
-
-            
-        default:
-            break;
-    }
-    
-    
-    
+    });
 }
 
 

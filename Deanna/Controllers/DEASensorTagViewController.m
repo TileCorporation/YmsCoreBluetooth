@@ -167,73 +167,51 @@
 #pragma mark - CBCentralManagerDelegate Methods
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Disconnected"
-                                                    message:@"This peripheral has been disconnected."
-                                                   delegate:nil
-                                          cancelButtonTitle:@"Dismiss"
-                                          otherButtonTitles:nil];
-    
-    [alert show];
-    
-    
-    // Quick and dirty hack! But good enough to let the previous view controller that the disconnection happened.
-    
-    [self.navigationController.viewControllers[0] centralManager:central didDisconnectPeripheral:peripheral error:error];
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        __strong typeof (this) strongThis = this;
+        // Quick and dirty hack! But good enough to let the previous view controller know that the disconnection happened.
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Disconnected"
+                                                        message:@"This peripheral has been disconnected."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Dismiss"
+                                              otherButtonTitles:nil];
+        
+        [alert show];
+
+        [strongThis.navigationController.viewControllers[0] centralManager:central didDisconnectPeripheral:peripheral error:error];
+    });
     
 }
 
 
 #pragma mark - CBPeripheralDelegate Methods
 
-- (void)performUpdateRSSI:(NSArray *)args {
-    CBPeripheral *peripheral = args[0];
-    
-    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-    [sensorTag readRSSI];
-}
-
-
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
-    if (error) {
-        NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD((^{
+        __strong typeof (this) strongThis = this;
         
-        if (peripheral.state == CBPeripheralStateConnected) {
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-                [sensorTag readRSSI];
-            });
+        if (error) {
+            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+            
+            if (peripheral.state == CBPeripheralStateConnected) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+                    [sensorTag readRSSI];
+                });
+            }
+            
+            return;
         }
         
-        return;
-    }
-    
-    self.rssiButton.title = [NSString stringWithFormat:@"%@ db", RSSI];
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-        [sensorTag readRSSI];
-    });
-}
-
-
-
-/*
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    //NSLog(@"HEY updating characteristic");
-    
-
-    if (characteristic.isNotifying) {
-        YMSCBService *btService = [self.sensorTag findService:characteristic.service];
-        YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
+        strongThis.rssiButton.title = [NSString stringWithFormat:@"%@ db", RSSI];
         
-        if ([btService isKindOfClass:[DEATemperatureService class]]) {
-            [self.temperatureViewCell updateDisplayForCharacteristicName:ct.name];
-        }
-        
-    }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+            [sensorTag readRSSI];
+        });
+    }));
 }
-*/
-
 
 @end

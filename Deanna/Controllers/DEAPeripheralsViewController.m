@@ -156,124 +156,140 @@
 
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    
-    switch (central.state) {
-        case CBCentralManagerStatePoweredOn:
-            break;
-        case CBCentralManagerStatePoweredOff:
-            break;
-            
-        case CBCentralManagerStateUnsupported: {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Dang."
-                                                            message:@"Unfortunately this device can not talk to Bluetooth Smart (Low Energy) Devices"
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"Dismiss"
-                                                  otherButtonTitles:nil];
-            
-            [alert show];
-            break;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        switch (central.state) {
+            case CBCentralManagerStatePoweredOn:
+                break;
+            case CBCentralManagerStatePoweredOff:
+                break;
+                
+            case CBCentralManagerStateUnsupported: {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Dang."
+                                                                message:@"Unfortunately this device can not talk to Bluetooth Smart (Low Energy) Devices"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"Dismiss"
+                                                      otherButtonTitles:nil];
+                
+                [alert show];
+                break;
+            }
+            case CBCentralManagerStateResetting: {
+                [self.peripheralsTableView reloadData];
+                break;
+            }
+            case CBCentralManagerStateUnauthorized:
+                break;
+                
+            case CBCentralManagerStateUnknown:
+                break;
+                
+            default:
+                break;
         }
-        case CBCentralManagerStateResetting: {
-            [self.peripheralsTableView reloadData];
-            break;
-        }
-        case CBCentralManagerStateUnauthorized:
-            break;
-            
-        case CBCentralManagerStateUnknown:
-            break;
-            
-        default:
-            break;
-    }
-    
-    
-    
+    });
 }
 
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-    yp.delegate = self;
-    
-    [yp readRSSI];
-    
-    for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-        if (cell.yperipheral == yp) {
-            [cell updateDisplay];
-            break;
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        DEACentralManager *centralManager = [DEACentralManager sharedService];
+        DEASensorTag *yp = (DEASensorTag *)[centralManager findPeripheral:peripheral];
+        yp.delegate = self;
+        
+        [yp readRSSI];
+
+        
+        for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
+            if (cell.yperipheral == yp) {
+                [cell updateDisplay];
+                break;
+            }
         }
-    }
+    });
 }
 
 
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-        [cell updateDisplay];
-    }
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
+            [cell updateDisplay];
+        }
+    });
 }
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
     
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    
-    YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-    
-    if ([yp isKindOfClass:[DEASensorTag class]]) {
-        DEASensorTag *sensorTag = (DEASensorTag *)yp;
-        if (sensorTag.isRenderedInViewCell == NO) {
-            [self.peripheralsTableView reloadData];
-            sensorTag.isRenderedInViewCell = YES;
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD((^{
+        DEACentralManager *centralManager = [DEACentralManager sharedService];
+        
+        YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
+        
+        if ([yp isKindOfClass:[DEASensorTag class]]) {
+            DEASensorTag *sensorTag = (DEASensorTag *)yp;
+            if (sensorTag.isRenderedInViewCell == NO) {
+                [self.peripheralsTableView reloadData];
+                sensorTag.isRenderedInViewCell = YES;
+            }
         }
-    }
-    
-    // SensorTag 2.0 Service UUID AA80
-    if (centralManager.isScanning) {
-        for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-            if (cell.yperipheral.cbPeripheral == peripheral) {
-                if (peripheral.state == CBPeripheralStateDisconnected) {
-                    cell.rssiLabel.text = [NSString stringWithFormat:@"%ld", (long)[RSSI integerValue]];
-                    cell.peripheralStatusLabel.text = @"ADVERTISING";
-                    [cell.peripheralStatusLabel setTextColor:[[DEATheme sharedTheme] advertisingColor]];
-                } else {
-                    continue;
+        
+        // SensorTag 2.0 Service UUID AA80
+        if (centralManager.isScanning) {
+            for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
+                if (cell.yperipheral.cbPeripheral == peripheral) {
+                    if (peripheral.state == CBPeripheralStateDisconnected) {
+                        cell.rssiLabel.text = [NSString stringWithFormat:@"%ld", (long)[RSSI integerValue]];
+                        cell.peripheralStatusLabel.text = @"ADVERTISING";
+                        [cell.peripheralStatusLabel setTextColor:[[DEATheme sharedTheme] advertisingColor]];
+                    } else {
+                        continue;
+                    }
                 }
             }
         }
-    }
+    }));
 }
 
 
 - (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals {
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    
-    for (CBPeripheral *peripheral in peripherals) {
-        YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-        if (yp) {
-            yp.delegate = self;
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        __strong typeof (this) strongThis = this;
+        DEACentralManager *centralManager = [DEACentralManager sharedService];
+        
+        for (CBPeripheral *peripheral in peripherals) {
+            YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
+            if (yp) {
+                yp.delegate = strongThis;
+            }
         }
-    }
-    
-    [self.peripheralsTableView reloadData];
-
+        [strongThis.peripheralsTableView reloadData];
+    });
 }
 
 
 - (void)centralManager:(CBCentralManager *)central didRetrieveConnectedPeripherals:(NSArray *)peripherals {
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    
-    for (CBPeripheral *peripheral in peripherals) {
-        YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-        if (yp) {
-            yp.delegate = self;
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        __strong typeof (this) strongThis = this;
+
+        DEACentralManager *centralManager = [DEACentralManager sharedService];
+        
+        for (CBPeripheral *peripheral in peripherals) {
+            YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
+            if (yp) {
+                yp.delegate = strongThis;
+            }
         }
-    }
     
-    [self.peripheralsTableView reloadData];
+        [strongThis.peripheralsTableView reloadData];
+    });
 }
 
+                                
 #pragma mark - CBPeripheralDelegate Methods
 
 - (void)performUpdateRSSI:(NSArray *)args {
@@ -284,30 +300,36 @@
 }
 
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
-    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
     
-    if (error) {
-        NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
-        if (peripheral.state == CBPeripheralStateConnected) {
-            [sensorTag readRSSI];
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD((^{
+        __strong typeof (this) strongThis = this;
+        
+        DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+        
+        if (error) {
+            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+            if (peripheral.state == CBPeripheralStateConnected) {
+                [sensorTag readRSSI];
+            }
         }
-    }
-    
-    
-    for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-        if (cell.yperipheral) {
-            if (cell.yperipheral.isConnected) {
-                if (cell.yperipheral.cbPeripheral == peripheral) {
-                    cell.rssiLabel.text = [NSString stringWithFormat:@"%@", RSSI];
-                    break;
+        
+        
+        for (DEAPeripheralTableViewCell *cell in [strongThis.peripheralsTableView visibleCells]) {
+            if (cell.yperipheral) {
+                if (cell.yperipheral.isConnected) {
+                    if (cell.yperipheral.cbPeripheral == peripheral) {
+                        cell.rssiLabel.text = [NSString stringWithFormat:@"%@", RSSI];
+                        break;
+                    }
                 }
             }
         }
-    }
-    
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [sensorTag readRSSI];
-    });
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [sensorTag readRSSI];
+        });
+    }));
 }
 
 

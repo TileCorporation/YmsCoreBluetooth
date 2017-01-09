@@ -363,16 +363,9 @@ NS_ASSUME_NONNULL_BEGIN
         self.discoverServicesCallback = nil;
     }
     
-    __weak NSError *weakError = error;
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        typeof(weakError) strongError = weakError;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didDiscoverServices:strongError];
-        }
-    });
-
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
+        [self.delegate peripheral:self.cbPeripheral didDiscoverServices:error];
+    }
 }
 
 /**
@@ -387,12 +380,9 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< didDiscoverIncludedServicesForService: %@ error:%@", service, error.description];
     [self.logger logInfo:message object:self.cbPeripheral];
     
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        if ([this.delegate respondsToSelector:@selector(peripheral:didDiscoverIncludedServicesForService:error:)]) {
-            [this.delegate peripheral:peripheral didDiscoverIncludedServicesForService:service error:error];
-        }
-    });
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverIncludedServicesForService:error:)]) {
+        [self.delegate peripheral:peripheral didDiscoverIncludedServicesForService:service error:error];
+    }
 }
 
 /**
@@ -411,15 +401,10 @@ NS_ASSUME_NONNULL_BEGIN
     [btService syncCharacteristics:service.characteristics];
     [btService handleDiscoveredCharacteristicsResponse:btService.characteristicDict withError:error];
     
-    __weak NSError *weakError = error;
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        __strong typeof(weakError) strongError = weakError;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didDiscoverCharacteristicsForService:btService.cbService error:strongError];
-        }
-    });
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
+        [self.delegate peripheral:self.cbPeripheral didDiscoverCharacteristicsForService:btService.cbService error:error];
+    }
 }
 
 
@@ -440,15 +425,9 @@ NS_ASSUME_NONNULL_BEGIN
     [ct syncDescriptors:characteristic.descriptors];
     [ct handleDiscoveredDescriptorsResponse:ct.descriptors withError:error];
     
-    __weak NSError *weakError = error;
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        typeof(weakError) strongError = weakError;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didDiscoverDescriptorsForCharacteristic:error:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didDiscoverDescriptorsForCharacteristic:ct.cbCharacteristic error:strongError];
-        }
-    });
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverDescriptorsForCharacteristic:error:)]) {
+        [self.delegate peripheral:self.cbPeripheral didDiscoverDescriptorsForCharacteristic:ct.cbCharacteristic error:error];
+    }
 }
 
 
@@ -495,17 +474,10 @@ NS_ASSUME_NONNULL_BEGIN
 
         }
     }
-
-    __weak NSError *weakError = error;
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        typeof(weakError) strongError = weakError;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didUpdateValueForCharacteristic:ct.cbCharacteristic error:strongError];
-        }
-    });
-
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self.cbPeripheral didUpdateValueForCharacteristic:ct.cbCharacteristic error:error];
+    }
 }
 
 
@@ -522,15 +494,9 @@ NS_ASSUME_NONNULL_BEGIN
     
     // TBD
     
-    __weak NSError *weakError = error;
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        typeof(weakError) strongError = weakError;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didUpdateValueForDescriptor:error:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didUpdateValueForDescriptor:descriptor error:strongError];
-        }
-    });
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForDescriptor:error:)]) {
+        [self.delegate peripheral:self.cbPeripheral didUpdateValueForDescriptor:descriptor error:error];
+    }
 }
 
 /**
@@ -553,16 +519,9 @@ NS_ASSUME_NONNULL_BEGIN
         ct.notificationCallback = nil;
     }
     
-    __weak NSError *weakError = error;
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        typeof(weakError) strongError = weakError;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didUpdateNotificationStateForCharacteristic:error:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didUpdateNotificationStateForCharacteristic:ct.cbCharacteristic error:strongError];
-        }
-    });
-
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateNotificationStateForCharacteristic:error:)]) {
+        [self.delegate peripheral:self.cbPeripheral didUpdateNotificationStateForCharacteristic:ct.cbCharacteristic error:error];
+    }
 }
 
 
@@ -587,15 +546,9 @@ NS_ASSUME_NONNULL_BEGIN
         //TILAssert(NO, message);
     }
     
-    __weak NSError *weakError = error;
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        typeof(weakError) strongError = weakError;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didWriteValueForCharacteristic:ct.cbCharacteristic error:strongError];
-        }
-    });
+    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self.cbPeripheral didWriteValueForCharacteristic:ct.cbCharacteristic error:error];
+    }
 }
 
 
@@ -610,21 +563,25 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< didWriteValueForDescriptor: %@ error:%@", descriptor, error.description];
     [self.logger logInfo:message object:self.cbPeripheral];
     
-    __weak NSError *weakError = error;
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        typeof(weakError) strongError = weakError;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didWriteValueForDescriptor:error:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didWriteValueForDescriptor:descriptor error:strongError];
-        }
-    });
-
+    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForDescriptor:error:)]) {
+        [self.delegate peripheral:self.cbPeripheral didWriteValueForDescriptor:descriptor error:error];
+    }
 }
 
 
 
-#if TARGET_OS_MAC
+#if TARGET_OS_IPHONE
+
+- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< peripheral: %@ didReadRSSI: %@ error:%@", self.cbPeripheral, RSSI, error];
+    [self.logger logInfo:message object:nil];
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
+        [self.delegate peripheral:peripheral didReadRSSI:RSSI error:error];
+    }
+}
+
+#else
 
 /**
  CBPeripheralDelegate implementation.
@@ -638,28 +595,10 @@ NS_ASSUME_NONNULL_BEGIN
     [self.logger logInfo:message object:nil];
     
     if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateRSSI:error:)]) {
-        __weak YMSCBPeripheral *this = self;
-        _YMS_PERFORM_ON_MAIN_THREAD(^{
-            __strong typeof(this) strongThis = this;
-            [strongThis.delegate peripheralDidUpdateRSSI:peripheral error:error];
-        });
+        [self.delegate peripheralDidUpdateRSSI:peripheral error:error];
     }
 }
 
-#else
-
-- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< peripheral: %@ didReadRSSI: %@ error:%@", self.cbPeripheral, RSSI, error];
-    [self.logger logInfo:message object:nil];
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
-        __weak YMSCBPeripheral *this = self;
-        _YMS_PERFORM_ON_MAIN_THREAD(^{
-            __strong typeof(this) strongThis = this;
-            [strongThis.delegate peripheral:peripheral didReadRSSI:RSSI error:error];
-        });
-    }
-}
 
 #endif
 
@@ -676,16 +615,9 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateName: %@", self.cbPeripheral];
     [self.logger logInfo:message object:nil];
     
-#if TARGET_OS_IPHONE
-    // TBD
-    __weak YMSCBPeripheral *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheralDidUpdateName:)]) {
-            [strongThis.delegate peripheralDidUpdateName:strongThis.cbPeripheral];
-        }
-    });
-#endif
+    if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateName:)]) {
+        [self.delegate peripheralDidUpdateName:self.cbPeripheral];
+    }
 }
 
 
@@ -718,14 +650,9 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< didModifyServices: %@", invalidatedServices];
     [self.logger logInfo:message object:self.cbPeripheral];
 
-    __weak typeof(self) this = self;
-    
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof(this) strongThis = this;
-        if ([strongThis.delegate respondsToSelector:@selector(peripheral:didModifyServices:)]) {
-            [strongThis.delegate peripheral:strongThis.cbPeripheral didModifyServices:invalidatedServices];
-        }
-    });
+    if ([self.delegate respondsToSelector:@selector(peripheral:didModifyServices:)]) {
+        [self.delegate peripheral:self.cbPeripheral didModifyServices:invalidatedServices];
+    }
 }
 
 

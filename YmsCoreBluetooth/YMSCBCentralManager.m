@@ -255,11 +255,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     
 
     if ([self.delegate respondsToSelector:@selector(centralManagerDidUpdateState:)]) {
-        __weak YMSCBCentralManager *this = self;
-        _YMS_PERFORM_ON_MAIN_THREAD(^{
-            __strong typeof (this) strongThis = this;
-            [strongThis.delegate centralManagerDidUpdateState:central];
-        });
+        [self.delegate centralManagerDidUpdateState:central];
     }
 }
 
@@ -274,18 +270,12 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     if (shouldProcess && self.discoveredCallback) {
         [self handleFoundPeripheral:peripheral];
         self.discoveredCallback(peripheral, advertisementData, RSSI, nil);
-        __weak YMSCBCentralManager *this = self;
         
         if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
-            if (shouldProcess) {
-                _YMS_PERFORM_ON_MAIN_THREAD(^{
-                    __strong typeof (this) strongThis = this;
-                    [strongThis.delegate centralManager:central
-                                  didDiscoverPeripheral:peripheral
-                                      advertisementData:advertisementData
-                                                   RSSI:RSSI];
-                });
-            }
+            [self.delegate centralManager:central
+                    didDiscoverPeripheral:peripheral
+                        advertisementData:advertisementData
+                                     RSSI:RSSI];
         }
     }
 }
@@ -299,11 +289,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     [yp handleConnectionResponse:nil];
     
     if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
-        __weak YMSCBCentralManager *this = self;
-        _YMS_PERFORM_ON_MAIN_THREAD(^{
-            __strong typeof (this) strongThis = this;
-            [strongThis.delegate centralManager:central didConnectPeripheral:peripheral];
-        });
+        [self.delegate centralManager:central didConnectPeripheral:peripheral];
     }
 }
 
@@ -321,11 +307,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     }
     
     if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
-        __weak YMSCBCentralManager *this = self;
-        _YMS_PERFORM_ON_MAIN_THREAD(^{
-            __strong typeof(this) strongThis = this;
-            [strongThis.delegate centralManager:central didDisconnectPeripheral:peripheral error:error];
-        });
+        [self.delegate centralManager:central didDisconnectPeripheral:peripheral error:error];
     }
     
 }
@@ -339,14 +321,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     yp.connectCallback = nil;
     
     if ([self.delegate respondsToSelector:@selector(centralManager:didFailToConnectPeripheral:error:)]) {
-        __weak YMSCBCentralManager *this = self;
-        _YMS_PERFORM_ON_MAIN_THREAD(^{
-            __strong typeof(this) strongThis = this;
-            [strongThis.delegate centralManager:central didFailToConnectPeripheral:peripheral error:error];
-        });
+        [self.delegate centralManager:central didFailToConnectPeripheral:peripheral error:error];
     }
 }
-
 
 - (void)centralManager:(CBCentralManager *)central willRestoreState:(NSDictionary<NSString *,id> *)dict {
     NSString *message = [NSString stringWithFormat:@"< willRestoreState: %@", dict];
