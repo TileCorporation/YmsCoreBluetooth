@@ -187,110 +187,107 @@
 }
 
 - (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    
-    switch (central.state) {
-        case CBCentralManagerStatePoweredOn:
-            [self.peripheralTableView reloadData];
-            break;
-        case CBCentralManagerStatePoweredOff:
-            break;
-            
-        case CBCentralManagerStateUnsupported: {
-            NSLog(@"ERROR: This system does not support Bluetooth 4.0 Low Energy communication. "
-                  "Please run this app on a system that either has BLE hardware support or has a BLE USB adapter attached.");
-            break;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        switch (central.state) {
+            case CBCentralManagerStatePoweredOn:
+                [self.peripheralTableView reloadData];
+                break;
+            case CBCentralManagerStatePoweredOff:
+                break;
+                
+            case CBCentralManagerStateUnsupported: {
+                NSLog(@"ERROR: This system does not support Bluetooth 4.0 Low Energy communication. "
+                      "Please run this app on a system that either has BLE hardware support or has a BLE USB adapter attached.");
+                break;
+            }
+
+            default:
+                break;
         }
-            
-            
-        default:
-            break;
-    }
+    });
 }
 
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    DEASensorTag *sensorTag = (DEASensorTag *)[centralManager findPeripheral:peripheral];
-    
-    sensorTag.delegate = self;
-    [sensorTag readRSSI];
-    
-    [self.peripheralTableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rowView, NSInteger row) {
-        DEMPeripheralViewCell *pvc = [rowView viewAtColumn:0];
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        __strong typeof (this) strongThis = this;
         
-        if (pvc.sensorTag == sensorTag) {
+        DEACentralManager *centralManager = [DEACentralManager sharedService];
+        DEASensorTag *sensorTag = (DEASensorTag *)[centralManager findPeripheral:peripheral];
+        
+        sensorTag.delegate = self;
+        [sensorTag readRSSI];
+        
+        [strongThis.peripheralTableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rowView, NSInteger row) {
+            DEMPeripheralViewCell *pvc = [rowView viewAtColumn:0];
             
-            NSLog(@"%@", rowView);
-            pvc.connectButton.title = @"Disconnect";
-            [pvc.detailButton setHidden:NO];
-        }
-        
-    }];
+            if (pvc.sensorTag == sensorTag) {
+                
+                NSLog(@"%@", rowView);
+                pvc.connectButton.title = @"Disconnect";
+                [pvc.detailButton setHidden:NO];
+            }
+            
+        }];
+    });
 }
-
+                                
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    __weak DEASensorTag *sensorTag = (DEASensorTag *)[centralManager findPeripheral:peripheral];
-
-    [self.peripheralTableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rowView, NSInteger row) {
-        DEMPeripheralViewCell *pvc = [rowView viewAtColumn:0];
+    
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        __strong typeof (this) strongThis = this;
         
-        if (pvc.sensorTag == sensorTag) {
+        DEACentralManager *centralManager = [DEACentralManager sharedService];
+        __weak DEASensorTag *sensorTag = (DEASensorTag *)[centralManager findPeripheral:peripheral];
+        
+        [strongThis.peripheralTableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rowView, NSInteger row) {
+            DEMPeripheralViewCell *pvc = [rowView viewAtColumn:0];
             
-            NSLog(@"%@", rowView);
-            pvc.connectButton.title = @"Connect";
-            [pvc.detailButton setHidden:YES];
-        }
-        
-    }];
-    
-    
-}
-
-#pragma mark - CBPeripheralDelegate Methods
-
-#pragma mark - CBPeripheralDelegate Methods
-
-- (void)performUpdateRSSI:(NSArray *)args {
-    CBPeripheral *peripheral = args[0];
-    
-    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-    [sensorTag readRSSI];
-
+            if (pvc.sensorTag == sensorTag) {
+                //NSLog(@"%@", rowView);
+                pvc.connectButton.title = @"Connect";
+                [pvc.detailButton setHidden:YES];
+            }
+        }];
+    });
 }
 
 
+
+#pragma mark - CBPeripheralDelegate Methods
+                                
 - (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error {
-    
-    if (error) {
-        NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD((^{
+
+        DEACentralManager *centralManager = [DEACentralManager sharedService];
+        __weak DEASensorTag *sensorTag = (DEASensorTag *)[centralManager findPeripheral:peripheral];
         
-        if (peripheral.state == CBPeripheralStateConnected) {
-            NSArray *args = @[peripheral];
-            [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:2.0];
+        if (error) {
+            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+            if (peripheral.state == CBPeripheralStateConnected) {
+                [sensorTag readRSSI];
+            }
+            return;
         }
         
-        return;
-    }
+        [self.peripheralTableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rowView, NSInteger row) {
+            
+            DEMPeripheralViewCell *pvc = [rowView viewAtColumn:0];
+            
+            if (pvc.sensorTag == sensorTag) {
+                pvc.rssiLabel.stringValue = [NSString stringWithFormat:@"%d", [sensorTag.cbPeripheral.RSSI intValue]];
+            }
+            
+        }];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [sensorTag readRSSI];
+        });
+    }));
     
-
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    __weak DEASensorTag *sensorTag = (DEASensorTag *)[centralManager findPeripheral:peripheral];
-    
-    [self.peripheralTableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rowView, NSInteger row) {
-        
-        DEMPeripheralViewCell *pvc = [rowView viewAtColumn:0];
-        
-        if (pvc.sensorTag == sensorTag) {
-            pvc.rssiLabel.stringValue = [NSString stringWithFormat:@"%d", [sensorTag.cbPeripheral.RSSI intValue]];
-        }
-        
-    }];
-
-
-       
-    NSArray *args = @[peripheral];
-    [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:sensorTag.rssiPingPeriod];
 }
 
 

@@ -292,13 +292,6 @@
                                 
 #pragma mark - CBPeripheralDelegate Methods
 
-- (void)performUpdateRSSI:(NSArray *)args {
-    CBPeripheral *peripheral = args[0];
-    
-    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-    [sensorTag readRSSI];
-}
-
 - (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
     
     __weak typeof(self) this = self;
