@@ -89,6 +89,7 @@
 		D9D70095177782CB0066AB1B /* DEATheme.m in Sources */ = {isa = PBXBuildFile; fileRef = D9D70094177782CB0066AB1B /* DEATheme.m */; };
 		D9D70098177783DB0066AB1B /* DEADefaultTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = D9D70097177783DB0066AB1B /* DEADefaultTheme.m */; };
 		D9D8316D168449FE00F51E42 /* DEASimpleKeysService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9D8316C168449FD00F51E42 /* DEASimpleKeysService.m */; };
+		D9DA1AFE1E256A32007C2740 /* YmsCoreBluetoothTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D9DA1AFD1E256A32007C2740 /* YmsCoreBluetoothTests.m */; };
 		D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9DE671016E0223E00F1B15C /* DEABarometerService.m */; };
 		D9E012F71797D66400677FC1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9E012F61797D66400677FC1 /* Images.xcassets */; };
 		D9F412F016DED0030094FEFA /* DEASensorTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412EE16DED0030094FEFA /* DEASensorTagViewController.m */; };
@@ -98,6 +99,16 @@
 		D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F916DEF6130094FEFA /* DEAHumidityViewCell.m */; };
 		D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412FC16DEFA510094FEFA /* DEASimpleKeysViewCell.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D9DA1B001E256A32007C2740 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D9718B38167F9F9F0001E42C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D9718B40167F9F9F0001E42C;
+			remoteInfo = Deanna;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		D906E5EF16DCAC55001D7932 /* DEACentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEACentralManager.h; sourceTree = "<group>"; };
@@ -211,6 +222,9 @@
 		D9D70097177783DB0066AB1B /* DEADefaultTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEADefaultTheme.m; sourceTree = "<group>"; };
 		D9D8316B168449FD00F51E42 /* DEASimpleKeysService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASimpleKeysService.h; sourceTree = "<group>"; };
 		D9D8316C168449FD00F51E42 /* DEASimpleKeysService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASimpleKeysService.m; sourceTree = "<group>"; };
+		D9DA1AFB1E256A32007C2740 /* YmsCoreBluetoothTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YmsCoreBluetoothTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9DA1AFD1E256A32007C2740 /* YmsCoreBluetoothTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YmsCoreBluetoothTests.m; sourceTree = "<group>"; };
+		D9DA1AFF1E256A32007C2740 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9DE670F16E0223E00F1B15C /* DEABarometerService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEABarometerService.h; sourceTree = "<group>"; };
 		D9DE671016E0223E00F1B15C /* DEABarometerService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEABarometerService.m; sourceTree = "<group>"; };
 		D9E012F61797D66400677FC1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -252,6 +266,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D9DA1AF81E256A32007C2740 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -288,6 +309,7 @@
 				D933CEC216DDAFA700EDDAD6 /* YmsCoreBluetooth */,
 				D9718B4B167F9F9F0001E42C /* Deanna */,
 				D997AC97175B245800C91B0D /* DeannaMac */,
+				D9DA1AFC1E256A32007C2740 /* YmsCoreBluetoothTests */,
 				D9718B44167F9F9F0001E42C /* Frameworks */,
 				D9718B42167F9F9F0001E42C /* Products */,
 			);
@@ -298,6 +320,7 @@
 			children = (
 				D9718B41167F9F9F0001E42C /* Deanna.app */,
 				D997AC90175B245800C91B0D /* DeannaMac.app */,
+				D9DA1AFB1E256A32007C2740 /* YmsCoreBluetoothTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -523,6 +546,15 @@
 			path = Themes;
 			sourceTree = "<group>";
 		};
+		D9DA1AFC1E256A32007C2740 /* YmsCoreBluetoothTests */ = {
+			isa = PBXGroup;
+			children = (
+				D9DA1AFD1E256A32007C2740 /* YmsCoreBluetoothTests.m */,
+				D9DA1AFF1E256A32007C2740 /* Info.plist */,
+			);
+			path = YmsCoreBluetoothTests;
+			sourceTree = "<group>";
+		};
 		D9DE671216E036C100F1B15C /* Sensors */ = {
 			isa = PBXGroup;
 			children = (
@@ -583,6 +615,24 @@
 			productReference = D997AC90175B245800C91B0D /* DeannaMac.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D9DA1AFA1E256A32007C2740 /* YmsCoreBluetoothTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D9DA1B041E256A32007C2740 /* Build configuration list for PBXNativeTarget "YmsCoreBluetoothTests" */;
+			buildPhases = (
+				D9DA1AF71E256A32007C2740 /* Sources */,
+				D9DA1AF81E256A32007C2740 /* Frameworks */,
+				D9DA1AF91E256A32007C2740 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D9DA1B011E256A32007C2740 /* PBXTargetDependency */,
+			);
+			name = YmsCoreBluetoothTests;
+			productName = YmsCoreBluetoothTests;
+			productReference = D9DA1AFB1E256A32007C2740 /* YmsCoreBluetoothTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -601,6 +651,12 @@
 						DevelopmentTeam = N5X6YV9N92;
 						ProvisioningStyle = Automatic;
 					};
+					D9DA1AFA1E256A32007C2740 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = XK64B7G5HB;
+						ProvisioningStyle = Automatic;
+						TestTargetID = D9718B40167F9F9F0001E42C;
+					};
 				};
 			};
 			buildConfigurationList = D9718B3B167F9F9F0001E42C /* Build configuration list for PBXProject "Deanna" */;
@@ -617,6 +673,7 @@
 			targets = (
 				D9718B40167F9F9F0001E42C /* Deanna */,
 				D997AC8F175B245800C91B0D /* DeannaMac */,
+				D9DA1AFA1E256A32007C2740 /* YmsCoreBluetoothTests */,
 			);
 		};
 /* End PBXProject section */
@@ -644,6 +701,13 @@
 				D997ACA2175B245800C91B0D /* Credits.rtf in Resources */,
 				D997ACCD175B27C000C91B0D /* MainMenu.xib in Resources */,
 				D997ACD1175B287200C91B0D /* DEASensorTagWindow.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9DA1AF91E256A32007C2740 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -733,7 +797,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D9DA1AF71E256A32007C2740 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9DA1AFE1E256A32007C2740 /* YmsCoreBluetoothTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D9DA1B011E256A32007C2740 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D9718B40167F9F9F0001E42C /* Deanna */;
+			targetProxy = D9DA1B001E256A32007C2740 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D9718B4E167F9F9F0001E42C /* InfoPlist.strings */ = {
@@ -932,6 +1012,52 @@
 			};
 			name = Release;
 		};
+		D9DA1B021E256A32007C2740 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = XK64B7G5HB;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = YmsCoreBluetoothTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thetileapp.YmsCoreBluetoothTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Deanna.app/Deanna";
+			};
+			name = Debug;
+		};
+		D9DA1B031E256A32007C2740 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = XK64B7G5HB;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = YmsCoreBluetoothTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thetileapp.YmsCoreBluetoothTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Deanna.app/Deanna";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -961,6 +1087,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		D9DA1B041E256A32007C2740 /* Build configuration list for PBXNativeTarget "YmsCoreBluetoothTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9DA1B021E256A32007C2740 /* Debug */,
+				D9DA1B031E256A32007C2740 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
