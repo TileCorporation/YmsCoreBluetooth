@@ -29,56 +29,81 @@ extern NSString *const YMSCBVersion;
 
 @class YMSCBPeripheral;
 @class YMSCBCentralManager;
+@protocol YMSCBCentralManagerInterface;
+@protocol YMSCBCentralManagerInterfaceDelegate;
+@protocol YMSCBCentralManagerDelegate;
+@protocol YMSCBPeripheralInterface;
+@protocol YMSCBPeripheralDelegate;
 
-typedef void (^YMSCBDiscoverCallbackBlockType)(CBPeripheral *, NSDictionary *, NSNumber *, NSError *_Nullable);
-typedef BOOL (^YMSCBFilterCallbackBlockType)(CBPeripheral *, NSDictionary *, NSNumber *);
-typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
+typedef void (^YMSCBDiscoverCallbackBlockType)(YMSCBPeripheral *yPeripheral, NSDictionary *advertisingData, NSNumber *RSSI);
+typedef BOOL (^YMSCBFilterCallbackBlockType)(NSString *name, NSDictionary *advertisingData, NSNumber *RSSI);
+typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
 
 // ------------------------------------------------------------------------
 
+
+/**
+ Interface to shadow properties and methods on CBCentralManager
+ */
 @protocol YMSCBCentralManagerInterface
 
-@property(nonatomic, assign, readonly) BOOL isScanning NS_AVAILABLE(NA, 9_0);
+@property(assign, nonatomic, nullable) id<YMSCBCentralManagerInterfaceDelegate> delegate;
 
-- (nullable instancetype)init;
+@property(readonly) CBCentralManagerState state;
 
-- (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
+
+- (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerInterfaceDelegate>)delegate
                                     queue:(nullable dispatch_queue_t)queue;
 
-- (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
+- (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerInterfaceDelegate>)delegate
                                     queue:(nullable dispatch_queue_t)queue
                                   options:(nullable NSDictionary<NSString *, id> *)options;
 
-- (nullable NSArray<CBPeripheral *> *)retrievePeripheralsWithIdentifiers:(nullable NSArray<NSUUID *> *)identifiers;
+- (nullable NSArray<id<YMSCBPeripheralInterface>> *)retrievePeripheralsWithIdentifiers:(nullable NSArray<NSUUID *> *)identifiers;
 
-- (nullable NSArray<CBPeripheral *> *)retrieveConnectedPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs;
+- (nullable NSArray<id<YMSCBPeripheralInterface>> *)retrieveConnectedPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs;
 
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options;
 
 - (void)stopScan;
 
-- (void)connectPeripheral:(CBPeripheral *)peripheral options:(nullable NSDictionary<NSString *, id> *)options;
+- (void)connectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface options:(nullable NSDictionary<NSString *, id> *)options;
 
-- (void)cancelPeripheralConnection:(CBPeripheral *)peripheral;
+- (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface;
 
 @end
 
 // ------------------------------------------------------------------------
 
+@protocol YMSCBCentralManagerInterfaceDelegate <NSObject>
 
-@protocol YMSCBCentralManagerDelegate
 @required
-- (void)centralManagerDidUpdateState:(YMSCBCentralManager *)central;
+- (void)centralManagerDidUpdateState:(id<YMSCBCentralManagerInterface>)centralInterface;
+
 @optional
-- (void)centralManager:(YMSCBCentralManager *)central willRestoreState:(NSDictionary<NSString *, id> *)dict;
-- (void)centralManager:(YMSCBCentralManager *)central didDiscoverPeripheral:(YMSCBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *, id> *)advertisementData RSSI:(NSNumber *)RSSI;
-- (void)centralManager:(YMSCBCentralManager *)central didConnectPeripheral:(YMSCBPeripheral *)peripheral;
-- (void)centralManager:(YMSCBCentralManager *)central didFailToConnectPeripheral:(YMSCBPeripheral *)peripheral error:(nullable NSError *)error;
-- (void)centralManager:(YMSCBCentralManager *)central didDisconnectPeripheral:(YMSCBPeripheral *)peripheral error:(nullable NSError *)error;
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface willRestoreState:(NSDictionary<NSString *, id> *)dict;
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDiscoverPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface advertisementData:(NSDictionary<NSString *, id> *)advertisementData RSSI:(NSNumber *)RSSI;
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface;
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didFailToConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
 @end
 
 // ------------------------------------------------------------------------
 
+@protocol YMSCBCentralManagerDelegate <NSObject>
+
+@required
+- (void)centralManagerDidUpdateState:(YMSCBCentralManager *)yCentral;
+
+@optional
+- (void)centralManager:(YMSCBCentralManager *)yCentral willRestoreState:(NSDictionary<NSString *, id> *)dict;
+- (void)centralManager:(YMSCBCentralManager *)yCentral didDiscoverPeripheral:(YMSCBPeripheral *)yPeripheral advertisementData:(NSDictionary<NSString *, id> *)advertisementData RSSI:(NSNumber *)RSSI;
+- (void)centralManager:(YMSCBCentralManager *)yCentral didConnectPeripheral:(YMSCBPeripheral *)yPeripheral;
+- (void)centralManager:(YMSCBCentralManager *)yCentral didFailToConnectPeripheral:(YMSCBPeripheral *)yPeripheral error:(nullable NSError *)error;
+- (void)centralManager:(YMSCBCentralManager *)yCentral didDisconnectPeripheral:(YMSCBPeripheral *)yPeripheral error:(nullable NSError *)error;
+@end
+
+// ------------------------------------------------------------------------
 
 /**
  Base class for defining a Bluetooth LE central.
@@ -99,7 +124,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 
  Legacy Note: This class was previously named YMSCBAppService.
  */
-@interface YMSCBCentralManager : NSObject <CBCentralManagerDelegate, YMSCBLogging>
+@interface YMSCBCentralManager : NSObject <YMSCBCentralManagerInterfaceDelegate, YMSCBLogging>
 
 /** @name Properties */
 /**
@@ -107,10 +132,15 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  The delegate object will be sent CBCentralManagerDelegate messages received by manager.
  */
-@property (atomic, weak, nullable) id <CBCentralManagerDelegate> delegate;
+@property(assign, nonatomic, nullable) id<YMSCBCentralManagerDelegate> delegate;
+
+@property(readonly) CBCentralManagerState state;
 
 @property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
 
+@property (nonatomic, strong) dispatch_queue_t queue;
+
+@property (nonatomic, strong) dispatch_queue_t ymsPeripheralsQueue;
 
 /**
  The CBCentralManager object.
@@ -118,7 +148,9 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  In typical practice, there is only one instance of CBCentralManager and it is located in a singleton instance of YMSCBCentralManager.
  This class listens to CBCentralManagerDelegate messages sent by manager, which in turn forwards those messages to delegate.
  */
-@property (nonatomic, strong) CBCentralManager *manager;
+//@property (nonatomic, strong) CBCentralManager *manager;
+// TODO: rename manager to centralInterface;
+@property (nonatomic, strong) id<YMSCBCentralManagerInterface> centralInterface;
 
 /// Flag to determine if manager is scanning.
 @property (atomic, assign) BOOL isScanning;
@@ -142,6 +174,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 
 @property (atomic, copy, nullable) YMSCBFilterCallbackBlockType filteredCallback;
 
+// TODO: is this obsolete?
 /// Peripheral Retreived Callback
 @property (atomic, copy, nullable) YMSCBRetrieveCallbackBlockType retrievedCallback;
 
@@ -159,7 +192,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @param options CBCentralManager options
  @return instance of YMSCBCentralManager
  */
-- (nullable instancetype)initWithDelegate:(nullable id<CBCentralManagerDelegate>)delegate
+- (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
                                     queue:(nullable dispatch_queue_t)queue
                                   options:(nullable NSDictionary<NSString *, id> *)options
                                    logger:(id<YMSCBLogging>)logger;
@@ -168,23 +201,26 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 #pragma mark - Peripheral Management
 /** @name Peripheral Management */
 
+
 /**
- Handler for discovered or found peripheral. This method is to be overridden.
+ Factory method for creating new instances that inherit from YMSCBPeripheral
+ 
 
- @param peripheral CoreBluetooth peripheral instance
+ @param peripheralInterface object which conforms to YMSCBPeripheralInterface
+ @return instance of YMSCBPeripheral
  */
-- (void)handleFoundPeripheral:(CBPeripheral *)peripheral;
+- (nullable YMSCBPeripheral *)ymsPeripheralWithInterface:(id<YMSCBPeripheralInterface>)peripheralInterface;
 
-- (void)addPeripheral:(YMSCBPeripheral *)yp;
+- (void)addPeripheral:(YMSCBPeripheral *)yPeripheral;
 
-- (void)removePeripheral:(YMSCBPeripheral *)yp;
+- (void)removePeripheral:(YMSCBPeripheral *)yPeripheral;
 
 /**
  Find YMSCBPeripheral instance matching peripheral
  @param peripheral peripheral corresponding with YMSCBPeripheral
  @return instance of YMSCBPeripheral
  */
-- (nullable YMSCBPeripheral *)findPeripheral:(nonnull CBPeripheral *)peripheral;
+- (nullable YMSCBPeripheral *)findPeripheral:(nonnull YMSCBPeripheral *)yPeripheral;
 
 #pragma mark - Scan Methods
 /** @name Scanning for Peripherals */
@@ -224,8 +260,8 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  */
 - (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs
                                options:(nullable NSDictionary *)options
-                             withBlock:(nullable void (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError * _Nullable error))discoverCallback
-                             withFilter:(nullable BOOL (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI))filterCallback;
+                             withBlock:(nullable YMSCBDiscoverCallbackBlockType)discoverCallback
+                             withFilter:(nullable YMSCBFilterCallbackBlockType)filterCallback;
 
 
 /**
@@ -260,6 +296,10 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @return A list of CBPeripheral objects.
  */
 - (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDs;
+
+- (void)connectPeripheral:(YMSCBPeripheral *)yPeripheral options:(nullable NSDictionary<NSString *, id> *)options;
+
+- (void)cancelPeripheralConnection:(YMSCBPeripheral *)yPeripheral;
 
 
 #pragma mark - CBCentralManager state handling methods
