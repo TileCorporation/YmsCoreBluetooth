@@ -216,11 +216,13 @@
 - (void)reset {
     [self.writeCallbacks removeAllObjects];
     [self.readCallbacks removeAllObjects];
-    self.characteristicInterface = nil;
+    //self.characteristicInterface = nil;
     self.notificationCallback = nil;
     self.notificationStateCallback = nil;
     self.discoverDescriptorsCallback = nil;
     self.logEnabled = YES;
+    
+    [self.characteristicInterface reset];
 }
 
 

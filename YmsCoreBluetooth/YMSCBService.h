@@ -50,6 +50,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 
 @property (nonatomic, weak, nullable) YMSCBService *owner;
 
+- (void)reset;
 @end
 
 

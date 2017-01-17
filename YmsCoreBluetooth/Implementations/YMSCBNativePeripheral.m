@@ -120,6 +120,9 @@ NS_ASSUME_NONNULL_BEGIN
     // TODO: implement
 }
 
+- (void)reset {
+    [self.nativeServices removeAllObjects];
+}
 
 #pragma mark - Utility Methods
 

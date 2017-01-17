@@ -303,12 +303,24 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)reset {
     self.valueValid = NO;
+    // TODO: who uses this? lastValue is very dangerous!
     self.lastValue = nil;
     self.connectCallback = nil;
     self.discoverServicesCallback = nil;
-    self.watchdogTimer = nil;
-    self.watchdogTimerInterval = 0;
+    
+    [self invalidateWatchdog];
+    
+    //self.watchdogTimerInterval = 5.0;
     self.watchdogRaised = NO;
+    
+
+    NSArray<YMSCBService *> *services = [self.serviceDict allValues];
+    
+    for (YMSCBService *service in services) {
+        [service reset];
+    }
+    
+    [self.peripheralInterface reset];
 }
 
 

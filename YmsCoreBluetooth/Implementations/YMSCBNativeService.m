@@ -73,4 +73,8 @@
     return result;
 }
 
+- (void)reset {
+    [self.nativeCharacteristics removeAllObjects];
+}
+
 @end

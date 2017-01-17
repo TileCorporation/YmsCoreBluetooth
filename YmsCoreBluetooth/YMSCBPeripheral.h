@@ -72,6 +72,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)writeValue:(NSData *)data forDescriptor:(id<YMSCBDescriptorInterface>)yDescriptor;
 
+- (void)reset;
+
 @end
 
 // ------------------------------------------------------------------------
@@ -228,7 +230,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 @property (nonatomic, assign) NSTimeInterval watchdogTimerInterval;
 
 /// Holds callback for connection established.
-@property (nonatomic, copy, nullable) YMSCBPeripheralConnectCallbackBlockType connectCallback;
+@property (atomic, copy, nullable) YMSCBPeripheralConnectCallbackBlockType connectCallback;
 
 /// Holds callback for services discovered.
 @property (nonatomic, copy, nullable) YMSCBPeripheralDiscoverServicesBlockType discoverServicesCallback;

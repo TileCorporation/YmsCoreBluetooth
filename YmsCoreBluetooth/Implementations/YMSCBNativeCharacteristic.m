@@ -89,6 +89,10 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
+- (void)reset {
+    [self.nativeDescriptors removeAllObjects];
+}
+
 
 @end
 

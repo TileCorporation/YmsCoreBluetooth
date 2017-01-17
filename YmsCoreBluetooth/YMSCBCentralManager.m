@@ -362,15 +362,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     [self.logger logInfo:message object:self.centralInterface];
     
     YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
-    
-    // TODO: need [YMSCBPeripheral reset]
-    yPeripheral.connectCallback = nil;
-    
-    for (id key in yPeripheral.serviceDict) {
-        YMSCBService *service = yPeripheral.serviceDict[key];
-        [service reset];
-    }
-    
+    [yPeripheral reset];
     
     if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
         [self.delegate centralManager:self didDisconnectPeripheral:yPeripheral error:error];

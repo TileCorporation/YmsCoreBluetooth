@@ -243,7 +243,6 @@
 }
 
 - (void)reset {
-    self.serviceInterface = nil;
     self.isEnabled = NO;
     self.isOn = NO;
     
@@ -251,6 +250,8 @@
         YMSCBCharacteristic *ct = self.characteristicDict[key];
         [ct reset];
     }
+    
+    [self.serviceInterface reset];
 }
 
 @end

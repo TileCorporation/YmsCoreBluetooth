@@ -43,6 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak, nullable) YMSCBCharacteristic *owner;
 
+- (void)reset;
+
 @end
 
 
