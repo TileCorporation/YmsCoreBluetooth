@@ -24,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *includedServices;
 @property(retain, readonly, nullable) NSArray<id<YMSCBCharacteristicInterface>> *characteristics;
 
+@property (nonatomic, weak, nullable) YMSCBService *owner;
+
+
 - (nullable instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface service:(CBService *)service;
 
 - (nullable id<YMSCBCharacteristicInterface>)interfaceForCharacteristic:(CBCharacteristic *)characteristic;

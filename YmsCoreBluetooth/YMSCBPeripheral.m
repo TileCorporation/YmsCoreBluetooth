@@ -351,19 +351,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 
-- (nullable YMSCBService *)serviceForInterface:(id<YMSCBServiceInterface>)serviceInterface {
-    YMSCBService *result = nil;
-    
-    NSArray<YMSCBService *> *tempArray = [self.serviceDict allValues];
-    for (YMSCBService *yService in tempArray) {
-        if ([serviceInterface.UUID isEqual:yService.uuid]) {
-            result = yService;
-            break;
-        }
-    }
-    
-    return result;
-}
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error {
     NSString *message = [NSString stringWithFormat:@"< didDiscoverServices:%@", error.description];
@@ -377,6 +364,7 @@ NS_ASSUME_NONNULL_BEGIN
             for (YMSCBService *yService in tempArray) {
                 if ([serviceInterface.UUID isEqual:yService.uuid]) {
                     yService.serviceInterface = serviceInterface;
+                    serviceInterface.owner = yService;
                     [services addObject:yService];
                     break;
                 }
@@ -398,7 +386,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self.logger logInfo:message object:_peripheralInterface];
     
     
-    YMSCBService *yService = [self serviceForInterface:serviceInterface];
+    YMSCBService *yService = serviceInterface.owner;
     
     [yService syncCharacteristics];
     [yService handleDiscoveredCharacteristicsResponse:yService.characteristicDict withError:error];
@@ -458,48 +446,51 @@ NS_ASSUME_NONNULL_BEGIN
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-//- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-//    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristic, error];
-//    [self.logger logInfo:message object:_peripheralInterface];
-//    
-//    if (!self.valueValid) {
-//        self.valueValid = YES;
-//    }
-//    
-//    YMSCBService *btService = [self findService:characteristic.service];
-//    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
-//    
-//    if (ct.readCallbacks && (ct.readCallbacks.count > 0)) {
-//        self.lastValue = characteristic.value;
-//        [ct executeReadCallback:characteristic.value error:error];
-//        
-//        if (ct.cbCharacteristic.isNotifying) {
-//            //message = [NSString stringWithFormat:@"WARNING: Read callback called for notifying characteristic %@", characteristic];
-//            //[localFileManager log:message peripheral:peripheral];
-//        }
-//    } else {
-//        if (ct.cbCharacteristic.isNotifying) {
-//            BOOL runNotificationCallback = NO;
-//            
-//            if (self.valueValid && (!self.lastValue || ![self.lastValue isEqualToData:characteristic.value])) {
-//                runNotificationCallback = YES;
-//            }
-//
-//            if (runNotificationCallback && ct.notificationCallback) {
-//                ct.notificationCallback(characteristic.value, error);
-//            } else {
-//                //message = [NSString stringWithFormat:@"WARNING: No notification callback defined for %@", characteristic];
-//                //[localFileManager log:message peripheral:peripheral];
-//            }
-//
-//        }
-//    }
-//    
-//    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
-////        [self.delegate peripheral:_peripheralInterface didUpdateValueForCharacteristic:ct.cbCharacteristic error:error];
-//    }
-//}
-//
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    
+    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristicInterface, error];
+    [self.logger logInfo:message object:_peripheralInterface];
+    
+    if (!self.valueValid) {
+        self.valueValid = YES;
+    }
+    
+    YMSCBCharacteristic *ct = characteristicInterface.owner;
+
+    if (ct.readCallbacks && (ct.readCallbacks.count > 0)) {
+        self.lastValue = [characteristicInterface.value copy];;
+        [ct executeReadCallback:self.lastValue error:error];
+        
+        if (characteristicInterface.isNotifying) {
+            message = [NSString stringWithFormat:@"Read callback called for notifying characteristic %@", characteristicInterface];
+            [self.logger logWarn:message object:_peripheralInterface];
+             
+        }
+    } else {
+        if (characteristicInterface.isNotifying) {
+            BOOL runNotificationCallback = NO;
+            
+            if (self.valueValid && (!self.lastValue || ![self.lastValue isEqualToData:characteristicInterface.value])) {
+                runNotificationCallback = YES;
+            }
+            
+            if (runNotificationCallback && ct.notificationCallback) {
+                ct.notificationCallback(characteristicInterface.value, error);
+            } else {
+                message = [NSString stringWithFormat:@"No notification callback defined for %@", characteristicInterface];
+                [self.logger logWarn:message object:_peripheralInterface];
+            }
+            
+        }
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didUpdateValueForCharacteristic:ct error:error];
+    }
+    
+}
+
 
 /**
  CBPeripheralDelegate implementation. Not yet supported.
@@ -526,23 +517,23 @@ NS_ASSUME_NONNULL_BEGIN
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-//- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-//    NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristic, error.description];
-//    [self.logger logInfo:message object:_peripheralInterface];
-//    
-//    YMSCBService *btService = [self findService:characteristic.service];
-//    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
-//    
-//    [ct executeNotificationStateCallback:error];
-//    
-//    if (!characteristic.isNotifying) {
-//        ct.notificationCallback = nil;
-//    }
-//    
-//    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateNotificationStateForCharacteristic:error:)]) {
-////        [self.delegate peripheral:_peripheralInterface didUpdateNotificationStateForCharacteristic:ct.cbCharacteristic error:error];
-//    }
-//}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateNotificationStateForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    
+    NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristicInterface, error.description];
+    [self.logger logInfo:message object:_peripheralInterface];
+    
+    YMSCBCharacteristic *ct = characteristicInterface.owner;
+    
+    [ct executeNotificationStateCallback:error];
+    if (!characteristicInterface.isNotifying) {
+        ct.notificationCallback = nil;
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateNotificationStateForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didUpdateNotificationStateForCharacteristic:characteristicInterface.owner error:error];
+    }
+}
 
 
 /**
@@ -552,6 +543,28 @@ NS_ASSUME_NONNULL_BEGIN
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    
+    NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristicInterface, error.description];
+    [self.logger logInfo:message object:_peripheralInterface];
+    
+    YMSCBCharacteristic *ct = characteristicInterface.owner;
+    
+    if (ct.writeCallbacks && (ct.writeCallbacks.count > 0)) {
+        [ct executeWriteCallback:error];
+    } else {
+        
+    }
+    
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didWriteValueForCharacteristic:ct error:error];
+    }
+
+}
+
+
 //- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
 //    NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristic, error.description];
 //    [self.logger logInfo:message object:_peripheralInterface];
@@ -579,6 +592,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param descriptor The characteristic descriptor whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForDescriptor:(id<YMSCBDescriptorInterface>)descriptorInterface error:(nullable NSError *)error {
+    
+}
+
 //- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
 //    NSString *message = [NSString stringWithFormat:@"< didWriteValueForDescriptor: %@ error:%@", descriptor, error.description];
 //    [self.logger logInfo:message object:_peripheralInterface];
@@ -592,14 +610,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if TARGET_OS_IPHONE
 
-//- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
-//    NSString *message = [NSString stringWithFormat:@"< peripheral: %@ didReadRSSI: %@ error:%@", _peripheralInterface, RSSI, error];
-//    [self.logger logInfo:message object:nil];
-//    
-//    if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
-//     //   [self.delegate peripheral:peripheral didReadRSSI:RSSI error:error];
-//    }
-//}
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< peripheral: %@ didReadRSSI: %@ error:%@", _peripheralInterface, RSSI, error];
+    [self.logger logInfo:message object:nil];
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
+        [self.delegate peripheral:self didReadRSSI:RSSI error:error];
+    }
+}
 
 #else
 

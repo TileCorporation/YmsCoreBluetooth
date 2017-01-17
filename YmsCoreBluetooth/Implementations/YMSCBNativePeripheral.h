@@ -17,8 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(assign, nonatomic, nullable) id<YMSCBPeripheralInterfaceDelegate> delegate;
 
-//@property(nonatomic, strong, nullable) id<YMSCBCentralManagerInterface> centralInterface;
-
 @property(retain, readonly, nullable) NSString *name;
 
 @property(readonly, nonatomic) NSUUID *identifier;

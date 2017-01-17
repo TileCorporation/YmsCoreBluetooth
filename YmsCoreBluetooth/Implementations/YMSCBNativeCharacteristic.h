@@ -27,9 +27,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly) BOOL isBroadcasted;
 @property(readonly) BOOL isNotifying;
 
+@property (nonatomic, weak, nullable) YMSCBCharacteristic *owner;
+
 - (nullable instancetype)initWithService:(id<YMSCBServiceInterface>)serviceInterface characteristic:(CBCharacteristic *)characteristic;
 
 - (nullable id<YMSCBDescriptorInterface>)interfaceForDescriptor:(CBDescriptor *)descriptor;
+
+
 
 @end
 

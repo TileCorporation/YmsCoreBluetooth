@@ -23,6 +23,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class YMSCBPeripheral;
+@class YMSCBCharacteristic;
 @class YMSCBService;
 
 @protocol YMSCBServiceInterface;
@@ -39,6 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(retain, readonly, nullable) NSArray<id<YMSCBDescriptorInterface>> *descriptors;
 @property(readonly) BOOL isBroadcasted;
 @property(readonly) BOOL isNotifying;
+
+@property (nonatomic, weak, nullable) YMSCBCharacteristic *owner;
 
 @end
 

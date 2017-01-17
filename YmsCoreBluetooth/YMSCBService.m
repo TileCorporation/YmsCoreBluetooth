@@ -175,7 +175,8 @@
     for (id<YMSCBCharacteristicInterface> ctInterface in ctInterfaces) {
         for (YMSCBCharacteristic *ct in localCharacteristics) {
             if ([ctInterface.UUID isEqual:ct.uuid]) {
-                ct.cbCharacteristic = ctInterface;
+                ct.characteristicInterface = ctInterface;
+                ctInterface.owner = ct;
                 break;
             }
         }
@@ -194,7 +195,7 @@
     for (NSString *key in self.characteristicDict) {
         YMSCBCharacteristic *yc = self.characteristicDict[key];
             
-        if ([yc.cbCharacteristic.UUID isEqual:ct.UUID]) {
+        if ([yc.characteristicInterface.UUID isEqual:ct.UUID]) {
             result = yc;
             break;
         }

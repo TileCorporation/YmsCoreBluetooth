@@ -22,6 +22,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class YMSCBService;
 @class YMSCBCharacteristic;
 @class YMSCBPeripheral;
 @protocol YMSCBPeripheralInterface;
@@ -46,6 +47,8 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 @property(readonly, nonatomic) BOOL isPrimary;
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *includedServices;
 @property(retain, readonly, nullable) NSArray<id<YMSCBCharacteristicInterface>> *characteristics;
+
+@property (nonatomic, weak, nullable) YMSCBService *owner;
 
 @end
 

@@ -193,8 +193,7 @@
 
     __weak typeof(self) this = self;
     _YMS_PERFORM_ON_MAIN_THREAD(^{
-        DEACentralManager *centralManager = [DEACentralManager sharedService];
-        DEASensorTag *yp = (DEASensorTag *)[centralManager findPeripheral:yPeripheral];
+        DEASensorTag *yp = (DEASensorTag *)yPeripheral;
         yp.delegate = self;
         
         [yp readRSSI];
@@ -224,7 +223,7 @@
     _YMS_PERFORM_ON_MAIN_THREAD((^{
         DEACentralManager *centralManager = [DEACentralManager sharedService];
         
-        YMSCBPeripheral *yp = [centralManager findPeripheral:yPeripheral];
+        YMSCBPeripheral *yp = yPeripheral;
         
         if ([yp isKindOfClass:[DEASensorTag class]]) {
             DEASensorTag *sensorTag = (DEASensorTag *)yp;
@@ -256,39 +255,39 @@
 
 #pragma mark - CBPeripheralDelegate Methods
 
-
-//- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
-//    
-//    __weak typeof(self) this = self;
-//    _YMS_PERFORM_ON_MAIN_THREAD((^{
-//        __strong typeof (this) strongThis = this;
-//        
-//        DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-//        
-//        if (error) {
-//            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
-//            if (peripheral.state == CBPeripheralStateConnected) {
-//                [sensorTag readRSSI];
-//            }
-//        }
-//        
-//        
-//        for (DEAPeripheralTableViewCell *cell in [strongThis.peripheralsTableView visibleCells]) {
-//            if (cell.yperipheral) {
-//                if (cell.yperipheral.isConnected) {
-//                    if (cell.yperipheral.cbPeripheral == peripheral) {
-//                        cell.rssiLabel.text = [NSString stringWithFormat:@"%@", RSSI];
-//                        break;
-//                    }
-//                }
-//            }
-//        }
-//        
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-//            [sensorTag readRSSI];
-//        });
-//    }));
-//}
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
+    
+    
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD((^{
+        __strong typeof (this) strongThis = this;
+        
+        DEASensorTag *sensorTag = (DEASensorTag *)yPeripheral;
+        
+        if (error) {
+            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+            if (yPeripheral.state == CBPeripheralStateConnected) {
+                [sensorTag readRSSI];
+            }
+        }
+        
+        
+        for (DEAPeripheralTableViewCell *cell in [strongThis.peripheralsTableView visibleCells]) {
+            if (cell.yperipheral) {
+                if (cell.yperipheral.isConnected) {
+                    if (cell.yperipheral == yPeripheral) {
+                        cell.rssiLabel.text = [NSString stringWithFormat:@"%@", RSSI];
+                        break;
+                    }
+                }
+            }
+        }
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [sensorTag readRSSI];
+        });
+    }));
+}
 
 
 

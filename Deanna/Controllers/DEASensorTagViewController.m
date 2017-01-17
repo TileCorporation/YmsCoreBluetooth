@@ -166,7 +166,7 @@
 
 #pragma mark - CBCentralManagerDelegate Methods
 
-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
+- (void)centralManager:(YMSCBCentralManager *)yCentral didDisconnectPeripheral:(YMSCBPeripheral *)yPeripheral error:(NSError *)error {
     __weak typeof(self) this = self;
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         __strong typeof (this) strongThis = this;
@@ -179,15 +179,15 @@
         
         [alert show];
 
-        [strongThis.navigationController.viewControllers[0] centralManager:central didDisconnectPeripheral:peripheral error:error];
+        [strongThis.navigationController.viewControllers[0] centralManager:yCentral didDisconnectPeripheral:yPeripheral error:error];
     });
-    
+
 }
 
 
 #pragma mark - CBPeripheralDelegate Methods
 
-- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
     __weak typeof(self) this = self;
     _YMS_PERFORM_ON_MAIN_THREAD((^{
         __strong typeof (this) strongThis = this;
@@ -195,10 +195,9 @@
         if (error) {
             NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
             
-            if (peripheral.state == CBPeripheralStateConnected) {
+            if (yPeripheral.state == CBPeripheralStateConnected) {
                 dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                    DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-                    [sensorTag readRSSI];
+                    [yPeripheral readRSSI];
                 });
             }
             
@@ -206,12 +205,12 @@
         }
         
         strongThis.rssiButton.title = [NSString stringWithFormat:@"%@ db", RSSI];
-        
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-            [sensorTag readRSSI];
+            [yPeripheral readRSSI];
         });
     }));
+    
 }
+
 
 @end
