@@ -17,6 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic, nullable) id<YMSCBCentralManagerInterfaceDelegate, NSObject> delegate;
 @property(readonly) CBCentralManagerState state;
 
+
+//- (id<YMSCBPeripheralInterface>)peripheralInterfaceForPeripheral:(CBPeripheral *)peripheral;
+
 @end
 
 NS_ASSUME_NONNULL_END

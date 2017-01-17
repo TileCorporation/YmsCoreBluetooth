@@ -57,6 +57,8 @@
     id<YMSCBPeripheralInterface> peripheralInterface = _peripheralInterfaces[peripheral];
     if (!peripheralInterface) {
         peripheralInterface = [[YMSCBNativePeripheral alloc] initWithPeripheral:peripheral];
+        // !!!: Note that the peripheral interface needs access to the parent centralInterface
+        //peripheralInterface.centralInterface = self;
         _peripheralInterfaces[peripheral] = peripheralInterface;
     }
     return peripheralInterface;
@@ -139,10 +141,7 @@
     if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
         [self.delegate centralManager:self didConnectPeripheral:peripheralInterface];
     }
-
 }
-
-
 
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     id<YMSCBPeripheralInterface> peripheralInterface = [self peripheralInterfaceForPeripheral:peripheral];
@@ -151,8 +150,6 @@
         [self.delegate centralManager:self didFailToConnectPeripheral:peripheralInterface error:error];
     }
 }
-
-
 
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     id<YMSCBPeripheralInterface> peripheralInterface = [self peripheralInterfaceForPeripheral:peripheral];
