@@ -23,7 +23,7 @@
 #import "DEAStyleSheet.h"
 #import "DEATheme.h"
 
-@interface DEAPeripheralsViewController ()
+@interface DEAPeripheralsViewController ()<YMSCBCentralManagerDelegate>
 - (void)editButtonAction:(id)sender;
 @end
 
@@ -127,7 +127,7 @@
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
         
         for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-            if (cell.yperipheral.cbPeripheral.state == CBPeripheralStateDisconnected) {
+            if (cell.yperipheral.state == CBPeripheralStateDisconnected) {
                 cell.rssiLabel.text = @"—";
                 cell.peripheralStatusLabel.text = @"QUIESCENT";
                 [cell.peripheralStatusLabel setTextColor:[[DEATheme sharedTheme] bodyTextColor]];
@@ -152,12 +152,12 @@
         
 }
 
-#pragma mark - CBCentralManagerDelegate Methods
+#pragma mark - YMSCBCentralManagerDelegate Methods
 
+- (void)centralManagerDidUpdateState:(YMSCBCentralManager *)yCentral {
 
-- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
     _YMS_PERFORM_ON_MAIN_THREAD(^{
-        switch (central.state) {
+        switch (yCentral.state) {
             case CBCentralManagerStatePoweredOn:
                 break;
             case CBCentralManagerStatePoweredOff:
@@ -189,16 +189,15 @@
     });
 }
 
+- (void)centralManager:(YMSCBCentralManager *)yCentral didConnectPeripheral:(YMSCBPeripheral *)yPeripheral {
 
-- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     __weak typeof(self) this = self;
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         DEACentralManager *centralManager = [DEACentralManager sharedService];
-        DEASensorTag *yp = (DEASensorTag *)[centralManager findPeripheral:peripheral];
+        DEASensorTag *yp = (DEASensorTag *)[centralManager findPeripheral:yPeripheral];
         yp.delegate = self;
         
         [yp readRSSI];
-
         
         for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
             if (cell.yperipheral == yp) {
@@ -209,9 +208,8 @@
     });
 }
 
+- (void)centralManager:(YMSCBCentralManager *)yCentral didDisconnectPeripheral:(YMSCBPeripheral *)yPeripheral error:(NSError *)error {
 
-
-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
     __weak typeof(self) this = self;
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
@@ -220,13 +218,13 @@
     });
 }
 
-- (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
+- (void)centralManager:(YMSCBCentralManager *)yCentral didDiscoverPeripheral:(YMSCBPeripheral *)yPeripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     
     __weak typeof(self) this = self;
     _YMS_PERFORM_ON_MAIN_THREAD((^{
         DEACentralManager *centralManager = [DEACentralManager sharedService];
         
-        YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
+        YMSCBPeripheral *yp = [centralManager findPeripheral:yPeripheral];
         
         if ([yp isKindOfClass:[DEASensorTag class]]) {
             DEASensorTag *sensorTag = (DEASensorTag *)yp;
@@ -239,8 +237,8 @@
         // SensorTag 2.0 Service UUID AA80
         if (centralManager.isScanning) {
             for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
-                if (cell.yperipheral.cbPeripheral == peripheral) {
-                    if (peripheral.state == CBPeripheralStateDisconnected) {
+                if (cell.yperipheral == yPeripheral) {
+                    if (yPeripheral.state == CBPeripheralStateDisconnected) {
                         cell.rssiLabel.text = [NSString stringWithFormat:@"%ld", (long)[RSSI integerValue]];
                         cell.peripheralStatusLabel.text = @"ADVERTISING";
                         [cell.peripheralStatusLabel setTextColor:[[DEATheme sharedTheme] advertisingColor]];
@@ -254,76 +252,43 @@
 }
 
 
-- (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals {
-    __weak typeof(self) this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof (this) strongThis = this;
-        DEACentralManager *centralManager = [DEACentralManager sharedService];
-        
-        for (CBPeripheral *peripheral in peripherals) {
-            YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-            if (yp) {
-                yp.delegate = strongThis;
-            }
-        }
-        [strongThis.peripheralsTableView reloadData];
-    });
-}
 
 
-- (void)centralManager:(CBCentralManager *)central didRetrieveConnectedPeripherals:(NSArray *)peripherals {
-    __weak typeof(self) this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        __strong typeof (this) strongThis = this;
-
-        DEACentralManager *centralManager = [DEACentralManager sharedService];
-        
-        for (CBPeripheral *peripheral in peripherals) {
-            YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-            if (yp) {
-                yp.delegate = strongThis;
-            }
-        }
-    
-        [strongThis.peripheralsTableView reloadData];
-    });
-}
-
-                                
 #pragma mark - CBPeripheralDelegate Methods
 
-- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
-    
-    __weak typeof(self) this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD((^{
-        __strong typeof (this) strongThis = this;
-        
-        DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
-        
-        if (error) {
-            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
-            if (peripheral.state == CBPeripheralStateConnected) {
-                [sensorTag readRSSI];
-            }
-        }
-        
-        
-        for (DEAPeripheralTableViewCell *cell in [strongThis.peripheralsTableView visibleCells]) {
-            if (cell.yperipheral) {
-                if (cell.yperipheral.isConnected) {
-                    if (cell.yperipheral.cbPeripheral == peripheral) {
-                        cell.rssiLabel.text = [NSString stringWithFormat:@"%@", RSSI];
-                        break;
-                    }
-                }
-            }
-        }
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [sensorTag readRSSI];
-        });
-    }));
-}
+
+//- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
+//    
+//    __weak typeof(self) this = self;
+//    _YMS_PERFORM_ON_MAIN_THREAD((^{
+//        __strong typeof (this) strongThis = this;
+//        
+//        DEASensorTag *sensorTag = (DEASensorTag *)[[DEACentralManager sharedService] findPeripheral:peripheral];
+//        
+//        if (error) {
+//            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+//            if (peripheral.state == CBPeripheralStateConnected) {
+//                [sensorTag readRSSI];
+//            }
+//        }
+//        
+//        
+//        for (DEAPeripheralTableViewCell *cell in [strongThis.peripheralsTableView visibleCells]) {
+//            if (cell.yperipheral) {
+//                if (cell.yperipheral.isConnected) {
+//                    if (cell.yperipheral.cbPeripheral == peripheral) {
+//                        cell.rssiLabel.text = [NSString stringWithFormat:@"%@", RSSI];
+//                        break;
+//                    }
+//                }
+//            }
+//        }
+//        
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//            [sensorTag readRSSI];
+//        });
+//    }));
+//}
 
 
 
@@ -385,7 +350,7 @@
             DEACentralManager *centralManager = [DEACentralManager sharedService];
             YMSCBPeripheral *yp = [centralManager peripheralAtIndex:indexPath.row];
             if ([yp isKindOfClass:[DEASensorTag class]]) {
-                if (yp.cbPeripheral.state == CBPeripheralStateConnected) {
+                if (yp.state == CBPeripheralStateConnected) {
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
                                                                     message:@"Disconnect the peripheral before deleting."
                                                                    delegate:nil cancelButtonTitle:@"Dismiss"

@@ -44,10 +44,11 @@
 
 #pragma mark - CBCentralManagerDelegate Methods
 
-- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
+- (void)centralManagerDidUpdateState:(YMSCBCentralManager *)yCentral {
+
     
     _YMS_PERFORM_ON_MAIN_THREAD(^{
-        switch (central.state) {
+        switch (yCentral.state) {
             case CBCentralManagerStatePoweredOn:
                 break;
             case CBCentralManagerStatePoweredOff:

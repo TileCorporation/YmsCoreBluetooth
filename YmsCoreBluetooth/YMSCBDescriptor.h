@@ -23,10 +23,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class YMSCBCharacteristic;
+@protocol YMSCBCharacteristicInterface;
 
 @protocol YMSCBDescriptorInterface
 @property(readonly, nonatomic) CBUUID *UUID;
-@property(assign, readonly, nonatomic) YMSCBCharacteristic *characteristic;
+@property(assign, readonly, nonatomic) id<YMSCBCharacteristicInterface> characteristicInterface;
 @property(retain, readonly) id value;
 @end
 
@@ -43,10 +44,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YMSCBDescriptor : NSObject
 
 /// Pointer to actual CBDescriptor
-@property (atomic, strong) CBDescriptor *cbDescriptor;
+@property (atomic, strong) id<YMSCBDescriptorInterface> descriptorInterface;
+
+// TODO: define constructor with id<YMSCBDescriptorInterface>
 
 /// Descriptor UUID
-@property (atomic, readonly) CBUUID *UUID;
+@property(readonly, nonatomic) CBUUID *UUID;
 
 @property(retain, readonly) id value;
 

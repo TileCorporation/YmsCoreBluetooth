@@ -22,6 +22,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class YMSCBCharacteristic;
+@class YMSCBPeripheral;
+@protocol YMSCBPeripheralInterface;
+@protocol YMSCBServiceInterface;
+@protocol YMSCBCharacteristicInterface;
+
 /**
  Callback type for discovered characteristics.
  */
@@ -35,18 +41,15 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 
 @protocol YMSCBServiceInterface
 
-@property(assign, readonly, nonatomic, nonnull) CBPeripheral *peripheral;
+@property(assign, readonly, nonatomic, nonnull) id<YMSCBPeripheralInterface> peripheralInterface;
 @property(readonly, nonatomic) CBUUID *UUID;
 @property(readonly, nonatomic) BOOL isPrimary;
-@property(retain, readonly, nullable) NSArray<CBService *> *includedServices;
-@property(retain, readonly, nullable) NSArray<CBCharacteristic *> *characteristics;
-
+@property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *includedServices;
+@property(retain, readonly, nullable) NSArray<id<YMSCBCharacteristicInterface>> *characteristics;
 
 @end
 
 
-@class YMSCBCharacteristic;
-@class YMSCBPeripheral;
 
 /**
  Base class for defining a Bluetooth LE service.
@@ -67,7 +70,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 /**
  Pointer to CBService. Note that access to the peripheral is available via the `peripheral` property of cbService.
  */
-@property (atomic, strong, nullable) CBService *cbService;
+@property (atomic, strong, nullable) id<YMSCBServiceInterface> serviceInterface;
 
 /// Pointer to parent peripheral.
 @property (nonatomic, weak, nullable) YMSCBPeripheral *parent;
@@ -173,7 +176,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  
  @param foundCharacteristics array of CBCharacteristics
  */
-- (void)syncCharacteristics:(nullable NSArray *)foundCharacteristics;
+- (void)syncCharacteristics;
 
 /** @name Find a YMSCBCharacteristic */
 /**

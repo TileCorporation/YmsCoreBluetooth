@@ -22,17 +22,19 @@
 #import "YMSCBCharacteristic.h"
 #import "YMSCBDescriptor.h"
 #import "NSMutableArray+fifoQueue.h"
+#import "YMSCBNativePeripheral.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSCBPeripheral ()
 @property (atomic, copy, nullable) NSData *lastValue;
 @property (atomic, assign) BOOL valueValid;
+
 @end
 
 @implementation YMSCBPeripheral
 
-- (nullable instancetype)initWithPeripheral:(CBPeripheral *)peripheral
+- (nullable instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface
                                     central:(YMSCBCentralManager *)owner
                                      baseHi:(int64_t)hi
                                      baseLo:(int64_t)lo {
@@ -43,13 +45,11 @@ NS_ASSUME_NONNULL_BEGIN
         _central = owner;
         _base.hi = hi;
         _base.lo = lo;
-        
-        _cbPeripheral = peripheral;
-        peripheral.delegate = self;
-        
-        _rssiPingPeriod = 2.0;
 
-        //_peripheralConnectionState = YMSCBPeripheralConnectionStateUnknown;
+        _peripheralInterface = peripheralInterface;
+        _peripheralInterface.delegate = self;
+
+        _rssiPingPeriod = 2.0;
         _watchdogTimerInterval = 5.0;
         _logger = _central.logger;
     }
@@ -62,48 +62,55 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSString *)name {
     NSString *result = nil;
-    if (self.cbPeripheral) {
-        result = self.cbPeripheral.name;
+    if (_peripheralInterface) {
+        result = _peripheralInterface.name;
     }
     
     return result;
 }
 
+- (CBPeripheralState)state {
+    CBPeripheralState state;
+    state = _peripheralInterface.state;
+    return state;
+}
+
 - (nullable NSUUID *)identifier {
     NSUUID *result = nil;
-    if (self.cbPeripheral) {
-        result = self.cbPeripheral.identifier;
+    if (_peripheralInterface) {
+        result = _peripheralInterface.identifier;
     }
     return result;
 }
 
 
 - (BOOL)isConnected {
-    
     BOOL result = NO;
     
-    if (self.cbPeripheral.state == CBPeripheralStateConnected) {
+    if (self.state == CBPeripheralStateConnected) {
         result = YES;
     }
     
     return result;
 }
 
-// TODO: is this needed?
-- (void)replaceCBPeripheral:(CBPeripheral *)peripheral {
-    for (NSString *key in self.serviceDict) {
-        YMSCBService *service = self.serviceDict[key];
-        service.cbService = nil;
-        
-        for (NSString *chKey in service.characteristicDict) {
-            YMSCBCharacteristic *ct = service.characteristicDict[chKey];
-            ct.cbCharacteristic = nil;
-        }
-    }
-    
-    self.cbPeripheral = peripheral;
-    peripheral.delegate = self;
-}
+//// TODO: is this needed?
+//- (void)replaceCBPeripheral:(CBPeripheral *)peripheral {
+//    /*
+//    for (NSString *key in self.serviceDict) {
+//        YMSCBService *service = self.serviceDict[key];
+//        service.cbService = nil;
+//        
+//        for (NSString *chKey in service.characteristicDict) {
+//            YMSCBCharacteristic *ct = service.characteristicDict[chKey];
+//            ct.cbCharacteristic = nil;
+//        }
+//    }
+//    
+//    _peripheralInterface = peripheral;
+//    peripheral.delegate = self;
+//     */
+//}
 
 
 - (nullable id)objectForKeyedSubscript:(id)key {
@@ -111,39 +118,38 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 
-- (NSArray *)services {
-    NSArray *result;
+- (NSArray<CBUUID *> *)serviceUUIDs {
+    NSArray<CBUUID *> *result;
     
-    NSMutableArray *tempArray = [[NSMutableArray alloc] init];
-    
+    NSMutableArray<CBUUID *> *tempArray = [NSMutableArray new];
+
     for (NSString *key in self.serviceDict) {
         YMSCBService *service = self.serviceDict[key];
         [tempArray addObject:service.uuid];
     }
-    
+
     result = [NSArray arrayWithArray:tempArray];
     return result;
 }
 
-- (NSArray *)servicesSubset:(NSArray *)keys {
-    NSArray *result = nil;
-    NSMutableArray *tempArray = [[NSMutableArray alloc] initWithCapacity:keys.count];
+- (NSArray<CBUUID *> *)servicesSubset:(NSArray<NSString *> *)keys {
+
+    NSArray<CBUUID *> *result = nil;
+    NSMutableArray<CBUUID *> *tempArray = [[NSMutableArray alloc] initWithCapacity:keys.count];
     
     for (NSString *key in keys) {
-        YMSCBService *btService = (YMSCBService *)self[key];
+        YMSCBService *btService = self[key];
         
         if (btService) {
             [tempArray addObject:btService.uuid];
         } else {
             NSString *message = [NSString stringWithFormat:@"WARNING: service key %@ not found in servicesSubset", key];
-            [self.logger logWarn:message object:self.cbPeripheral];
+            [self.logger logWarn:message object:_peripheralInterface];
         }
     }
     
     result = [NSArray arrayWithArray:tempArray];
     return result;
-
-    
 }
 
 - (nullable YMSCBService *)findService:(CBService *)service {
@@ -172,7 +178,7 @@ NS_ASSUME_NONNULL_BEGIN
             return;
         }
 
-        [yp discoverServices:[yp services] withBlock:^(NSArray *yservices, NSError *error) {
+        [yp discoverServices:[yp serviceUUIDs] withBlock:^(NSArray *yservices, NSError *error) {
             if (error) {
                 return;
             }
@@ -194,7 +200,7 @@ NS_ASSUME_NONNULL_BEGIN
                                 return;
                             }
                             for (YMSCBDescriptor *yd in ydescriptors) {
-                                NSLog(@"Descriptor: %@ %@ %@", thisService.name, yd.UUID, yd.cbDescriptor);
+                                NSLog(@"Descriptor: %@ %@ %@", thisService.name, yd.UUID, yd.descriptorInterface);
                             }
                         }];
                     }
@@ -239,7 +245,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)watchdogDisconnect {
     // Watchdog aware method
-    if (self.cbPeripheral.state != CBPeripheralStateConnected) {
+    if (self.state != CBPeripheralStateConnected) {
         self.watchdogRaised = YES;
         [self disconnect];
     }
@@ -247,11 +253,12 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(nullable void (^)(YMSCBPeripheral * _Nonnull yp, NSError * _Nullable error))connectCallback {
-    NSString *message = [NSString stringWithFormat:@"> connectPeripheral: %@", self.cbPeripheral];
+    NSString *message = [NSString stringWithFormat:@"> connectPeripheral: %@", _peripheralInterface];
     [self.logger logInfo:message object:self.central];
     
     self.connectCallback = connectCallback;
-    [self.central.manager connectPeripheral:self.cbPeripheral options:options];
+    
+    [self.central connectPeripheral:self options:options];
 }
 
 
@@ -260,11 +267,11 @@ NS_ASSUME_NONNULL_BEGIN
         self.connectCallback = nil;
     }
     
-    NSString *message = [NSString stringWithFormat:@"> cancelPeripheralConnection: %@", self.cbPeripheral];
+    NSString *message = [NSString stringWithFormat:@"> cancelPeripheralConnection: %@", _peripheralInterface];
     [self.logger logInfo:message object:self.central];
     
-    [self.logger logInfo:message object:self.cbPeripheral];
-    [self.central.manager cancelPeripheralConnection:self.cbPeripheral];
+    [self.logger logInfo:message object:_peripheralInterface];
+    [self.central cancelPeripheralConnection:self];
 }
 
 
@@ -288,9 +295,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)readRSSI {
     NSString *message = [NSString stringWithFormat:@"> readRSSI"];
-    [self.logger logInfo:message object:self.cbPeripheral];
+    [self.logger logInfo:message object:_peripheralInterface];
     
-    [self.cbPeripheral readRSSI];
+    [_peripheralInterface readRSSI];
 }
 
 
@@ -318,55 +325,89 @@ NS_ASSUME_NONNULL_BEGIN
     
     NSString *buf = [bufArray componentsJoinedByString:@","];
     NSString *message = [NSString stringWithFormat:@"> discoverServices: [%@]", buf];
-    [self.logger logInfo:message object:self.cbPeripheral];
+    [self.logger logInfo:message object:_peripheralInterface];
     
-    [self.cbPeripheral discoverServices:serviceUUIDs];
+    [_peripheralInterface discoverServices:serviceUUIDs];
 }
 
 - (void)syncServices:(NSArray *)services {
     for (CBService *service in services) {
         YMSCBService *btService = [self findService:service];
         if (btService) {
-            btService.cbService = service;
-            [btService syncCharacteristics:service.characteristics];
+            btService.serviceInterface = service;
+            [btService syncCharacteristics];
         }
     }
 }
 
 
-#pragma mark - CBPeripheralDelegate Methods
-/** @name CBPeripheralDelegate Methods */
+#pragma mark - YMSCBPeripheralInterfaceDelegate Methods
+/** @name YMSCBPeripheralDelegate Methods */
 /**
- CBPeripheralDelegate implementation.
+ YMSCBPeripheralDelegate implementation.
  
  @param peripheral The peripheral that the services belong to.
  @param error If an error occurred, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(nullable NSError *)error {
+
+
+- (nullable YMSCBService *)serviceForInterface:(id<YMSCBServiceInterface>)serviceInterface {
+    YMSCBService *result = nil;
+    
+    NSArray<YMSCBService *> *tempArray = [self.serviceDict allValues];
+    for (YMSCBService *yService in tempArray) {
+        if ([serviceInterface.UUID isEqual:yService.uuid]) {
+            result = yService;
+            break;
+        }
+    }
+    
+    return result;
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error {
     NSString *message = [NSString stringWithFormat:@"< didDiscoverServices:%@", error.description];
-    [self.logger logInfo:message object:self.cbPeripheral];
+    [self.logger logInfo:message object:_peripheralInterface];
     
     if (self.discoverServicesCallback) {
-        NSMutableArray *services = [NSMutableArray new];
+        NSArray<YMSCBService *> *tempArray = [self.serviceDict allValues];
+        NSMutableArray<YMSCBService *> *services = [NSMutableArray new];
         
-        @synchronized(self) {
-            for (CBService *service in peripheral.services) {
-                YMSCBService *btService = [self findService:service];
-                if (btService) {
-                    btService.cbService = service;
-                    [services addObject:btService];
+        for (id<YMSCBServiceInterface> serviceInterface in peripheralInterface.services) {
+            for (YMSCBService *yService in tempArray) {
+                if ([serviceInterface.UUID isEqual:yService.uuid]) {
+                    yService.serviceInterface = serviceInterface;
+                    [services addObject:yService];
+                    break;
                 }
             }
         }
         
         self.discoverServicesCallback(services, error);
         self.discoverServicesCallback = nil;
+
     }
     
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
-        [self.delegate peripheral:self.cbPeripheral didDiscoverServices:error];
+        [self.delegate peripheral:self didDiscoverServices:error];
     }
 }
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverCharacteristicsForService:(id<YMSCBServiceInterface>)serviceInterface error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< didDiscoverCharacteristicsForService: %@ error:%@", serviceInterface, error.description];
+    [self.logger logInfo:message object:_peripheralInterface];
+    
+    
+    YMSCBService *yService = [self serviceForInterface:serviceInterface];
+    
+    [yService syncCharacteristics];
+    [yService handleDiscoveredCharacteristicsResponse:yService.characteristicDict withError:error];
+
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
+        [self.delegate peripheral:self didDiscoverCharacteristicsForService:yService error:error];
+    }
+}
+
 
 /**
  CBPeripheralDelegate implementation.  Not yet supported.
@@ -375,37 +416,16 @@ NS_ASSUME_NONNULL_BEGIN
  @param service The CBService object containing the included service.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(nullable NSError *)error {
-    // TBD
-    NSString *message = [NSString stringWithFormat:@"< didDiscoverIncludedServicesForService: %@ error:%@", service, error.description];
-    [self.logger logInfo:message object:self.cbPeripheral];
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverIncludedServicesForService:error:)]) {
-        [self.delegate peripheral:peripheral didDiscoverIncludedServicesForService:service error:error];
-    }
-}
+//- (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(nullable NSError *)error {
+//    // TBD
+//    NSString *message = [NSString stringWithFormat:@"< didDiscoverIncludedServicesForService: %@ error:%@", service, error.description];
+//    [self.logger logInfo:message object:_peripheralInterface];
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverIncludedServicesForService:error:)]) {
+//        //[self.delegate peripheral:peripheral didDiscoverIncludedServicesForService:service error:error];
+//    }
+//}
 
-/**
- CBPeripheralDelegate implementation.
- 
- @param peripheral The peripheral providing this information.
- @param service The service that the characteristics belong to.
- @param error If an error occured, the cause of the failure.
- */
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didDiscoverCharacteristicsForService: %@ error:%@", service, error.description];
-    [self.logger logInfo:message object:self.cbPeripheral];
-    
-    YMSCBService *btService = [self findService:service];
-    
-    [btService syncCharacteristics:service.characteristics];
-    [btService handleDiscoveredCharacteristicsResponse:btService.characteristicDict withError:error];
-    
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
-        [self.delegate peripheral:self.cbPeripheral didDiscoverCharacteristicsForService:btService.cbService error:error];
-    }
-}
 
 
 /**
@@ -415,20 +435,20 @@ NS_ASSUME_NONNULL_BEGIN
  @param characteristic The characteristic that the characteristic descriptors belong to.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-     NSString *message = [NSString stringWithFormat:@"< didDiscoverDescriptorsForCharacteristic: %@ error:%@", characteristic, error.description];
-    [self.logger logInfo:message object:self.cbPeripheral];
-    
-    YMSCBService *btService = [self findService:characteristic.service];
-    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
-    
-    [ct syncDescriptors:characteristic.descriptors];
-    [ct handleDiscoveredDescriptorsResponse:ct.descriptors withError:error];
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverDescriptorsForCharacteristic:error:)]) {
-        [self.delegate peripheral:self.cbPeripheral didDiscoverDescriptorsForCharacteristic:ct.cbCharacteristic error:error];
-    }
-}
+//- (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
+//     NSString *message = [NSString stringWithFormat:@"< didDiscoverDescriptorsForCharacteristic: %@ error:%@", characteristic, error.description];
+//    [self.logger logInfo:message object:_peripheralInterface];
+//    
+//    YMSCBService *btService = [self findService:characteristic.service];
+//    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
+//    
+//    [ct syncDescriptors:characteristic.descriptors];
+//    [ct handleDiscoveredDescriptorsResponse:ct.descriptors withError:error];
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverDescriptorsForCharacteristic:error:)]) {
+////        [self.delegate peripheral:_peripheralInterface didDiscoverDescriptorsForCharacteristic:ct.cbCharacteristic error:error];
+//    }
+//}
 
 
 /**
@@ -438,48 +458,48 @@ NS_ASSUME_NONNULL_BEGIN
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristic, error];
-    [self.logger logInfo:message object:self.cbPeripheral];
-    
-    if (!self.valueValid) {
-        self.valueValid = YES;
-    }
-    
-    YMSCBService *btService = [self findService:characteristic.service];
-    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
-    
-    if (ct.readCallbacks && (ct.readCallbacks.count > 0)) {
-        self.lastValue = characteristic.value;
-        [ct executeReadCallback:characteristic.value error:error];
-        
-        if (ct.cbCharacteristic.isNotifying) {
-            //message = [NSString stringWithFormat:@"WARNING: Read callback called for notifying characteristic %@", characteristic];
-            //[localFileManager log:message peripheral:peripheral];
-        }
-    } else {
-        if (ct.cbCharacteristic.isNotifying) {
-            BOOL runNotificationCallback = NO;
-            
-            if (self.valueValid && (!self.lastValue || ![self.lastValue isEqualToData:characteristic.value])) {
-                runNotificationCallback = YES;
-            }
-
-            if (runNotificationCallback && ct.notificationCallback) {
-                ct.notificationCallback(characteristic.value, error);
-            } else {
-                //message = [NSString stringWithFormat:@"WARNING: No notification callback defined for %@", characteristic];
-                //[localFileManager log:message peripheral:peripheral];
-            }
-
-        }
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
-        [self.delegate peripheral:self.cbPeripheral didUpdateValueForCharacteristic:ct.cbCharacteristic error:error];
-    }
-}
-
+//- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
+//    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristic, error];
+//    [self.logger logInfo:message object:_peripheralInterface];
+//    
+//    if (!self.valueValid) {
+//        self.valueValid = YES;
+//    }
+//    
+//    YMSCBService *btService = [self findService:characteristic.service];
+//    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
+//    
+//    if (ct.readCallbacks && (ct.readCallbacks.count > 0)) {
+//        self.lastValue = characteristic.value;
+//        [ct executeReadCallback:characteristic.value error:error];
+//        
+//        if (ct.cbCharacteristic.isNotifying) {
+//            //message = [NSString stringWithFormat:@"WARNING: Read callback called for notifying characteristic %@", characteristic];
+//            //[localFileManager log:message peripheral:peripheral];
+//        }
+//    } else {
+//        if (ct.cbCharacteristic.isNotifying) {
+//            BOOL runNotificationCallback = NO;
+//            
+//            if (self.valueValid && (!self.lastValue || ![self.lastValue isEqualToData:characteristic.value])) {
+//                runNotificationCallback = YES;
+//            }
+//
+//            if (runNotificationCallback && ct.notificationCallback) {
+//                ct.notificationCallback(characteristic.value, error);
+//            } else {
+//                //message = [NSString stringWithFormat:@"WARNING: No notification callback defined for %@", characteristic];
+//                //[localFileManager log:message peripheral:peripheral];
+//            }
+//
+//        }
+//    }
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
+////        [self.delegate peripheral:_peripheralInterface didUpdateValueForCharacteristic:ct.cbCharacteristic error:error];
+//    }
+//}
+//
 
 /**
  CBPeripheralDelegate implementation. Not yet supported.
@@ -488,16 +508,16 @@ NS_ASSUME_NONNULL_BEGIN
  @param descriptor The characteristic descriptor whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForDescriptor:%@ error:%@", descriptor, error.description];
-    [self.logger logInfo:message object:self.cbPeripheral];
-    
-    // TBD
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForDescriptor:error:)]) {
-        [self.delegate peripheral:self.cbPeripheral didUpdateValueForDescriptor:descriptor error:error];
-    }
-}
+//- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
+//    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForDescriptor:%@ error:%@", descriptor, error.description];
+//    [self.logger logInfo:message object:_peripheralInterface];
+//    
+//    // TBD
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForDescriptor:error:)]) {
+////        [self.delegate peripheral:_peripheralInterface didUpdateValueForDescriptor:descriptor error:error];
+//    }
+//}
 
 /**
  CBPeripheralDelegate implementation. Not yet supported.
@@ -506,23 +526,23 @@ NS_ASSUME_NONNULL_BEGIN
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristic, error.description];
-    [self.logger logInfo:message object:self.cbPeripheral];
-    
-    YMSCBService *btService = [self findService:characteristic.service];
-    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
-    
-    [ct executeNotificationStateCallback:error];
-    
-    if (!characteristic.isNotifying) {
-        ct.notificationCallback = nil;
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateNotificationStateForCharacteristic:error:)]) {
-        [self.delegate peripheral:self.cbPeripheral didUpdateNotificationStateForCharacteristic:ct.cbCharacteristic error:error];
-    }
-}
+//- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
+//    NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristic, error.description];
+//    [self.logger logInfo:message object:_peripheralInterface];
+//    
+//    YMSCBService *btService = [self findService:characteristic.service];
+//    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
+//    
+//    [ct executeNotificationStateCallback:error];
+//    
+//    if (!characteristic.isNotifying) {
+//        ct.notificationCallback = nil;
+//    }
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateNotificationStateForCharacteristic:error:)]) {
+////        [self.delegate peripheral:_peripheralInterface didUpdateNotificationStateForCharacteristic:ct.cbCharacteristic error:error];
+//    }
+//}
 
 
 /**
@@ -532,24 +552,24 @@ NS_ASSUME_NONNULL_BEGIN
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristic, error.description];
-    [self.logger logInfo:message object:self.cbPeripheral];
-
-    YMSCBService *btService = [self findService:characteristic.service];
-    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
-    
-    if (ct.writeCallbacks && (ct.writeCallbacks.count > 0)) {
-        [ct executeWriteCallback:error];
-    } else {
-        //message = [NSString stringWithFormat:@"No write callback in didWriteValueForCharacteristic:%@ for peripheral %@", characteristic, peripheral];
-        //TILAssert(NO, message);
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
-        [self.delegate peripheral:self.cbPeripheral didWriteValueForCharacteristic:ct.cbCharacteristic error:error];
-    }
-}
+//- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
+//    NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristic, error.description];
+//    [self.logger logInfo:message object:_peripheralInterface];
+//
+//    YMSCBService *btService = [self findService:characteristic.service];
+//    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
+//    
+//    if (ct.writeCallbacks && (ct.writeCallbacks.count > 0)) {
+//        [ct executeWriteCallback:error];
+//    } else {
+//        //message = [NSString stringWithFormat:@"No write callback in didWriteValueForCharacteristic:%@ for peripheral %@", characteristic, peripheral];
+//        //TILAssert(NO, message);
+//    }
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
+//       // [self.delegate peripheral:_peripheralInterface didWriteValueForCharacteristic:ct.cbCharacteristic error:error];
+//    }
+//}
 
 
 /**
@@ -559,27 +579,27 @@ NS_ASSUME_NONNULL_BEGIN
  @param descriptor The characteristic descriptor whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didWriteValueForDescriptor: %@ error:%@", descriptor, error.description];
-    [self.logger logInfo:message object:self.cbPeripheral];
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForDescriptor:error:)]) {
-        [self.delegate peripheral:self.cbPeripheral didWriteValueForDescriptor:descriptor error:error];
-    }
-}
+//- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
+//    NSString *message = [NSString stringWithFormat:@"< didWriteValueForDescriptor: %@ error:%@", descriptor, error.description];
+//    [self.logger logInfo:message object:_peripheralInterface];
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForDescriptor:error:)]) {
+//       // [self.delegate peripheral:_peripheralInterface didWriteValueForDescriptor:descriptor error:error];
+//    }
+//}
 
 
 
 #if TARGET_OS_IPHONE
 
-- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< peripheral: %@ didReadRSSI: %@ error:%@", self.cbPeripheral, RSSI, error];
-    [self.logger logInfo:message object:nil];
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
-        [self.delegate peripheral:peripheral didReadRSSI:RSSI error:error];
-    }
-}
+//- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
+//    NSString *message = [NSString stringWithFormat:@"< peripheral: %@ didReadRSSI: %@ error:%@", _peripheralInterface, RSSI, error];
+//    [self.logger logInfo:message object:nil];
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
+//     //   [self.delegate peripheral:peripheral didReadRSSI:RSSI error:error];
+//    }
+//}
 
 #else
 
@@ -589,15 +609,15 @@ NS_ASSUME_NONNULL_BEGIN
  @param peripheral The peripheral providing this information.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(nullable NSError *)error {
-    
-    NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateRSSI: %@ error:%@", self.cbPeripheral, error.description];
-    [self.logger logInfo:message object:nil];
-    
-    if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateRSSI:error:)]) {
-        [self.delegate peripheralDidUpdateRSSI:peripheral error:error];
-    }
-}
+//- (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(nullable NSError *)error {
+//    
+//    NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateRSSI: %@ error:%@", _peripheralInterface, error.description];
+//    [self.logger logInfo:message object:nil];
+//    
+//    if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateRSSI:error:)]) {
+//      //  [self.delegate peripheralDidUpdateRSSI:peripheral error:error];
+//    }
+//}
 
 
 #endif
@@ -612,11 +632,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param peripheral The peripheral providing this information.
  */
 - (void)peripheralDidUpdateName:(CBPeripheral *)peripheral {
-    NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateName: %@", self.cbPeripheral];
+    NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateName: %@", _peripheralInterface];
     [self.logger logInfo:message object:nil];
     
     if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateName:)]) {
-        [self.delegate peripheralDidUpdateName:self.cbPeripheral];
+        //[self.delegate peripheralDidUpdateName:_peripheralInterface];
     }
 }
 
@@ -648,10 +668,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)peripheral:(CBPeripheral *)peripheral didModifyServices:(NSArray *)invalidatedServices {
     NSString *message = [NSString stringWithFormat:@"< didModifyServices: %@", invalidatedServices];
-    [self.logger logInfo:message object:self.cbPeripheral];
+    [self.logger logInfo:message object:_peripheralInterface];
 
     if ([self.delegate respondsToSelector:@selector(peripheral:didModifyServices:)]) {
-        [self.delegate peripheral:self.cbPeripheral didModifyServices:invalidatedServices];
+     //   [self.delegate peripheral:_peripheralInterface didModifyServices:invalidatedServices];
     }
 }
 

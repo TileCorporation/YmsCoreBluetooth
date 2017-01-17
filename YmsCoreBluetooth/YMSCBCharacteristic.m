@@ -50,28 +50,28 @@
         self.notificationStateCallback = notifyStateCallback;
     }
     
-    if (!self.cbCharacteristic && notifyStateCallback) {
+    if (!self.characteristicInterface && notifyStateCallback) {
         notifyStateCallback([self nilCBCharacteristicError:NSLocalizedString(@"Diagnose in setNotifyValue:withStateChangeBlock:withNotificationBlock:", nil)]);
         return;
     }
     
     if (notificationCallback) {
         if (!notifyValue) {
-            NSString *message = [NSString stringWithFormat:@"Attempt to unsubscribe from %@ with a notificationCallback defined", self.cbCharacteristic];
-            [self.logger logWarn:message object:self.parent.cbPeripheral];
+            NSString *message = [NSString stringWithFormat:@"Attempt to unsubscribe from %@ with a notificationCallback defined", self.characteristicInterface];
+            [self.logger logWarn:message object:self.parent];
             self.notificationCallback = nil;
         } else {
             self.notificationCallback = notificationCallback;
         }
     }
     
-    NSString *message = [NSString stringWithFormat:@"> setNotifyValue:%@ forCharacteristic:%@", @(notifyValue), self.cbCharacteristic];
+    NSString *message = [NSString stringWithFormat:@"> setNotifyValue:%@ forCharacteristic:%@", @(notifyValue), self.characteristicInterface];
     if (self.logEnabled) {
-        [self.logger logInfo:message object:self.parent.cbPeripheral];
+        [self.logger logInfo:message object:self.parent];
     }
-    [self.parent.cbPeripheral setNotifyValue:notifyValue forCharacteristic:self.cbCharacteristic];
+    
+    [self.parent.peripheralInterface setNotifyValue:notifyValue forCharacteristic:self.characteristicInterface];
 }
-
 
 
 - (void)executeNotificationStateCallback:(NSError *)error {
@@ -91,17 +91,17 @@
 - (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *))writeCallback {
     NSString *message = nil;
     
-    //TILAssert(data != nil, @"ERROR: call to writeValue with nil data to %@", self.cbCharacteristic);
+    //TILAssert(data != nil, @"ERROR: call to writeValue with nil data to %@", self.characteristicInterface);
     
     if (writeCallback) {
-        if (!self.cbCharacteristic) {
+        if (!self.characteristicInterface) {
             writeCallback([self nilCBCharacteristicError:NSLocalizedString(@"Diagnose write with response in writeValue:withBlock:", nil)]);
             return;
         }
         
         if (!data) {
             NSString *description = NSLocalizedString(@"Attempt to write nil to CBCharacteristic", nil);
-            NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"Illegal to write nil to %@", nil), self.cbCharacteristic];
+            NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"Illegal to write nil to %@", nil), self.characteristicInterface];
             NSString *recoverySuggestion = NSLocalizedString(@"Troubleshoot at once.", nil);
             
             NSDictionary *userInfo = @{ NSLocalizedDescriptionKey: description,
@@ -112,37 +112,35 @@
                                                  code:1
                                              userInfo:userInfo];
             writeCallback(error);
-            message = [NSString stringWithFormat:@"ERROR: call to writeValue with nil data to %@", self.cbCharacteristic];
+            message = [NSString stringWithFormat:@"ERROR: call to writeValue with nil data to %@", self.characteristicInterface];
             
         } else {
             [self.writeCallbacks push:[writeCallback copy]];
-            message = [NSString stringWithFormat:@"> writeValue:%@ forCharacteristic:%@ type:CBCharacteristicWriteWithResponse", data, self.cbCharacteristic];
-            [self.parent.cbPeripheral writeValue:data
-                               forCharacteristic:self.cbCharacteristic
-                                            type:CBCharacteristicWriteWithResponse];
+            message = [NSString stringWithFormat:@"> writeValue:%@ forCharacteristic:%@ type:CBCharacteristicWriteWithResponse", data, self.characteristicInterface];
+            [self.parent.peripheralInterface writeValue:data
+                                      forCharacteristic:self.characteristicInterface
+                                                   type:CBCharacteristicWriteWithResponse];
+            
         }
     } else {
-        if (!self.cbCharacteristic) {
+        if (!self.characteristicInterface) {
             NSString *message = [NSString stringWithFormat:@"ERROR: %@", [self nilCBCharacteristicError:NSLocalizedString(@"Diagnose write without response in writeValue:withBlock:", nil)]];
-            
-            [self.logger logError:message object:self.parent.cbPeripheral];
+            [self.logger logError:message object:self.parent];
             return;
         }
         
         if (!data) {
-            message = [NSString stringWithFormat:@"ERROR: call to writeValue with nil data to %@", self.cbCharacteristic];
+            message = [NSString stringWithFormat:@"ERROR: call to writeValue with nil data to %@", self.characteristicInterface];
         } else {
-            message = [NSString stringWithFormat:@"> writeValue:%@ forCharacteristic:%@ type:CBCharacteristicWriteWithoutResponse", data, self.cbCharacteristic];
-            [self.parent.cbPeripheral writeValue:data
-                               forCharacteristic:self.cbCharacteristic
-                                            type:CBCharacteristicWriteWithoutResponse];
+            message = [NSString stringWithFormat:@"> writeValue:%@ forCharacteristic:%@ type:CBCharacteristicWriteWithoutResponse", data, self.characteristicInterface];
+            [self.parent.peripheralInterface writeValue:data
+                                      forCharacteristic:self.characteristicInterface
+                                                   type:CBCharacteristicWriteWithoutResponse];
         }
     }
     if (self.logEnabled) {
-        [self.logger logInfo:message object:self.parent.cbPeripheral];
+        [self.logger logInfo:message object:self.parent];
     }
-
-    
 }
 
 - (void)writeByte:(int8_t)val withBlock:(void (^)(NSError *))writeCallback {
@@ -153,18 +151,19 @@
 
 - (void)readValueWithBlock:(void (^)(NSData *, NSError *))readCallback {
     
-    if (!self.cbCharacteristic && readCallback) {
+    if (!self.characteristicInterface && readCallback) {
         readCallback(nil, [self nilCBCharacteristicError:NSLocalizedString(@"Diagnose in readValueWithBlock:", nil)]);
         return;
     }
     
     [self.readCallbacks push:[readCallback copy]];
     
-    NSString *message = [NSString stringWithFormat:@"> readValueForCharacteristic:%@", self.cbCharacteristic];
+    NSString *message = [NSString stringWithFormat:@"> readValueForCharacteristic:%@", self.characteristicInterface];
     if (self.logEnabled) {
-        [self.logger logInfo:message object:self.parent.cbPeripheral];
+        [self.logger logInfo:message object:self.parent];
     }
-    [self.parent.cbPeripheral readValueForCharacteristic:self.cbCharacteristic];
+    
+    [self.parent.peripheralInterface readValueForCharacteristic:self.characteristicInterface];
 }
 
 
@@ -179,12 +178,12 @@
 }
 
 - (void)discoverDescriptorsWithBlock:(void (^)(NSArray *, NSError *))callback {
-    if (self.cbCharacteristic) {
+    if (self.characteristicInterface) {
         self.discoverDescriptorsCallback = callback;
     
-        [self.parent.cbPeripheral discoverDescriptorsForCharacteristic:self.cbCharacteristic];
+    //    [self.parent.cbPeripheral discoverDescriptorsForCharacteristic:self.characteristicInterface];
     } else {
-        NSLog(@"WARNING: Attempt to discover descriptors with null cbCharacteristic: '%@' for %@", self.name, self.uuid);
+     //   NSLog(@"WARNING: Attempt to discover descriptors with null characteristicInterface: '%@' for %@", self.name, self.uuid);
     }
 }
 
@@ -206,7 +205,7 @@
     
     for (CBDescriptor *cbDescriptor in foundDescriptors) {
         YMSCBDescriptor *yd = [YMSCBDescriptor new];
-        yd.cbDescriptor = cbDescriptor;
+    //    yd.cbDescriptor = cbDescriptor;
         [tempList addObject:yd];
     }
     
@@ -217,7 +216,7 @@
 - (void)reset {
     [self.writeCallbacks removeAllObjects];
     [self.readCallbacks removeAllObjects];
-    self.cbCharacteristic = nil;
+    self.characteristicInterface = nil;
     self.notificationCallback = nil;
     self.notificationStateCallback = nil;
     self.discoverDescriptorsCallback = nil;
@@ -227,7 +226,7 @@
 
 - (NSError *)nilCBCharacteristicError:(NSString *)recovery {
     NSString *description = [NSString stringWithFormat:NSLocalizedString(@"CBCharacteristic is nil", nil)];
-    NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"Attempt to invoke operation on nil CBCharacteristic: %@ (%@) on %@", nil), self.name, self.uuid, self.parent.cbPeripheral];
+    NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"Attempt to invoke operation on nil CBCharacteristic: %@ (%@) on %@", nil), self.name, self.uuid, self.parent];
     
     NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: description,

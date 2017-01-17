@@ -26,7 +26,6 @@
 
 @implementation YMSCBService
 
-
 - (instancetype)initWithName:(NSString *)oName
                       parent:(YMSCBPeripheral *)pObj
                       baseHi:(int64_t)hi
@@ -77,6 +76,8 @@
         } else {
             _uuid = [YMSCBUtils createCBUUID:&_base withIntBLEOffset:serviceOffset];
         }
+        
+        _logger = _parent.logger;
     }
     return self;
 }
@@ -166,15 +167,16 @@
 }
 
 
-- (void)syncCharacteristics:(NSArray *)foundCharacteristics {
-    @synchronized(self) {
-        for (NSString *key in self.characteristicDict) {
-            YMSCBCharacteristic *yc = self.characteristicDict[key];
-            for (CBCharacteristic *ct in foundCharacteristics) {
-                if ([yc.uuid isEqual:ct.UUID]) {
-                    yc.cbCharacteristic = ct;
-                    break;
-                }
+- (void)syncCharacteristics {
+    // @synchronized(self)
+    NSArray<id<YMSCBCharacteristicInterface>> *ctInterfaces = [self.serviceInterface characteristics];
+    NSArray<YMSCBCharacteristic *> *localCharacteristics = [self.characteristicDict allValues];
+    
+    for (id<YMSCBCharacteristicInterface> ctInterface in ctInterfaces) {
+        for (YMSCBCharacteristic *ct in localCharacteristics) {
+            if ([ctInterface.UUID isEqual:ct.uuid]) {
+                ct.cbCharacteristic = ctInterface;
+                break;
             }
         }
     }
@@ -217,11 +219,12 @@
     }];
     NSString *buf = [bufArray componentsJoinedByString:@","];
     
-    NSString *message = [NSString stringWithFormat:@"> discoverCharacteristics:%@ forService: %@", buf, self.cbService];
-    [self.logger logInfo:message object:self.parent.cbPeripheral];
+    NSString *message = [NSString stringWithFormat:@"> discoverCharacteristics:%@ forService: %@", buf, self.serviceInterface];
+    [self.logger logInfo:message object:self.parent.peripheralInterface];
     
-    [self.parent.cbPeripheral discoverCharacteristics:characteristicUUIDs
-                                           forService:self.cbService];
+    
+    [self.parent.peripheralInterface discoverCharacteristics:characteristicUUIDs
+                                                  forService:self.serviceInterface];
 
 }
 
@@ -239,7 +242,7 @@
 }
 
 - (void)reset {
-    self.cbService = nil;
+    self.serviceInterface = nil;
     self.isEnabled = NO;
     self.isOn = NO;
     

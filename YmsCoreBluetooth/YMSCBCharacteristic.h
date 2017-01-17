@@ -25,21 +25,25 @@ NS_ASSUME_NONNULL_BEGIN
 @class YMSCBPeripheral;
 @class YMSCBService;
 
+@protocol YMSCBServiceInterface;
+@protocol YMSCBDescriptorInterface;
+@protocol YMSCBPeripheralInterface;
+
 @protocol YMSCBCharacteristicInterface
 
-@property(assign, readonly, nonatomic) CBService *service;
+@property(assign, readonly, nonatomic) id<YMSCBServiceInterface>service;
 @property(readonly, nonatomic) CBUUID *UUID;
 
 @property(readonly, nonatomic) CBCharacteristicProperties properties;
 @property(retain, readonly, nullable) NSData *value;
-@property(retain, readonly, nullable) NSArray<CBDescriptor *> *descriptors;
+@property(retain, readonly, nullable) NSArray<id<YMSCBDescriptorInterface>> *descriptors;
 @property(readonly) BOOL isBroadcasted;
 @property(readonly) BOOL isNotifying;
 
 @end
 
 
-
+// TODO: define generics
 typedef void (^YMSCBDiscoverDescriptorsCallbackBlockType)(NSArray * _Nullable, NSError * _Nullable);
 
 typedef void (^YMSCBReadCallbackBlockType)(NSData * _Nullable, NSError * _Nullable);
@@ -65,7 +69,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
 @property (atomic, strong) CBUUID *uuid;
 
 /// Pointer to actual CBCharacterisic.
-@property (atomic, strong, nullable) CBCharacteristic *cbCharacteristic;
+@property (atomic, strong, nullable) id<YMSCBCharacteristicInterface> characteristicInterface;
 
 /// Pointer to parent peripheral.
 @property (nonatomic, weak) YMSCBPeripheral *parent;
@@ -73,6 +77,8 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
 /// Absolute address value. May turn into an offset value if base address is supported in the future for this class.
 @property (atomic, strong) NSNumber *offset;
 
+
+// TODO: define generics
 /// Holds instances of YMSCBDescriptor
 @property (atomic, strong) NSArray *descriptors;
 
@@ -93,6 +99,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  
  Each element is a block of type YMSCBReadCallbackBlockType.
  */
+// TODO: define generics
 @property (atomic, strong) NSMutableArray *readCallbacks;
 
 /**
@@ -100,6 +107,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  
  Each element is a block of type YMSCBWriteCallbackBlockType.
  */
+// TODO: define generics
 @property (atomic, strong) NSMutableArray *writeCallbacks;
 
 @property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
@@ -145,6 +153,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  @param oUUID characteristic CBUUID
  @param addrOffset characteristic absolute address (it's not really an offset)
  */
+// TODO: add id<YMSCBCharacteristicInterface> parameter
 - (instancetype)initWithName:(NSString *)oName parent:(YMSCBPeripheral *)pObj uuid:(CBUUID *)oUUID offset:(int)addrOffset;
 
 

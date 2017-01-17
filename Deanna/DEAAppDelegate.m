@@ -22,6 +22,10 @@
 #import "DEACentralManager.h"
 #import "DEATheme.h"
 
+@interface DEAAppDelegate() <YMSCBCentralManagerDelegate>
+
+@end
+
 
 @implementation DEAAppDelegate
 
@@ -79,6 +83,34 @@
 
 - (void)initializeAppearance {
     [DEATheme customizeApplication];
+}
+
+- (void)centralManagerDidUpdateState:(YMSCBCentralManager *)yCentral {
+    
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        switch (yCentral.state) {
+            case CBCentralManagerStatePoweredOn:
+                break;
+            case CBCentralManagerStatePoweredOff:
+                break;
+                
+            case CBCentralManagerStateUnsupported: {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Dang."
+                                                                message:@"Unfortunately this device can not talk to Bluetooth Smart (Low Energy) Devices"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"Dismiss"
+                                                      otherButtonTitles:nil];
+                
+                [alert show];
+                break;
+            }
+                
+                
+            default:
+                break;
+        }
+    });
+
 }
 
 @end

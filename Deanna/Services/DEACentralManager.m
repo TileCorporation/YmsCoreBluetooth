@@ -21,7 +21,7 @@
 #import "DEASensorTag.h"
 #include "TISensorTag.h"
 #import "YMSCBLogger.h"
-
+#import "YMSCBPeripheral.h"
 
 #define CALLBACK_EXAMPLE 1
 
@@ -78,13 +78,8 @@ static DEACentralManager *sharedCentralManager;
     __weak typeof(self) this = self;
     BOOL result = [self scanForPeripheralsWithServices:nil
                                  options:options
-                               withBlock:^(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError *error) {
+                               withBlock:^(YMSCBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
                                    __strong typeof (this) strongThis = this;
-                                   
-                                   if (error) {
-                                       NSLog(@"Something bad happened with scanForPeripheralWithServices:options:withBlock:");
-                                       return;
-                                   }
                                    
                                    //NSLog(@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI);
                                    NSString *message = [NSString stringWithFormat:@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI];
@@ -93,16 +88,15 @@ static DEACentralManager *sharedCentralManager;
                                        [strongThis.logger logInfo:message object:nil];
                                    }
                                    
-                                   
                                }
      
-                              withFilter:^BOOL(CBPeripheral * _Nonnull peripheral, NSDictionary * _Nonnull advertisementData, NSNumber * _Nonnull RSSI) {
+                              withFilter:^BOOL(NSString *name, NSDictionary * _Nonnull advertisementData, NSNumber * _Nonnull RSSI) {
                                   
                                   BOOL result = NO;
-                                  if (peripheral.name &&
+                                  if (name &&
                                       (RSSI.integerValue < 0) &&
                                       (RSSI.integerValue > -55) &&
-                                      [peripheral.name containsString:@"Sensor"]
+                                      [name containsString:@"Sensor"]
                                       ) {
                                       result = YES;
                                   }
@@ -115,32 +109,23 @@ static DEACentralManager *sharedCentralManager;
     return result;
 }
 
-- (void)handleFoundPeripheral:(CBPeripheral *)peripheral {
-    YMSCBPeripheral *yp = [self findPeripheral:peripheral];
+- (nullable YMSCBPeripheral *)ymsPeripheralWithInterface:(id<YMSCBPeripheralInterface>)peripheralInterface {
+    YMSCBPeripheral *result = nil;
     
-    if (yp == nil) {
+    if ([peripheralInterface.name containsString:@"Sensor"] && peripheralInterface.identifier) {
+        DEASensorTag *sensorTag = [[DEASensorTag alloc] initWithPeripheral:peripheralInterface
+                                                                   central:self
+                                                                    baseHi:kSensorTag_BASE_ADDRESS_HI
+                                                                    baseLo:kSensorTag_BASE_ADDRESS_LO];
         
-        if ([peripheral.name containsString:@"Sensor"] && peripheral.identifier) {
-            DEASensorTag *sensorTag = [[DEASensorTag alloc] initWithPeripheral:peripheral
-                                                                       central:self
-                                                                        baseHi:kSensorTag_BASE_ADDRESS_HI
-                                                                        baseLo:kSensorTag_BASE_ADDRESS_LO];
-            
-            [self addPeripheral:sensorTag];
-        } else {
-//            if (self.ymsPeripherals.count < 25) {
-//                yp = [[YMSCBPeripheral alloc] initWithPeripheral:peripheral central:self baseHi:0 baseLo:0];
-//                [self addPeripheral:yp];
-//            }
-        }
-
+        result = sensorTag;
     }
+    return result;
 }
 
 - (NSArray *)peripherals {
     NSArray *result = nil;
 
-    
     NSArray *sortedKeys = [[self.ymsPeripherals allKeys] sortedArrayUsingSelector: @selector(compare:)];
     NSMutableArray *sortedValues = [NSMutableArray array];
     for (NSString *key in sortedKeys)
@@ -155,6 +140,7 @@ static DEACentralManager *sharedCentralManager;
     result = [[self peripherals] objectAtIndex:index];
     return result;
 }
+
 
 
 - (void)managerPoweredOnHandler {

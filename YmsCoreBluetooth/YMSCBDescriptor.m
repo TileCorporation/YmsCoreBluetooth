@@ -25,8 +25,8 @@
 
 - (CBUUID *)UUID {
     CBUUID *result = nil;
-    if (self.cbDescriptor) {
-        result = self.cbDescriptor.UUID;
+    if (self.descriptorInterface) {
+        result = self.descriptorInterface.UUID;
     }
 
     return result;
@@ -35,8 +35,8 @@
 - (id)value {
     id result = nil;
     
-    if (self.cbDescriptor) {
-        result = self.cbDescriptor.value;
+    if (self.descriptorInterface) {
+        result = self.descriptorInterface.value;
     }
     
     return result;

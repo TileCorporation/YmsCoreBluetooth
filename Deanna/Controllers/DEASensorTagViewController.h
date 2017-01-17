@@ -18,6 +18,7 @@
 
 
 #import "DEABaseViewController.h"
+#import "YMSCBPeripheral.h"
 @class DEASensorTag;
 @class DEATemperatureViewCell;
 @class DEAAccelerometerViewCell;
@@ -31,7 +32,7 @@
 /**
  ViewController for TI SensorTag peripheral.
  */
-@interface DEASensorTagViewController : DEABaseViewController <UITableViewDelegate, UITableViewDataSource, CBPeripheralDelegate>
+@interface DEASensorTagViewController : DEABaseViewController <UITableViewDelegate, UITableViewDataSource, YMSCBPeripheralDelegate>
 
 /** @name Properties */
 /// Array of names of service cells.

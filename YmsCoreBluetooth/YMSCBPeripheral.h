@@ -18,7 +18,7 @@
 
 @import Foundation;
 @import CoreBluetooth;
-#include "YMSCBUtils.h"
+#import "YMSCBUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,79 +27,119 @@ NS_ASSUME_NONNULL_BEGIN
 @class YMSCBService;
 @class YMSCBCharacteristic;
 @class YMSCBDescriptor;
+@protocol YMSCBCentralManagerInterface;
+@protocol YMSCBPeripheralInterface;
+@protocol YMSCBPeripheralInterfaceDelegate;
+@protocol YMSCBPeripheralDelegate;
+@protocol YMSCBServiceInterface;
+@protocol YMSCBCharacteristicInterface;
+@protocol YMSCBDescriptorInterface;
 
 typedef void (^YMSCBPeripheralConnectCallbackBlockType)(YMSCBPeripheral *, NSError * _Nullable);
 typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _Nullable);
 
-@protocol YMSCBPeripheralInterface
+// ------------------------------------------------------------------------
 
-@property(assign, nonatomic, nullable) id<CBPeripheralDelegate> delegate;
+@protocol YMSCBPeripheralInterface <NSObject>
+
+@property(assign, nonatomic, nullable) id<YMSCBPeripheralInterfaceDelegate> delegate;
 
 @property(retain, readonly, nullable) NSString *name;
 
 @property(readonly, nonatomic) NSUUID *identifier;
 
-@property(retain, readonly, nullable) NSNumber *RSSI;
-
 @property(readonly) CBPeripheralState state;
 
-@property(retain, readonly, nullable) NSArray<CBService *> *services;
+@property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *services;
 
 - (void)readRSSI;
 
 - (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs;
 
-- (void)discoverIncludedServices:(nullable NSArray<CBUUID *> *)includedServiceUUIDs forService:(CBService *)service;
+- (void)discoverIncludedServices:(nullable NSArray<CBUUID *> *)includedServiceUUIDs forService:(id<YMSCBServiceInterface>)yService;
 
-- (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(CBService *)service;
+- (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)yService;
 
-- (void)readValueForCharacteristic:(CBCharacteristic *)characteristic;
+- (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic;
 
-- (NSUInteger)maximumWriteValueLengthForType:(CBCharacteristicWriteType)type NS_AVAILABLE(NA, 9_0);
+- (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic type:(CBCharacteristicWriteType)type;
 
-- (void)writeValue:(NSData *)data forCharacteristic:(CBCharacteristic *)characteristic type:(CBCharacteristicWriteType)type;
+- (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic;
 
-- (void)setNotifyValue:(BOOL)enabled forCharacteristic:(CBCharacteristic *)characteristic;
+- (void)discoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic;
 
-- (void)discoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic;
+- (void)readValueForDescriptor:(id<YMSCBDescriptorInterface>)yDescriptor;
 
-- (void)readValueForDescriptor:(CBDescriptor *)descriptor;
-
-- (void)writeValue:(NSData *)data forDescriptor:(CBDescriptor *)descriptor;
+- (void)writeValue:(NSData *)data forDescriptor:(id<YMSCBDescriptorInterface>)yDescriptor;
 
 @end
 
-@protocol YMSCBPeripheralDelegate
+// ------------------------------------------------------------------------
+
+@protocol YMSCBPeripheralInterfaceDelegate <NSObject>
 
 @optional
 
-- (void)peripheralDidUpdateName:(YMSCBPeripheral *)peripheral;
+- (void)peripheralDidUpdateName:(id<YMSCBPeripheralInterface>)peripheralInterface;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didModifyServices:(NSArray<YMSCBService *> *)invalidatedServices;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didModifyServices:(NSArray<id<YMSCBServiceInterface>> *)invalidatedServices;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didDiscoverServices:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didDiscoverIncludedServicesForService:(YMSCBService *)service error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverIncludedServicesForService:(id<YMSCBServiceInterface>)serviceInterface error:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didDiscoverCharacteristicsForService:(YMSCBService *)service error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverCharacteristicsForService:(id<YMSCBServiceInterface>)serviceInterface error:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didUpdateValueForCharacteristic:(YMSCBCharacteristic *)characteristic error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didWriteValueForCharacteristic:(YMSCBCharacteristic *)characteristic error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(YMSCBCharacteristic *)characteristic error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateNotificationStateForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(YMSCBCharacteristic *)characteristic error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didUpdateValueForDescriptor:(YMSCBDescriptor *)descriptor error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForDescriptor:(id<YMSCBDescriptorInterface>)descriptorInterface error:(nullable NSError *)error;
 
-- (void)peripheral:(YMSCBPeripheral *)peripheral didWriteValueForDescriptor:(YMSCBDescriptor *)descriptor error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForDescriptor:(id<YMSCBDescriptorInterface>)descriptorInterface error:(nullable NSError *)error;
 
 @end
 
 
+// ------------------------------------------------------------------------
+
+@protocol YMSCBPeripheralDelegate <NSObject>
+
+@optional
+
+- (void)peripheralDidUpdateName:(YMSCBPeripheral *)yPeripheral;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didModifyServices:(NSArray<YMSCBService *> *)invalidatedServices;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didDiscoverServices:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didDiscoverIncludedServicesForService:(YMSCBService *)yService error:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didDiscoverCharacteristicsForService:(YMSCBService *)yService error:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didUpdateValueForCharacteristic:(YMSCBCharacteristic *)yCharacteristic error:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didWriteValueForCharacteristic:(YMSCBCharacteristic *)yCharacteristic error:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didUpdateNotificationStateForCharacteristic:(YMSCBCharacteristic *)yCharacteristic error:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didDiscoverDescriptorsForCharacteristic:(YMSCBCharacteristic *)yCharacteristic error:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didUpdateValueForDescriptor:(YMSCBDescriptor *)yDescriptor error:(nullable NSError *)error;
+
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didWriteValueForDescriptor:(YMSCBDescriptor *)yDescriptor error:(nullable NSError *)error;
+
+@end
+
+// ------------------------------------------------------------------------
 
 
 /**
@@ -112,16 +152,10 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  contained in the dictionary serviceDict.
  
  */
-@interface YMSCBPeripheral : NSObject <CBPeripheralDelegate>
+// TODO: need to change to YMSCBPeripheralInterfaceDelegate
+@interface YMSCBPeripheral : NSObject <YMSCBPeripheralInterfaceDelegate>
 
 /** @name Properties */
-/// 128 bit address base
-@property (nonatomic, assign) yms_u128_t base;
-
-/**
- Convenience accessor for cbPeripheral.name.
- */
-@property (nonatomic, readonly, nullable) NSString *name;
 
 /**
  Pointer to delegate.
@@ -129,7 +163,31 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  The delegate object will be forwarded CBPeripheralDelegate messages sent by cbPeripheral.
  
  */
-@property (nonatomic, assign, nullable) id<CBPeripheralDelegate> delegate;
+@property(assign, nonatomic, nullable) id<YMSCBPeripheralDelegate> delegate;
+
+/**
+ Convenience accessor for cbPeripheral.name.
+ */
+@property(retain, readonly, nullable) NSString *name;
+
+@property(readonly, nonatomic, nullable) NSUUID *identifier;
+
+@property(readonly) CBPeripheralState state;
+
+@property(retain, readonly, nullable) NSArray<YMSCBService *> *services;
+
+/// Object which conforms to YMSCBPeripheralInterface
+@property (nonatomic, strong, nullable) id<YMSCBPeripheralInterface> peripheralInterface;
+
+/**
+ Pointer to an instance of YMSCBCentralManager.
+ */
+@property (nonatomic, weak, nullable) YMSCBCentralManager *central;
+
+
+
+/// 128 bit address base
+@property (nonatomic, assign) yms_u128_t base;
 
 /**
  Flag to indicate if the watchdog timer has expired and forced a disconnect.
@@ -141,12 +199,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  
  The NSString `key` is typically a "human-readable" string to easily reference a YMSCBService.
  */
-@property (nonatomic, strong) NSDictionary *serviceDict;
+@property (nonatomic, strong) NSDictionary<NSString *, YMSCBService*> *serviceDict;
 
-/// The CBPeripheral instance.
-@property (nonatomic, strong, nullable) CBPeripheral *cbPeripheral;
-
-@property(readonly, nonatomic, nullable) NSUUID *identifier;
 
 /**
  A Boolean value indicating whether the peripheral is currently connected to the central manager. (read-only)
@@ -162,10 +216,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  */
 @property (nonatomic, assign) NSTimeInterval rssiPingPeriod;
 
-/**
- Pointer to an instance of YMSCBCentralManager.
- */
-@property (nonatomic, weak, nullable) YMSCBCentralManager *central;
 
 /**
  Watchdog timer for connection.
@@ -204,11 +254,10 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  @param lo Bottom 64 bits of 128-bit base address value
  @return instance of this class
  */
-- (nullable instancetype)initWithPeripheral:(CBPeripheral *)peripheral
+- (nullable instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>) yPeripheral
                                     central:(YMSCBCentralManager *)owner
                                      baseHi:(int64_t)hi
                                      baseLo:(int64_t)lo;
-
 
 /** @name Get all CBService CBUUIDs for this peripheral  */
 /**
@@ -218,7 +267,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  
  @return array of CBUUID services
  */
-- (NSArray *)services;
+
+- (NSArray<CBUUID *> *)serviceUUIDs;
 
 
 /**
@@ -228,7 +278,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  
  @return array of CBUUIDs
  */
-- (NSArray *)servicesSubset:(NSArray *)keys;
+- (NSArray<CBUUID *> *)servicesSubset:(NSArray<NSString *> *)keys;
 
 
 /** @name Find a YMSCBService */
@@ -316,7 +366,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  */
 - (nullable id)objectForKeyedSubscript:(id)key;
 
-- (void)replaceCBPeripheral:(CBPeripheral *)peripheral;
+//- (void)replaceCBPeripheral:(CBPeripheral *)peripheral;
 
 - (void)reset;
 
@@ -325,6 +375,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  
  @param services Array of CBService objects, typical CBPeripheral.services
  */
+// TODO: add generics
 - (void)syncServices:(NSArray *)services;
 
 @end
