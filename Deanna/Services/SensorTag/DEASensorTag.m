@@ -96,7 +96,7 @@
                     }];
                     
                 } else {
-                    //__weak DEABaseService *thisService = (DEABaseService *)service;
+                    __weak DEABaseService *thisService = (DEABaseService *)service;
                     [service discoverCharacteristics:[service characteristics] withBlock:^(NSDictionary *chDict, NSError *error) {
                         if (error) {
                             NSString *message = [NSString stringWithFormat:@"%@", error];
@@ -104,23 +104,21 @@
                             return;
                         }
                         
-                        /*
                         for (NSString *key in chDict) {
                             YMSCBCharacteristic *ct = chDict[key];
-                            NSLog(@"%@ %@ %@", ct, ct.cbCharacteristic, ct.uuid);
+                            NSLog(@"%@ %@ %@", ct, ct.characteristicInterface, ct.uuid);
                             
-                            
-                            [ct discoverDescriptorsWithBlock:^(NSArray *ydescriptors, NSError *error) {
+                            [ct discoverDescriptorsWithBlock:^(NSArray *yDescriptors, NSError *error) {
                                 if (error) {
                                     return;
                                 }
-                                for (YMSCBDescriptor *yd in ydescriptors) {
+                                for (YMSCBDescriptor *yd in yDescriptors) {
                                     NSLog(@"Descriptor: %@ %@ %@", thisService.name, yd.UUID, yd.descriptorInterface);
                                 }
                             }];
                             
                         }
-                         */
+
                     }];
                 }
             }

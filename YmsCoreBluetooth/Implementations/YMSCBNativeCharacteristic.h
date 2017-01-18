@@ -19,10 +19,19 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) CBCharacteristic *cbCharacteristic;
 
 @property(assign, readonly, nonatomic) id<YMSCBServiceInterface>service;
+
 @property(readonly, nonatomic) CBUUID *UUID;
 
 @property(readonly, nonatomic) CBCharacteristicProperties properties;
+
 @property(retain, readonly, nullable) NSData *value;
+
+
+/**
+ Array of descriptor interfaces
+ 
+ This method also creates new YMSCBDescriptorInterface instances to map to existing CBDescriptor instances.
+ */
 @property(retain, readonly, nullable) NSArray<id<YMSCBDescriptorInterface>> *descriptors;
 @property(readonly) BOOL isBroadcasted;
 @property(readonly) BOOL isNotifying;

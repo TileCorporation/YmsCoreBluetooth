@@ -223,6 +223,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
     id<YMSCBCharacteristicInterface> characteristicInterface = [self interfaceForCharacteristic:characteristic];
     
+    [characteristicInterface descriptors];
+    
     if (characteristicInterface && [self.delegate respondsToSelector:@selector(peripheral:didDiscoverDescriptorsForCharacteristic:error:)]) {
         [self.delegate peripheral:self didDiscoverDescriptorsForCharacteristic:characteristicInterface error:error];
     }

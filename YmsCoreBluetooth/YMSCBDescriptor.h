@@ -23,23 +23,26 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class YMSCBCharacteristic;
+@class YMSCBDescriptor;
+
 @protocol YMSCBCharacteristicInterface;
 
 @protocol YMSCBDescriptorInterface
 @property(readonly, nonatomic) CBUUID *UUID;
 @property(assign, readonly, nonatomic) id<YMSCBCharacteristicInterface> characteristicInterface;
 @property(retain, readonly) id value;
+
+@property (nonatomic, weak, nullable) YMSCBDescriptor *owner;
+
+
 @end
 
 
 @class YMSCBPeripheral;
 
+
 /**
- Base class for defining a Bluetooth LE descriptor.
- 
- YMSCBDescriptor holds an instance of CBDescriptor (cbDescriptor).
- 
- The implementation of this class is TBD.
+ * Base class for defining a Bluetooth LE descriptor.
  */
 @interface YMSCBDescriptor : NSObject
 
@@ -55,11 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
 
-
-
 // TODO: need to make constructor 
 //- (instancetype)initWithName:(NSString *)oName parent:(YMSCBCharacteristic *)ct uuid:(CBUUID *)oUUID offset:(int)addrOffset;
-
 //- (void)reset;
 
 

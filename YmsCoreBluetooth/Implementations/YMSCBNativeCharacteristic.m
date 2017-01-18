@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (CBDescriptor *descriptor in _cbCharacteristic.descriptors) {
         NSString *key = descriptor.UUID.UUIDString;
         
-        if (_nativeDescriptors[key]) {
+        if (!_nativeDescriptors[key]) {
             YMSCBNativeDescriptor *descriptorInterface = [[YMSCBNativeDescriptor alloc] initWithParent:self descriptor:descriptor];
             _nativeDescriptors[key] = descriptorInterface;
         }

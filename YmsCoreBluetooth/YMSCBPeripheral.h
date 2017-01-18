@@ -239,7 +239,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 @property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
 
 
-/** @name Initializing a YMSCBPeripheral */
 /**
  Constructor.
  
@@ -276,9 +275,9 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 /**
  Return array of CBUUIDs for YMSCBService instances in serviceDict whose key is included in keys.
  
- @param keys array of NSString keys, where each key must exist in serviceDict
+ - parameter keys: array of NSString keys, where each key must exist in serviceDict
  
- @return array of CBUUIDs
+ - returns: array of CBUUIDs
  */
 - (NSArray<CBUUID *> *)servicesSubset:(NSArray<NSString *> *)keys;
 

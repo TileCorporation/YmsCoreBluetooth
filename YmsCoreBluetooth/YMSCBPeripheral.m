@@ -388,6 +388,16 @@ NS_ASSUME_NONNULL_BEGIN
     [self.logger logInfo:message object:_peripheralInterface];
     
     
+    /*
+    YMSCBService *yService = nil;
+    for (YMSCBService *service in self.services) {
+        if ([serviceInterface.UUID isEqual:service.uuid]) {
+            yService = service;
+            break;
+        }
+    }
+     */
+    
     YMSCBService *yService = serviceInterface.owner;
     
     [yService syncCharacteristics];
@@ -425,6 +435,19 @@ NS_ASSUME_NONNULL_BEGIN
  @param characteristic The characteristic that the characteristic descriptors belong to.
  @param error If an error occured, the cause of the failure.
  */
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    
+    YMSCBCharacteristic *yCharacteristic = characteristicInterface.owner;
+    [yCharacteristic syncDescriptors];
+    [yCharacteristic handleDiscoveredDescriptorsResponse:yCharacteristic.descriptors withError:error];
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverDescriptorsForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didDiscoverDescriptorsForCharacteristic:yCharacteristic error:error];
+    }
+}
+
+
 //- (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
 //     NSString *message = [NSString stringWithFormat:@"< didDiscoverDescriptorsForCharacteristic: %@ error:%@", characteristic, error.description];
 //    [self.logger logInfo:message object:_peripheralInterface];
@@ -435,9 +458,6 @@ NS_ASSUME_NONNULL_BEGIN
 //    [ct syncDescriptors:characteristic.descriptors];
 //    [ct handleDiscoveredDescriptorsResponse:ct.descriptors withError:error];
 //    
-//    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverDescriptorsForCharacteristic:error:)]) {
-////        [self.delegate peripheral:_peripheralInterface didDiscoverDescriptorsForCharacteristic:ct.cbCharacteristic error:error];
-//    }
 //}
 
 

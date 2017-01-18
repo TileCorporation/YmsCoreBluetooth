@@ -190,6 +190,7 @@
 }
 
 
+// TODO: obsolete
 - (YMSCBCharacteristic *)findCharacteristic:(CBCharacteristic *)ct {
     YMSCBCharacteristic *result;
     for (NSString *key in self.characteristicDict) {

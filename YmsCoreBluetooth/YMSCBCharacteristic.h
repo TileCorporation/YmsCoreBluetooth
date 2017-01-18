@@ -23,8 +23,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class YMSCBPeripheral;
-@class YMSCBCharacteristic;
 @class YMSCBService;
+@class YMSCBCharacteristic;
+@class YMSCBDescriptor;
 
 @protocol YMSCBServiceInterface;
 @protocol YMSCBDescriptorInterface;
@@ -85,7 +86,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
 
 // TODO: define generics
 /// Holds instances of YMSCBDescriptor
-@property (atomic, strong) NSArray *descriptors;
+@property (nonatomic, strong) NSArray<YMSCBDescriptor *> *descriptors;
 
 /// Notification state callback
 @property (atomic, copy, nullable) YMSCBWriteCallbackBlockType notificationStateCallback;
@@ -158,7 +159,6 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  @param oUUID characteristic CBUUID
  @param addrOffset characteristic absolute address (it's not really an offset)
  */
-// TODO: add id<YMSCBCharacteristicInterface> parameter
 - (instancetype)initWithName:(NSString *)oName parent:(YMSCBPeripheral *)pObj uuid:(CBUUID *)oUUID offset:(int)addrOffset;
 
 
@@ -237,6 +237,9 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  @param error Error object, if failure.
  */
 - (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(NSError *)error;
+
+
+- (void)syncDescriptors;
 
 - (void)reset;
 

@@ -108,7 +108,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
 /**
  Base class for defining a Bluetooth LE central.
  
- YMSCBCentralManager holds an instance of CBCentralManager (manager) and implements the
+ YMSCBCentralManager holds an instance of YMSCBCentralManagerInterface centralInterface and implements the
  CBCentralManagerDelgate messages sent by manager.
  
  This class provides ObjectiveC block-based callback support for peripheral
@@ -122,7 +122,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
 
  All discovered BLE peripherals are stored in the array ymsPeripherals.
 
- Legacy Note: This class was previously named YMSCBAppService.
  */
 @interface YMSCBCentralManager : NSObject <YMSCBCentralManagerInterfaceDelegate, YMSCBLogging>
 
@@ -148,8 +147,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
  In typical practice, there is only one instance of CBCentralManager and it is located in a singleton instance of YMSCBCentralManager.
  This class listens to CBCentralManagerDelegate messages sent by manager, which in turn forwards those messages to delegate.
  */
-//@property (nonatomic, strong) CBCentralManager *manager;
-// TODO: rename manager to centralInterface;
 @property (nonatomic, strong) id<YMSCBCentralManagerInterface> centralInterface;
 
 /// Flag to determine if manager is scanning.

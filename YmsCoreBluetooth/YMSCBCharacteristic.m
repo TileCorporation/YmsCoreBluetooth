@@ -21,6 +21,12 @@
 #import "YMSCBPeripheral.h"
 #import "YMSCBDescriptor.h"
 
+@interface YMSCBCharacteristic()
+@property (nonatomic, strong) NSMutableDictionary *descriptorDict;
+
+
+@end
+
 @implementation YMSCBCharacteristic
 
 
@@ -36,6 +42,7 @@
         _writeCallbacks = [NSMutableArray new];
         _readCallbacks = [NSMutableArray new];
         _logger = _parent.logger;
+        _descriptorDict = [NSMutableDictionary new];
     }
     
     return self;
@@ -180,13 +187,13 @@
 - (void)discoverDescriptorsWithBlock:(void (^)(NSArray *, NSError *))callback {
     if (self.characteristicInterface) {
         self.discoverDescriptorsCallback = callback;
-    
-    //    [self.parent.cbPeripheral discoverDescriptorsForCharacteristic:self.characteristicInterface];
+        [self.parent.peripheralInterface discoverDescriptorsForCharacteristic:self.characteristicInterface];
+
     } else {
-     //   NSLog(@"WARNING: Attempt to discover descriptors with null characteristicInterface: '%@' for %@", self.name, self.uuid);
+        NSString *message = [NSString stringWithFormat:@"Attempt to discover descriptors with null characteristicInterface: '%@' for %@", self.name, self.uuid];
+        [self.logger logWarn:message object:self];
     }
 }
-
 
 - (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(NSError *)error {
     YMSCBDiscoverDescriptorsCallbackBlockType callback = [self.discoverDescriptorsCallback copy];
@@ -199,21 +206,44 @@
     }
 }
 
+- (void)syncDescriptors {
+    NSArray<id<YMSCBDescriptorInterface>> *descriptorInterfaces = [self.characteristicInterface descriptors];
+    
+    for (id<YMSCBDescriptorInterface> descriptorInterface in descriptorInterfaces) {
+        NSString *key = descriptorInterface.UUID.UUIDString;
+        YMSCBDescriptor *yDescriptor = self.descriptorDict[key];
+        if (!yDescriptor) {
+            yDescriptor = [[YMSCBDescriptor alloc] init];
+            self.descriptorDict[key] = yDescriptor;
+        }
+        
+        yDescriptor.descriptorInterface = descriptorInterface;
+        descriptorInterface.owner = yDescriptor;
+    }
+}
 
+
+- (NSArray<YMSCBDescriptor *> *)descriptors {
+    NSArray<YMSCBDescriptor *> *result = nil;
+    result = [self.descriptorDict allValues];
+    return result;
+}
 
 - (void)reset {
     [self.writeCallbacks removeAllObjects];
     [self.readCallbacks removeAllObjects];
-    //self.characteristicInterface = nil;
     self.notificationCallback = nil;
     self.notificationStateCallback = nil;
     self.discoverDescriptorsCallback = nil;
     self.logEnabled = YES;
     
+    // reset descriptors
+    
     [self.characteristicInterface reset];
 }
 
 
+// TODO: refactor
 - (NSError *)nilCBCharacteristicError:(NSString *)recovery {
     NSString *description = [NSString stringWithFormat:NSLocalizedString(@"CBCharacteristic is nil", nil)];
     NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"Attempt to invoke operation on nil CBCharacteristic: %@ (%@) on %@", nil), self.name, self.uuid, self.parent];
