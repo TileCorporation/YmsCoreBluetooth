@@ -67,6 +67,8 @@
     // Watchdog aware method
     [self resetWatchdog];
     
+    __weak typeof(self) this = self;
+    
     [self connectWithOptions:nil withBlock:^(YMSCBPeripheral *yp, NSError *error) {
         if (error) {
             return;
@@ -94,13 +96,20 @@
                     }];
                     
                 } else {
-                    __weak DEABaseService *thisService = (DEABaseService *)service;
+                    //__weak DEABaseService *thisService = (DEABaseService *)service;
                     [service discoverCharacteristics:[service characteristics] withBlock:^(NSDictionary *chDict, NSError *error) {
+                        if (error) {
+                            NSString *message = [NSString stringWithFormat:@"%@", error];
+                            [this.logger logError:message object:this];
+                            return;
+                        }
+                        
+                        /*
                         for (NSString *key in chDict) {
                             YMSCBCharacteristic *ct = chDict[key];
-                            //NSLog(@"%@ %@ %@", ct, ct.cbCharacteristic, ct.uuid);
+                            NSLog(@"%@ %@ %@", ct, ct.cbCharacteristic, ct.uuid);
                             
-                            /*
+                            
                             [ct discoverDescriptorsWithBlock:^(NSArray *ydescriptors, NSError *error) {
                                 if (error) {
                                     return;
@@ -109,8 +118,9 @@
                                     NSLog(@"Descriptor: %@ %@ %@", thisService.name, yd.UUID, yd.descriptorInterface);
                                 }
                             }];
-                             */
+                            
                         }
+                         */
                     }];
                 }
             }
