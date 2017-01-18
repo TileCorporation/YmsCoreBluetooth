@@ -238,10 +238,6 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  */
 - (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(NSError *)error;
 
-// TODO: document
-
-- (void)syncDescriptors:(NSArray *)foundDescriptors;
-
 - (void)reset;
 
 NS_ASSUME_NONNULL_END

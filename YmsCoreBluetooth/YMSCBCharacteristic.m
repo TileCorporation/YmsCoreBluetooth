@@ -199,18 +199,6 @@
     }
 }
 
-- (void)syncDescriptors:(NSArray *)foundDescriptors {
-    
-    NSMutableArray *tempList = [[NSMutableArray alloc] initWithCapacity:[foundDescriptors count]];
-    
-    for (CBDescriptor *cbDescriptor in foundDescriptors) {
-        YMSCBDescriptor *yd = [YMSCBDescriptor new];
-    //    yd.cbDescriptor = cbDescriptor;
-        [tempList addObject:yd];
-    }
-    
-    self.descriptors = tempList;
-}
 
 
 - (void)reset {

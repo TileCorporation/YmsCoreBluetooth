@@ -372,14 +372,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)reset;
 
-/**
- Synchronize list of CBService objects with their YMSCBService container.
- 
- @param services Array of CBService objects, typical CBPeripheral.services
- */
-// TODO: add generics
-- (void)syncServices:(NSArray *)services;
-
 @end
 
 NS_ASSUME_NONNULL_END

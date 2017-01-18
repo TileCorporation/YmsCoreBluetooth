@@ -342,16 +342,6 @@ NS_ASSUME_NONNULL_BEGIN
     [_peripheralInterface discoverServices:serviceUUIDs];
 }
 
-- (void)syncServices:(NSArray *)services {
-    for (CBService *service in services) {
-        YMSCBService *btService = [self findService:service];
-        if (btService) {
-            btService.serviceInterface = service;
-            [btService syncCharacteristics];
-        }
-    }
-}
-
 
 #pragma mark - YMSCBPeripheralInterfaceDelegate Methods
 /** @name YMSCBPeripheralDelegate Methods */
