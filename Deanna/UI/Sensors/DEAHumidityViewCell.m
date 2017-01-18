@@ -46,7 +46,7 @@
 }
 
 - (void)configureWithSensorTag:(DEASensorTag *)sensorTag {
-    self.service = sensorTag.serviceDict[@"humidity"];
+    self.service = (DEAHumidityService *)sensorTag.serviceDict[@"humidity"];
     
     for (NSString *key in @[@"ambientTemp", @"relativeHumidity", @"isOn", @"isEnabled"]) {
         [self.service addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:NULL];

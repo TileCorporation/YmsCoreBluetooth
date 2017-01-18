@@ -46,7 +46,7 @@
 }
 
 - (void)configureWithSensorTag:(DEASensorTag *)sensorTag {
-    self.service = sensorTag.serviceDict[@"magnetometer"];
+    self.service = (DEAMagnetometerService *)sensorTag.serviceDict[@"magnetometer"];
     
     for (NSString *key in @[@"x", @"y", @"z", @"isOn", @"isEnabled"]) {
         [self.service addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:NULL];
