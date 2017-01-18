@@ -62,14 +62,36 @@ double calcHumRel(uint16_t rawH) {
 }
 
 
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error {
-    if (error) {
-        return;
-    }
 
-    if ([yc.name isEqualToString:@"data"]) {
-        NSData *data = yc.cbCharacteristic.value;
+- (void)turnOn {
+    __weak DEABaseService *this = self;
+    
+    YMSCBCharacteristic *configCt = self.characteristicDict[@"config"];
+    [configCt writeByte:0x1 withBlock:^(NSError *error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
         
+        NSLog(@"TURNED ON: %@", this.name);
+    }];
+    
+    YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification for %@ on", this.name);
+        
+    } withNotificationBlock:^(NSData * _Nonnull data, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification received %@ for %@", data, this.name);
         char val[data.length];
         
         [data getBytes:&val length:data.length];
@@ -81,7 +103,7 @@ double calcHumRel(uint16_t rawH) {
         
         uint16_t rawTemperature = yms_u16_build(v0, v1);
         uint16_t rawHumidity = yms_u16_build(v2, v3);
-
+        
         __weak DEAHumidityService *this = self;
         _YMS_PERFORM_ON_MAIN_THREAD(^{
             [self willChangeValueForKey:@"sensorValues"];
@@ -89,8 +111,15 @@ double calcHumRel(uint16_t rawH) {
             this.relativeHumidity = @(calcHumRel(rawHumidity));
             [self didChangeValueForKey:@"sensorValues"];
         });
-    }
+
+        
+    }];
+    
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        this.isOn = YES;
+    });
 }
+
 
 - (NSDictionary *)sensorValues
 {

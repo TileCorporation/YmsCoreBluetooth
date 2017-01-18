@@ -1,5 +1,5 @@
 //
-// Copyright 2013-2015 Yummy Melon Software LLC
+// Copyright 2016 Yummy Melon Software LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,30 +16,9 @@
 //  Author: Charles Y. Choi <charles.choi@yummymelon.com>
 //
 
-#import "YMSCBDescriptor.h"
-#import "YMSCBCharacteristic.h"
-#import "YMSCBPeripheral.h"
-#import "NSMutableArray+fifoQueue.h"
+@import Foundation;
+#import "YMSCBUtils.h"
 
-@implementation YMSCBDescriptor
-
-- (CBUUID *)UUID {
-    CBUUID *result = nil;
-    if (self.descriptorInterface) {
-        result = self.descriptorInterface.UUID;
-    }
-
-    return result;
-}
-
-- (id)value {
-    id result = nil;
-    
-    if (self.descriptorInterface) {
-        result = self.descriptorInterface.value;
-    }
-    
-    return result;
-}
+@interface YMSCBLogger : NSObject <YMSCBLogging>
 
 @end

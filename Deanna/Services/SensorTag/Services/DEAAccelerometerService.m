@@ -60,22 +60,42 @@ float calcAccel(int16_t rawV) {
 }
 
 
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error {
+- (void)turnOn {
+    __weak DEABaseService *this = self;
     
-    if (error) {
-        return;
-    }
+    YMSCBCharacteristic *configCt = self.characteristicDict[@"config"];
+    [configCt writeByte:0x1 withBlock:^(NSError *error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"TURNED ON: %@", this.name);
+    }];
     
-    if ([yc.name isEqualToString:@"data"]) {
-        NSData *data = yc.cbCharacteristic.value;
+    YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification for %@ on", this.name);
+        
+    } withNotificationBlock:^(NSData * _Nonnull data, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification received %@ for %@", data, this.name);
         
         char val[data.length];
         [data getBytes:&val length:data.length];
-        
         int16_t xx = val[0];
         int16_t yy = val[1];
         int16_t zz = val[2];
-
+        
         __weak DEAAccelerometerService *this = self;
         _YMS_PERFORM_ON_MAIN_THREAD(^{
             [self willChangeValueForKey:@"sensorValues"];
@@ -84,8 +104,13 @@ float calcAccel(int16_t rawV) {
             this.z = @(calcAccel(zz));
             [self didChangeValueForKey:@"sensorValues"];
         });
-    }
+    }];
+    
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        this.isOn = YES;
+    });
 }
+
 
 - (void)configPeriod:(uint8_t)value {
     
@@ -97,7 +122,9 @@ float calcAccel(int16_t rawV) {
             NSLog(@"ERROR: %@", [error localizedDescription]);
             this.period = this.period;
         } else {
-            this.period = @(value);
+            _YMS_PERFORM_ON_MAIN_THREAD(^{
+                this.period = @(value);
+            });
         }
     }];
 }

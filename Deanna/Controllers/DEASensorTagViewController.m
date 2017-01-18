@@ -96,7 +96,7 @@
 
 
 - (void)viewWillAppear:(BOOL)animated {
-    
+    [super viewWillAppear:animated];
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     centralManager.delegate = self;
     
@@ -122,6 +122,8 @@
             [cell performSelector:@selector(deconfigure)];
         }
     }
+    
+    [super viewWillDisappear:animated];
 }
 
 
@@ -164,75 +166,51 @@
 
 #pragma mark - CBCentralManagerDelegate Methods
 
-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Disconnected"
-                                                    message:@"This peripheral has been disconnected."
-                                                   delegate:nil
-                                          cancelButtonTitle:@"Dismiss"
-                                          otherButtonTitles:nil];
-    
-    [alert show];
-    
-    
-    // Quick and dirty hack! But good enough to let the previous view controller that the disconnection happened.
-    
-    [self.navigationController.viewControllers[0] centralManager:central didDisconnectPeripheral:peripheral error:error];
-    
+- (void)centralManager:(YMSCBCentralManager *)yCentral didDisconnectPeripheral:(YMSCBPeripheral *)yPeripheral error:(NSError *)error {
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        __strong typeof (this) strongThis = this;
+        // Quick and dirty hack! But good enough to let the previous view controller know that the disconnection happened.
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Disconnected"
+                                                        message:@"This peripheral has been disconnected."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Dismiss"
+                                              otherButtonTitles:nil];
+        
+        [alert show];
+
+        [strongThis.navigationController.viewControllers[0] centralManager:yCentral didDisconnectPeripheral:yPeripheral error:error];
+    });
+
 }
 
 
 #pragma mark - CBPeripheralDelegate Methods
 
-- (void)performUpdateRSSI:(NSArray *)args {
-    CBPeripheral *peripheral = args[0];
-    
-    [peripheral readRSSI];
-    
-}
-
-
-
-- (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error {
-    //NSLog(@"HEY got here");
-    
-    if (error) {
-        NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD((^{
+        __strong typeof (this) strongThis = this;
         
-        if (peripheral.state == CBPeripheralStateConnected) {
-            NSArray *args = @[peripheral];
-            [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:2.0];
+        if (error) {
+            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+            
+            if (yPeripheral.state == CBPeripheralStateConnected) {
+                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                    [yPeripheral readRSSI];
+                });
+            }
+            
+            return;
         }
         
-        return;
-    }
+        strongThis.rssiButton.title = [NSString stringWithFormat:@"%@ db", RSSI];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [yPeripheral readRSSI];
+        });
+    }));
     
-    self.rssiButton.title = [NSString stringWithFormat:@"%@ db", peripheral.RSSI];
-    
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-    
-    NSArray *args = @[peripheral];
-    [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:yp.rssiPingPeriod];
-
 }
-
-/*
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
-    //NSLog(@"HEY updating characteristic");
-    
-
-    if (characteristic.isNotifying) {
-        YMSCBService *btService = [self.sensorTag findService:characteristic.service];
-        YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
-        
-        if ([btService isKindOfClass:[DEATemperatureService class]]) {
-            [self.temperatureViewCell updateDisplayForCharacteristicName:ct.name];
-        }
-        
-    }
-}
-*/
 
 
 @end

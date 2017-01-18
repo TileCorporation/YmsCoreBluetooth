@@ -16,19 +16,34 @@
 //  Author: Charles Y. Choi <charles.choi@yummymelon.com>
 //
 
-#import <Foundation/Foundation.h>
-#if TARGET_OS_IPHONE
-#import <CoreBluetooth/CoreBluetooth.h>
-#elif TARGET_OS_MAC
-#import <IOBluetooth/IOBluetooth.h>
-#endif
+@import Foundation;
+@import CoreBluetooth;
 
 #include "YMS128.h"
 
+extern NSString *const kYMSCBErrorDomain;
+
+typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
+    kYMSCBErrorCodeNilService = 1,
+    kYMSCBErrorCodeNilCharacteristic,
+    kYMSCBErrorCodeNilDescriptor
+};
 
 #ifndef _YMS_PERFORM_ON_MAIN_THREAD
 #define _YMS_PERFORM_ON_MAIN_THREAD(block) dispatch_async(dispatch_get_main_queue(), block);
 #endif
+
+
+@protocol YMSCBLogging
+
+- (void)logError:(NSString *)message object:(id)object;
+- (void)logWarn:(NSString *)message object:(id)object;
+- (void)logInfo:(NSString *)message object:(id)object;
+- (void)logDebug:(NSString *)message object:(id)object;
+- (void)logVerbose:(NSString *)message object:(id)object;
+
+@end
+
 
 /**
  Utility class for YMS CoreBluetooth Framework

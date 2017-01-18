@@ -77,13 +77,36 @@ double calcTmpTarget(int16_t objT, double m_tempAmb) {
     return self;
 }
 
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error {
-    if (error) {
-        return;
-    }
+
+- (void)turnOn {
+    __weak DEABaseService *this = self;
     
-    if ([yc.name isEqualToString:@"data"]) {
-        NSData *data = yc.cbCharacteristic.value;
+    YMSCBCharacteristic *configCt = self.characteristicDict[@"config"];
+    [configCt writeByte:0x1 withBlock:^(NSError *error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"TURNED ON: %@", this.name);
+    }];
+    
+    YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification for %@ on", this.name);
+        
+    } withNotificationBlock:^(NSData * _Nonnull data, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification received %@ for %@", data, this.name);
         
         char val[data.length];
         [data getBytes:&val length:data.length];
@@ -97,7 +120,7 @@ double calcTmpTarget(int16_t objT, double m_tempAmb) {
         int16_t objT = ((v0 & 0xff)| ((v1 << 8) & 0xff00));
         
         double tempAmb = calcTmpLocal(amb);
-
+        
         __weak DEATemperatureService *this = self;
         _YMS_PERFORM_ON_MAIN_THREAD(^{
             [self willChangeValueForKey:@"sensorValues"];
@@ -105,8 +128,14 @@ double calcTmpTarget(int16_t objT, double m_tempAmb) {
             this.objectTemp = @(calcTmpTarget(objT, tempAmb));
             [self didChangeValueForKey:@"sensorValues"];
         });
-    }
+
+    }];
+    
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        this.isOn = YES;
+    });
 }
+
 
 - (NSDictionary *)sensorValues
 {

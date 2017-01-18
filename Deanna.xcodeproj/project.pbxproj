@@ -30,16 +30,15 @@
 		D93EAC5316E18748008B1BD3 /* DEAGyroscopeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D93EAC5216E18748008B1BD3 /* DEAGyroscopeViewCell.m */; };
 		D93EAC5616E1DAC8008B1BD3 /* DEAMagnetometerViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D93EAC5516E1DAC8008B1BD3 /* DEAMagnetometerViewCell.m */; };
 		D93EAC5916E1DAF5008B1BD3 /* DEAMagnetometerService.m in Sources */ = {isa = PBXBuildFile; fileRef = D93EAC5816E1DAF5008B1BD3 /* DEAMagnetometerService.m */; };
+		D9717E7F1E0B29CF00F59C24 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B8E167FA5140001E42C /* CoreBluetooth.framework */; };
 		D9718B46167F9F9F0001E42C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B45167F9F9F0001E42C /* UIKit.framework */; };
 		D9718B48167F9F9F0001E42C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B47167F9F9F0001E42C /* Foundation.framework */; };
 		D9718B4A167F9F9F0001E42C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B49167F9F9F0001E42C /* CoreGraphics.framework */; };
 		D9718B50167F9F9F0001E42C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D9718B4E167F9F9F0001E42C /* InfoPlist.strings */; };
 		D9718B52167F9F9F0001E42C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D9718B51167F9F9F0001E42C /* main.m */; };
 		D9718B56167F9F9F0001E42C /* DEAAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D9718B55167F9F9F0001E42C /* DEAAppDelegate.m */; };
-		D9718B8F167FA5140001E42C /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9718B8E167FA5140001E42C /* CoreBluetooth.framework */; };
 		D97EC6D0172B08AB00CAECFC /* DEABaseService.m in Sources */ = {isa = PBXBuildFile; fileRef = D97EC6CF172B08AB00CAECFC /* DEABaseService.m */; };
 		D97EC6D2172B1B8C00CAECFC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D97EC6D1172B1B8C00CAECFC /* README.md */; };
-		D9812904173F3804008EA8D5 /* YMSCBStoredPeripherals.m in Sources */ = {isa = PBXBuildFile; fileRef = D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */; };
 		D988A5C616DD26A100D7D392 /* DEASensorTag.m in Sources */ = {isa = PBXBuildFile; fileRef = D988A5C516DD26A100D7D392 /* DEASensorTag.m */; };
 		D98D66611BB8CE7600E82BE4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66601BB8CE7600E82BE4 /* Foundation.framework */; };
 		D98D66631BB8CE9600E82BE4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66621BB8CE9500E82BE4 /* Cocoa.framework */; };
@@ -47,6 +46,8 @@
 		D98D66681BB8CEAA00E82BE4 /* IOBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66651BB8CEAA00E82BE4 /* IOBluetooth.framework */; };
 		D98D66691BB8CEAA00E82BE4 /* IOBluetoothUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66661BB8CEAA00E82BE4 /* IOBluetoothUI.framework */; };
 		D9960A54173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9960A53173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m */; };
+		D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = D99659141E1F569300F67BCA /* YMSCBLogger.m */; };
+		D99659161E1F569300F67BCA /* YMSCBLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = D99659141E1F569300F67BCA /* YMSCBLogger.m */; };
 		D9971AEA1720A9A100B1A068 /* DEAPeripheralTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9971AE91720A9A100B1A068 /* DEAPeripheralTableViewCell.xib */; };
 		D9971AEE1720AA7E00B1A068 /* DEAPeripheralTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9971AED1720AA7E00B1A068 /* DEAPeripheralTableViewCell.m */; };
 		D997AC9C175B245800C91B0D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = D997AC9A175B245800C91B0D /* InfoPlist.strings */; };
@@ -59,7 +60,6 @@
 		D997ACB9175B254500C91B0D /* YMSCBService.m in Sources */ = {isa = PBXBuildFile; fileRef = D933CECC16DDAFA700EDDAD6 /* YMSCBService.m */; };
 		D997ACBA175B254500C91B0D /* YMSCBCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = D933CEC816DDAFA700EDDAD6 /* YMSCBCharacteristic.m */; };
 		D997ACBB175B254500C91B0D /* YMSCBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D933CECE16DDAFA700EDDAD6 /* YMSCBUtils.m */; };
-		D997ACBC175B254500C91B0D /* YMSCBStoredPeripherals.m in Sources */ = {isa = PBXBuildFile; fileRef = D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */; };
 		D997ACBD175B254500C91B0D /* YMSCBDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */; };
 		D997ACBE175B254500C91B0D /* NSMutableArray+fifoQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = D9268B4217306295009C4284 /* NSMutableArray+fifoQueue.m */; };
 		D997ACBF175B255E00C91B0D /* DEACentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D906E5F016DCAC55001D7932 /* DEACentralManager.m */; };
@@ -83,14 +83,25 @@
 		D997ACE3175B331F00C91B0D /* DEMDeviceInfoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D997ACE2175B331F00C91B0D /* DEMDeviceInfoViewCell.m */; };
 		D997ACE6175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D997ACE5175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m */; };
 		D9AA81C91753E00700C2836D /* YMSCBDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */; };
+		D9BAA8701E25A5B200952268 /* YMSCBNativeCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D9BAA86F1E25A5B200952268 /* YMSCBNativeCentralManager.m */; };
+		D9BAA8711E25A5B200952268 /* YMSCBNativeCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D9BAA86F1E25A5B200952268 /* YMSCBNativeCentralManager.m */; };
 		D9C5012216AB37DD001D4D4F /* DEAPeripheralsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D9C5012016AB37DD001D4D4F /* DEAPeripheralsViewController.m */; };
 		D9C5012316AB37DD001D4D4F /* DEAPeripheralsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9C5012116AB37DD001D4D4F /* DEAPeripheralsViewController.xib */; };
 		D9C6137A177672BA00826EBF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9C61379177672BA00826EBF /* QuartzCore.framework */; };
 		D9D70095177782CB0066AB1B /* DEATheme.m in Sources */ = {isa = PBXBuildFile; fileRef = D9D70094177782CB0066AB1B /* DEATheme.m */; };
 		D9D70098177783DB0066AB1B /* DEADefaultTheme.m in Sources */ = {isa = PBXBuildFile; fileRef = D9D70097177783DB0066AB1B /* DEADefaultTheme.m */; };
 		D9D8316D168449FE00F51E42 /* DEASimpleKeysService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9D8316C168449FD00F51E42 /* DEASimpleKeysService.m */; };
+		D9DA1AFE1E256A32007C2740 /* YmsCoreBluetoothTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D9DA1AFD1E256A32007C2740 /* YmsCoreBluetoothTests.m */; };
 		D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9DE671016E0223E00F1B15C /* DEABarometerService.m */; };
 		D9E012F71797D66400677FC1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9E012F61797D66400677FC1 /* Images.xcassets */; };
+		D9E5BB051E26AC7C00EAA87E /* YMSCBNativePeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB041E26AC7C00EAA87E /* YMSCBNativePeripheral.m */; };
+		D9E5BB061E26AC7C00EAA87E /* YMSCBNativePeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB041E26AC7C00EAA87E /* YMSCBNativePeripheral.m */; };
+		D9E5BB091E26AC9E00EAA87E /* YMSCBNativeService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB081E26AC9E00EAA87E /* YMSCBNativeService.m */; };
+		D9E5BB0A1E26AC9E00EAA87E /* YMSCBNativeService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB081E26AC9E00EAA87E /* YMSCBNativeService.m */; };
+		D9E5BB0D1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */; };
+		D9E5BB0E1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */; };
+		D9E5BB151E26AD4300EAA87E /* YMSCBNativeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */; };
+		D9E5BB161E26AD4300EAA87E /* YMSCBNativeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */; };
 		D9F412F016DED0030094FEFA /* DEASensorTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412EE16DED0030094FEFA /* DEASensorTagViewController.m */; };
 		D9F412F116DED0030094FEFA /* DEASensorTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F412EF16DED0030094FEFA /* DEASensorTagViewController.xib */; };
 		D9F412F416DED7510094FEFA /* DEATemperatureViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F316DED7510094FEFA /* DEATemperatureViewCell.m */; };
@@ -98,6 +109,16 @@
 		D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F916DEF6130094FEFA /* DEAHumidityViewCell.m */; };
 		D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412FC16DEFA510094FEFA /* DEASimpleKeysViewCell.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D9DA1B001E256A32007C2740 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D9718B38167F9F9F0001E42C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D9718B40167F9F9F0001E42C;
+			remoteInfo = Deanna;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		D906E5EF16DCAC55001D7932 /* DEACentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEACentralManager.h; sourceTree = "<group>"; };
@@ -160,8 +181,6 @@
 		D97EC6CE172B08AB00CAECFC /* DEABaseService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEABaseService.h; sourceTree = "<group>"; };
 		D97EC6CF172B08AB00CAECFC /* DEABaseService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEABaseService.m; sourceTree = "<group>"; };
 		D97EC6D1172B1B8C00CAECFC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		D9812902173F3804008EA8D5 /* YMSCBStoredPeripherals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBStoredPeripherals.h; sourceTree = "<group>"; };
-		D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBStoredPeripherals.m; sourceTree = "<group>"; };
 		D988A5C416DD26A100D7D392 /* DEASensorTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASensorTag.h; sourceTree = "<group>"; };
 		D988A5C516DD26A100D7D392 /* DEASensorTag.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASensorTag.m; sourceTree = "<group>"; };
 		D98D66601BB8CE7600E82BE4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -171,6 +190,8 @@
 		D98D66661BB8CEAA00E82BE4 /* IOBluetoothUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOBluetoothUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/IOBluetoothUI.framework; sourceTree = DEVELOPER_DIR; };
 		D9960A52173B0A1B0013C8E7 /* DEADeviceInfoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEADeviceInfoViewCell.h; sourceTree = "<group>"; };
 		D9960A53173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEADeviceInfoViewCell.m; sourceTree = "<group>"; };
+		D99659131E1F569300F67BCA /* YMSCBLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBLogger.h; sourceTree = "<group>"; };
+		D99659141E1F569300F67BCA /* YMSCBLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBLogger.m; sourceTree = "<group>"; };
 		D9971AE91720A9A100B1A068 /* DEAPeripheralTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DEAPeripheralTableViewCell.xib; sourceTree = "<group>"; };
 		D9971AEC1720AA7E00B1A068 /* DEAPeripheralTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEAPeripheralTableViewCell.h; sourceTree = "<group>"; };
 		D9971AED1720AA7E00B1A068 /* DEAPeripheralTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEAPeripheralTableViewCell.m; sourceTree = "<group>"; };
@@ -200,6 +221,8 @@
 		D997ACE5175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEMSimpleKeysViewCell.m; sourceTree = "<group>"; };
 		D9AA81C71753E00700C2836D /* YMSCBDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBDescriptor.h; sourceTree = "<group>"; };
 		D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBDescriptor.m; sourceTree = "<group>"; };
+		D9BAA86E1E25A5B200952268 /* YMSCBNativeCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeCentralManager.h; sourceTree = "<group>"; };
+		D9BAA86F1E25A5B200952268 /* YMSCBNativeCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativeCentralManager.m; sourceTree = "<group>"; };
 		D9C5011F16AB37DD001D4D4F /* DEAPeripheralsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEAPeripheralsViewController.h; sourceTree = "<group>"; };
 		D9C5012016AB37DD001D4D4F /* DEAPeripheralsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEAPeripheralsViewController.m; sourceTree = "<group>"; };
 		D9C5012116AB37DD001D4D4F /* DEAPeripheralsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DEAPeripheralsViewController.xib; sourceTree = "<group>"; };
@@ -211,9 +234,20 @@
 		D9D70097177783DB0066AB1B /* DEADefaultTheme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEADefaultTheme.m; sourceTree = "<group>"; };
 		D9D8316B168449FD00F51E42 /* DEASimpleKeysService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASimpleKeysService.h; sourceTree = "<group>"; };
 		D9D8316C168449FD00F51E42 /* DEASimpleKeysService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASimpleKeysService.m; sourceTree = "<group>"; };
+		D9DA1AFB1E256A32007C2740 /* YmsCoreBluetoothTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YmsCoreBluetoothTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D9DA1AFD1E256A32007C2740 /* YmsCoreBluetoothTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YmsCoreBluetoothTests.m; sourceTree = "<group>"; };
+		D9DA1AFF1E256A32007C2740 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9DE670F16E0223E00F1B15C /* DEABarometerService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEABarometerService.h; sourceTree = "<group>"; };
 		D9DE671016E0223E00F1B15C /* DEABarometerService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEABarometerService.m; sourceTree = "<group>"; };
 		D9E012F61797D66400677FC1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D9E5BB031E26AC7C00EAA87E /* YMSCBNativePeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativePeripheral.h; sourceTree = "<group>"; };
+		D9E5BB041E26AC7C00EAA87E /* YMSCBNativePeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativePeripheral.m; sourceTree = "<group>"; };
+		D9E5BB071E26AC9E00EAA87E /* YMSCBNativeService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeService.h; sourceTree = "<group>"; };
+		D9E5BB081E26AC9E00EAA87E /* YMSCBNativeService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativeService.m; sourceTree = "<group>"; };
+		D9E5BB0B1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeCharacteristic.h; sourceTree = "<group>"; };
+		D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativeCharacteristic.m; sourceTree = "<group>"; };
+		D9E5BB131E26AD4300EAA87E /* YMSCBNativeDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeDescriptor.h; sourceTree = "<group>"; };
+		D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativeDescriptor.m; sourceTree = "<group>"; };
 		D9F412ED16DED0030094FEFA /* DEASensorTagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASensorTagViewController.h; sourceTree = "<group>"; };
 		D9F412EE16DED0030094FEFA /* DEASensorTagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASensorTagViewController.m; sourceTree = "<group>"; };
 		D9F412EF16DED0030094FEFA /* DEASensorTagViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DEASensorTagViewController.xib; sourceTree = "<group>"; };
@@ -232,8 +266,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9717E7F1E0B29CF00F59C24 /* CoreBluetooth.framework in Frameworks */,
 				D9C6137A177672BA00826EBF /* QuartzCore.framework in Frameworks */,
-				D9718B8F167FA5140001E42C /* CoreBluetooth.framework in Frameworks */,
 				D9718B46167F9F9F0001E42C /* UIKit.framework in Frameworks */,
 				D9718B48167F9F9F0001E42C /* Foundation.framework in Frameworks */,
 				D9718B4A167F9F9F0001E42C /* CoreGraphics.framework in Frameworks */,
@@ -252,14 +286,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D9DA1AF81E256A32007C2740 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		D933CEC216DDAFA700EDDAD6 /* YmsCoreBluetooth */ = {
 			isa = PBXGroup;
 			children = (
-				D933CEC416DDAFA700EDDAD6 /* YMS128.h */,
+				D9BAA86D1E25A57400952268 /* Implementations */,
 				D933CEC316DDAFA700EDDAD6 /* YMS128.c */,
+				D933CEC416DDAFA700EDDAD6 /* YMS128.h */,
 				D933CEC516DDAFA700EDDAD6 /* YMSCBCentralManager.h */,
 				D933CEC616DDAFA700EDDAD6 /* YMSCBCentralManager.m */,
 				D933CEC916DDAFA700EDDAD6 /* YMSCBPeripheral.h */,
@@ -272,8 +314,8 @@
 				D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */,
 				D933CECD16DDAFA700EDDAD6 /* YMSCBUtils.h */,
 				D933CECE16DDAFA700EDDAD6 /* YMSCBUtils.m */,
-				D9812902173F3804008EA8D5 /* YMSCBStoredPeripherals.h */,
-				D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */,
+				D99659131E1F569300F67BCA /* YMSCBLogger.h */,
+				D99659141E1F569300F67BCA /* YMSCBLogger.m */,
 				D9268B4117306295009C4284 /* NSMutableArray+fifoQueue.h */,
 				D9268B4217306295009C4284 /* NSMutableArray+fifoQueue.m */,
 			);
@@ -288,6 +330,7 @@
 				D933CEC216DDAFA700EDDAD6 /* YmsCoreBluetooth */,
 				D9718B4B167F9F9F0001E42C /* Deanna */,
 				D997AC97175B245800C91B0D /* DeannaMac */,
+				D9DA1AFC1E256A32007C2740 /* YmsCoreBluetoothTests */,
 				D9718B44167F9F9F0001E42C /* Frameworks */,
 				D9718B42167F9F9F0001E42C /* Products */,
 			);
@@ -298,6 +341,7 @@
 			children = (
 				D9718B41167F9F9F0001E42C /* Deanna.app */,
 				D997AC90175B245800C91B0D /* DeannaMac.app */,
+				D9DA1AFB1E256A32007C2740 /* YmsCoreBluetoothTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -476,6 +520,23 @@
 			path = XIBs;
 			sourceTree = "<group>";
 		};
+		D9BAA86D1E25A57400952268 /* Implementations */ = {
+			isa = PBXGroup;
+			children = (
+				D9BAA86E1E25A5B200952268 /* YMSCBNativeCentralManager.h */,
+				D9BAA86F1E25A5B200952268 /* YMSCBNativeCentralManager.m */,
+				D9E5BB031E26AC7C00EAA87E /* YMSCBNativePeripheral.h */,
+				D9E5BB041E26AC7C00EAA87E /* YMSCBNativePeripheral.m */,
+				D9E5BB071E26AC9E00EAA87E /* YMSCBNativeService.h */,
+				D9E5BB081E26AC9E00EAA87E /* YMSCBNativeService.m */,
+				D9E5BB0B1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.h */,
+				D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */,
+				D9E5BB131E26AD4300EAA87E /* YMSCBNativeDescriptor.h */,
+				D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */,
+			);
+			path = Implementations;
+			sourceTree = "<group>";
+		};
 		D9CB2C0616A71F8E00279DDA /* SensorTag */ = {
 			isa = PBXGroup;
 			children = (
@@ -521,6 +582,15 @@
 				D9D70097177783DB0066AB1B /* DEADefaultTheme.m */,
 			);
 			path = Themes;
+			sourceTree = "<group>";
+		};
+		D9DA1AFC1E256A32007C2740 /* YmsCoreBluetoothTests */ = {
+			isa = PBXGroup;
+			children = (
+				D9DA1AFD1E256A32007C2740 /* YmsCoreBluetoothTests.m */,
+				D9DA1AFF1E256A32007C2740 /* Info.plist */,
+			);
+			path = YmsCoreBluetoothTests;
 			sourceTree = "<group>";
 		};
 		D9DE671216E036C100F1B15C /* Sensors */ = {
@@ -583,6 +653,24 @@
 			productReference = D997AC90175B245800C91B0D /* DeannaMac.app */;
 			productType = "com.apple.product-type.application";
 		};
+		D9DA1AFA1E256A32007C2740 /* YmsCoreBluetoothTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D9DA1B041E256A32007C2740 /* Build configuration list for PBXNativeTarget "YmsCoreBluetoothTests" */;
+			buildPhases = (
+				D9DA1AF71E256A32007C2740 /* Sources */,
+				D9DA1AF81E256A32007C2740 /* Frameworks */,
+				D9DA1AF91E256A32007C2740 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D9DA1B011E256A32007C2740 /* PBXTargetDependency */,
+			);
+			name = YmsCoreBluetoothTests;
+			productName = YmsCoreBluetoothTests;
+			productReference = D9DA1AFB1E256A32007C2740 /* YmsCoreBluetoothTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -591,11 +679,21 @@
 			attributes = {
 				CLASSPREFIX = DEA;
 				LastTestingUpgradeCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Yummy Melon Software";
 				TargetAttributes = {
+					D9718B40167F9F9F0001E42C = {
+						DevelopmentTeam = N5X6YV9N92;
+					};
 					D997AC8F175B245800C91B0D = {
 						DevelopmentTeam = N5X6YV9N92;
+						ProvisioningStyle = Automatic;
+					};
+					D9DA1AFA1E256A32007C2740 = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = XK64B7G5HB;
+						ProvisioningStyle = Automatic;
+						TestTargetID = D9718B40167F9F9F0001E42C;
 					};
 				};
 			};
@@ -613,6 +711,7 @@
 			targets = (
 				D9718B40167F9F9F0001E42C /* Deanna */,
 				D997AC8F175B245800C91B0D /* DeannaMac */,
+				D9DA1AFA1E256A32007C2740 /* YmsCoreBluetoothTests */,
 			);
 		};
 /* End PBXProject section */
@@ -643,6 +742,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D9DA1AF91E256A32007C2740 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -653,6 +759,8 @@
 				D9718B52167F9F9F0001E42C /* main.m in Sources */,
 				D9718B56167F9F9F0001E42C /* DEAAppDelegate.m in Sources */,
 				D91170531681251900E2D19A /* DEATemperatureService.m in Sources */,
+				D9E5BB091E26AC9E00EAA87E /* YMSCBNativeService.m in Sources */,
+				D9E5BB0D1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m in Sources */,
 				D91170561681461300E2D19A /* DEAAccelerometerService.m in Sources */,
 				D9D8316D168449FE00F51E42 /* DEASimpleKeysService.m in Sources */,
 				D9C5012216AB37DD001D4D4F /* DEAPeripheralsViewController.m in Sources */,
@@ -664,12 +772,15 @@
 				D933CED016DDAFA700EDDAD6 /* YMSCBCentralManager.m in Sources */,
 				D933CED116DDAFA700EDDAD6 /* YMSCBCharacteristic.m in Sources */,
 				D933CED216DDAFA700EDDAD6 /* YMSCBPeripheral.m in Sources */,
+				D9E5BB151E26AD4300EAA87E /* YMSCBNativeDescriptor.m in Sources */,
 				D933CED316DDAFA700EDDAD6 /* YMSCBService.m in Sources */,
 				D933CED416DDAFA700EDDAD6 /* YMSCBUtils.m in Sources */,
 				D9F412F016DED0030094FEFA /* DEASensorTagViewController.m in Sources */,
 				D9F412F416DED7510094FEFA /* DEATemperatureViewCell.m in Sources */,
+				D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */,
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
+				D9BAA8701E25A5B200952268 /* YMSCBNativeCentralManager.m in Sources */,
 				D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */,
 				D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */,
 				D907A76B16E0393300EA8D5B /* DEABarometerViewCell.m in Sources */,
@@ -682,8 +793,8 @@
 				D9268B4317306295009C4284 /* NSMutableArray+fifoQueue.m in Sources */,
 				D9268B46173081E2009C4284 /* DEADeviceInfoService.m in Sources */,
 				D9960A54173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m in Sources */,
-				D9812904173F3804008EA8D5 /* YMSCBStoredPeripherals.m in Sources */,
 				D9AA81C91753E00700C2836D /* YMSCBDescriptor.m in Sources */,
+				D9E5BB051E26AC7C00EAA87E /* YMSCBNativePeripheral.m in Sources */,
 				D9D70095177782CB0066AB1B /* DEATheme.m in Sources */,
 				D9D70098177783DB0066AB1B /* DEADefaultTheme.m in Sources */,
 			);
@@ -693,6 +804,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D99659161E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D997AC9E175B245800C91B0D /* main.m in Sources */,
 				D997ACA5175B245800C91B0D /* DEMAppDelegate.m in Sources */,
 				D997ACB6175B254500C91B0D /* YMS128.c in Sources */,
@@ -701,7 +813,6 @@
 				D997ACB9175B254500C91B0D /* YMSCBService.m in Sources */,
 				D997ACBA175B254500C91B0D /* YMSCBCharacteristic.m in Sources */,
 				D997ACBB175B254500C91B0D /* YMSCBUtils.m in Sources */,
-				D997ACBC175B254500C91B0D /* YMSCBStoredPeripherals.m in Sources */,
 				D997ACBD175B254500C91B0D /* YMSCBDescriptor.m in Sources */,
 				D997ACBE175B254500C91B0D /* NSMutableArray+fifoQueue.m in Sources */,
 				D997ACBF175B255E00C91B0D /* DEACentralManager.m in Sources */,
@@ -710,10 +821,14 @@
 				D997ACC4175B257000C91B0D /* DEAAccelerometerService.m in Sources */,
 				D997ACC5175B257000C91B0D /* DEABarometerService.m in Sources */,
 				D997ACC6175B257000C91B0D /* DEADeviceInfoService.m in Sources */,
+				D9E5BB0E1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m in Sources */,
+				D9BAA8711E25A5B200952268 /* YMSCBNativeCentralManager.m in Sources */,
 				D997ACC7175B257000C91B0D /* DEAGyroscopeService.m in Sources */,
 				D997ACC8175B257000C91B0D /* DEAHumidityService.m in Sources */,
 				D997ACC9175B257000C91B0D /* DEAMagnetometerService.m in Sources */,
+				D9E5BB0A1E26AC9E00EAA87E /* YMSCBNativeService.m in Sources */,
 				D997ACCA175B257000C91B0D /* DEASimpleKeysService.m in Sources */,
+				D9E5BB161E26AD4300EAA87E /* YMSCBNativeDescriptor.m in Sources */,
 				D997ACCB175B257000C91B0D /* DEATemperatureService.m in Sources */,
 				D997ACDA175B288900C91B0D /* DEMPeripheralViewCell.m in Sources */,
 				D997ACDB175B288900C91B0D /* DEMBaseViewCell.m in Sources */,
@@ -726,10 +841,27 @@
 				D9211E23175BC2870081143F /* DEMMagnetometerViewCell.m in Sources */,
 				D9211E26175BCA860081143F /* DEMGyroscopeViewCell.m in Sources */,
 				D9211E29175BCF040081143F /* DEMHumidityViewCell.m in Sources */,
+				D9E5BB061E26AC7C00EAA87E /* YMSCBNativePeripheral.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D9DA1AF71E256A32007C2740 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D9DA1AFE1E256A32007C2740 /* YmsCoreBluetoothTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D9DA1B011E256A32007C2740 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D9718B40167F9F9F0001E42C /* Deanna */;
+			targetProxy = D9DA1B001E256A32007C2740 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		D9718B4E167F9F9F0001E42C /* InfoPlist.strings */ = {
@@ -765,24 +897,37 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -796,16 +941,29 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				SDKROOT = iphoneos;
@@ -821,10 +979,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = N5X6YV9N92;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Deanna/Deanna-Prefix.pch";
 				INFOPLIST_FILE = "Deanna/Deanna-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -838,10 +997,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 5;
+				DEVELOPMENT_TEAM = N5X6YV9N92;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Deanna/Deanna-Prefix.pch";
 				INFOPLIST_FILE = "Deanna/Deanna-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -855,6 +1015,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -865,7 +1026,7 @@
 				GCC_PREFIX_HEADER = "DeannaMac/DeannaMac-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "DeannaMac/DeannaMac-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -879,6 +1040,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -890,11 +1052,57 @@
 				GCC_PREFIX_HEADER = "DeannaMac/DeannaMac-Prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				INFOPLIST_FILE = "DeannaMac/DeannaMac-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		D9DA1B021E256A32007C2740 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = XK64B7G5HB;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = YmsCoreBluetoothTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thetileapp.YmsCoreBluetoothTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Deanna.app/Deanna";
+			};
+			name = Debug;
+		};
+		D9DA1B031E256A32007C2740 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = XK64B7G5HB;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = YmsCoreBluetoothTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.thetileapp.YmsCoreBluetoothTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Deanna.app/Deanna";
 			};
 			name = Release;
 		};
@@ -924,6 +1132,15 @@
 			buildConfigurations = (
 				D997ACA9175B245800C91B0D /* Debug */,
 				D997ACAA175B245800C91B0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D9DA1B041E256A32007C2740 /* Build configuration list for PBXNativeTarget "YmsCoreBluetoothTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D9DA1B021E256A32007C2740 /* Debug */,
+				D9DA1B031E256A32007C2740 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

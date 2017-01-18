@@ -19,13 +19,14 @@
 #import <UIKit/UIKit.h>
 #import "DEACentralManager.h"
 #import "DEABaseViewController.h"
+#import "YMSCBPeripheral.h"
 
 @class DEAPeripheralTableViewCell;
 
 /**
  View Controller for listing of Bluetooth LE Peripherals available.
  */
-@interface DEAPeripheralsViewController : DEABaseViewController <UITableViewDataSource, UITableViewDelegate, CBPeripheralDelegate>
+@interface DEAPeripheralsViewController : DEABaseViewController <UITableViewDataSource, UITableViewDelegate, YMSCBPeripheralDelegate>
 
 /** @name Properties */
 /// TableViewCell for a connectable peripheral.

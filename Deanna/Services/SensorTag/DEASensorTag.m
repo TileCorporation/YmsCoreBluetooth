@@ -33,12 +33,12 @@
 
 @implementation DEASensorTag
 
-- (instancetype)initWithPeripheral:(CBPeripheral *)peripheral
+- (instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface
                            central:(YMSCBCentralManager *)owner
                             baseHi:(int64_t)hi
                             baseLo:(int64_t)lo {
 
-    self = [super initWithPeripheral:peripheral central:owner baseHi:hi baseLo:lo];
+    self = [super initWithPeripheral:peripheralInterface central:owner baseHi:hi baseLo:lo];
     
     if (self) {
         DEATemperatureService *ts = [[DEATemperatureService alloc] initWithName:@"temperature" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_TEMPERATURE_SERVICE];
@@ -67,6 +67,8 @@
     // Watchdog aware method
     [self resetWatchdog];
     
+    __weak typeof(self) this = self;
+    
     [self connectWithOptions:nil withBlock:^(YMSCBPeripheral *yp, NSError *error) {
         if (error) {
             return;
@@ -75,7 +77,7 @@
         // Example where only a subset of services is to be discovered.
         //[yp discoverServices:[yp servicesSubset:@[@"temperature", @"simplekeys", @"devinfo"]] withBlock:^(NSArray *yservices, NSError *error) {
         
-        [yp discoverServices:[yp services] withBlock:^(NSArray *yservices, NSError *error) {
+        [yp discoverServices:[yp serviceUUIDs] withBlock:^(NSArray *yservices, NSError *error) {
             if (error) {
                 return;
             }
@@ -96,19 +98,27 @@
                 } else {
                     __weak DEABaseService *thisService = (DEABaseService *)service;
                     [service discoverCharacteristics:[service characteristics] withBlock:^(NSDictionary *chDict, NSError *error) {
+                        if (error) {
+                            NSString *message = [NSString stringWithFormat:@"%@", error];
+                            [this.logger logError:message object:this];
+                            return;
+                        }
+                        
                         for (NSString *key in chDict) {
                             YMSCBCharacteristic *ct = chDict[key];
-                            //NSLog(@"%@ %@ %@", ct, ct.cbCharacteristic, ct.uuid);
+                            NSLog(@"%@ %@ %@", ct, ct.characteristicInterface, ct.uuid);
                             
-                            [ct discoverDescriptorsWithBlock:^(NSArray *ydescriptors, NSError *error) {
+                            [ct discoverDescriptorsWithBlock:^(NSArray *yDescriptors, NSError *error) {
                                 if (error) {
                                     return;
                                 }
-                                for (YMSCBDescriptor *yd in ydescriptors) {
-                                    NSLog(@"Descriptor: %@ %@ %@", thisService.name, yd.UUID, yd.cbDescriptor);
+                                for (YMSCBDescriptor *yd in yDescriptors) {
+                                    NSLog(@"Descriptor: %@ %@ %@", thisService.name, yd.UUID, yd.descriptorInterface);
                                 }
                             }];
+                            
                         }
+
                     }];
                 }
             }
@@ -118,35 +128,35 @@
 
 
 - (DEAAccelerometerService *)accelerometer {
-    return self.serviceDict[@"accelerometer"];
+    return (DEAAccelerometerService *)self.serviceDict[@"accelerometer"];
 }
 
 - (DEABarometerService *)barometer {
-    return self.serviceDict[@"barometer"];
+    return (DEABarometerService *)self.serviceDict[@"barometer"];
 }
 
 - (DEADeviceInfoService *)devinfo {
-    return self.serviceDict[@"devinfo"];
+    return (DEADeviceInfoService *)self.serviceDict[@"devinfo"];
 }
 
 - (DEAGyroscopeService *)gyroscope {
-    return self.serviceDict[@"gyroscope"];
+    return (DEAGyroscopeService *)self.serviceDict[@"gyroscope"];
 }
 
 - (DEAHumidityService *)humidity {
-    return self.serviceDict[@"humidity"];
+    return (DEAHumidityService *)self.serviceDict[@"humidity"];
 }
 
 - (DEAMagnetometerService *)magnetometer {
-    return self.serviceDict[@"magnetometer"];
+    return (DEAMagnetometerService *)self.serviceDict[@"magnetometer"];
 }
 
 - (DEASimpleKeysService *)simplekeys {
-    return self.serviceDict[@"simplekeys"];
+    return (DEASimpleKeysService *)self.serviceDict[@"simplekeys"];
 }
 
 - (DEATemperatureService *)temperature {
-    return self.serviceDict[@"temperature"];
+    return (DEATemperatureService *)self.serviceDict[@"temperature"];
 }
 
 @end

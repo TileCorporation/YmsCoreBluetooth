@@ -38,7 +38,7 @@
 
 
 - (void)configureWithSensorTag:(DEASensorTag *)sensorTag {
-    self.service = sensorTag.serviceDict[@"simplekeys"];
+    self.service = (DEASimpleKeysService *)sensorTag.serviceDict[@"simplekeys"];
     
     for (NSString *key in @[@"keyValue", @"isOn", @"isEnabled"]) {
         [self.service addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:NULL];
@@ -93,7 +93,10 @@
             
             if (keyValue != 0) {
                 NSLog(@"Background Key Value %d", keyValue);
-            
+                
+                // TODO: posting notification needs to be updated for iOS 8, 10
+                
+                /*
                 UILocalNotification *localNotif = [[UILocalNotification alloc] init];
                 if (localNotif == nil) {
                     return;
@@ -102,10 +105,11 @@
                 localNotif.soundName = UILocalNotificationDefaultSoundName;
                 localNotif.applicationIconBadgeNumber = keyValue;
                 localNotif.alertBody = [NSString stringWithFormat:@"You pressed button %d", keyValue];
-                //localNotif.alertAction = @"Deanna got something for you";
+                localNotif.alertAction = @"Deanna got something for you";
                 localNotif.hasAction = NO;
 
                 [app presentLocalNotificationNow:localNotif];
+                 */
             }
 
         }

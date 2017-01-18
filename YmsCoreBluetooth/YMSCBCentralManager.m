@@ -20,20 +20,17 @@
 #import "YMSCBPeripheral.h"
 #import "YMSCBService.h"
 #import "YMSCBCharacteristic.h"
-#import "YMSCBStoredPeripherals.h"
+#import "YMSCBNativeCentralManager.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 @interface YMSCBCentralManager ()
-{
-    NSMutableArray *_ymsPeripherals;
-}
 
-@property (atomic, strong) NSMutableArray *ymsPeripherals;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, YMSCBPeripheral *> *ymsPeripherals;
 
 @end
-
 
 @implementation YMSCBCentralManager
 
@@ -44,112 +41,95 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 #pragma mark - Constructors
 
-- (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue delegate:(id<CBCentralManagerDelegate>) delegate; {
+- (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
+                                    queue:(nullable dispatch_queue_t)queue
+                                  options:(nullable NSDictionary<NSString *, id> *)options
+                                   logger:(id<YMSCBLogging>)logger {
     self = [super init];
-    
     if (self) {
-        _ymsPeripherals = [NSMutableArray new];
+        _ymsPeripherals = [NSMutableDictionary new];
         _delegate = delegate;
-        _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
-        _knownPeripheralNames = nameList;
+        _queue = queue;
+
+        // TODO: conditional compile based on environment
+        _centralInterface = [[YMSCBNativeCentralManager alloc] initWithDelegate:self queue:queue options:options];
+
+        _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
         _discoveredCallback = nil;
         _retrievedCallback = nil;
-        _useStoredPeripherals = NO;
+        _logger = logger;
     }
     
     return self;
 }
 
-- (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue useStoredPeripherals:(BOOL)useStore delegate:(id<CBCentralManagerDelegate>)delegate {
-
-    self = [super init];
-    
-    if (self) {
-        _ymsPeripherals = [NSMutableArray new];
-        _delegate = delegate;
-        _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
-        _knownPeripheralNames = nameList;
-        _discoveredCallback = nil;
-        _retrievedCallback = nil;
-        _useStoredPeripherals = useStore;
-    }
-    
-    if (useStore) {
-        [YMSCBStoredPeripherals initializeStorage];
-    }
-    
-    return self;
+- (CBCentralManagerState)state {
+    CBCentralManagerState state;
+    state = _centralInterface.state;
+    return state;
 }
+
 
 #pragma mark - Peripheral Management
 
 - (NSUInteger)count {
-    return  [self countOfYmsPeripherals];
-}
-
-- (YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index {
-    return [self objectInYmsPeripheralsAtIndex:index];
-}
-
-
-- (void)addPeripheral:(YMSCBPeripheral *)yperipheral {
-    [self insertObject:yperipheral inYmsPeripheralsAtIndex:self.countOfYmsPeripherals];
-}
-
-- (void)removePeripheral:(YMSCBPeripheral *)yperipheral {
-    [self removeObjectFromYmsPeripheralsAtIndex:[self.ymsPeripherals indexOfObject:yperipheral]];
-}
-
-- (void)removePeripheralAtIndex:(NSUInteger)index {
-    [self removeObjectFromYmsPeripheralsAtIndex:index];
-}
-
-- (void)removeAllPeripherals {
-    while ([self countOfYmsPeripherals] > 0) {
-        [self removePeripheralAtIndex:0];
-    }
-}
-
-- (NSUInteger)countOfYmsPeripherals {
-    return _ymsPeripherals.count;
-}
-
-- (id)objectInYmsPeripheralsAtIndex:(NSUInteger)index {
-    return [_ymsPeripherals objectAtIndex:index];
-}
-
-- (void)insertObject:(YMSCBPeripheral *)object inYmsPeripheralsAtIndex:(NSUInteger)index {
-    [_ymsPeripherals insertObject:object atIndex:index];
-}
-
-- (void)removeObjectFromYmsPeripheralsAtIndex:(NSUInteger)index {
-    if (self.useStoredPeripherals) {
-        YMSCBPeripheral *yperipheral = [self.ymsPeripherals objectAtIndex:index];
-        if (yperipheral.cbPeripheral.identifier != nil) {
-            [YMSCBStoredPeripherals deleteUUID:yperipheral.cbPeripheral.identifier];
-        }
-    }
-    [_ymsPeripherals removeObjectAtIndex:index];
-}
-
-
-
-- (BOOL)isKnownPeripheral:(CBPeripheral *)peripheral {
-    BOOL result = NO;
+    __block NSUInteger result = 0;
     
-    for (NSString *key in self.knownPeripheralNames) {
-        result = result || [peripheral.name isEqualToString:key];
-        if (result) {
-            break;
-        }
-    }
+    __weak typeof(self) this = self;
+    dispatch_sync(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        result = strongThis.ymsPeripherals.count;
+    });
     
     return result;
 }
 
+- (void)addPeripheral:(YMSCBPeripheral *)yp {
+    __weak typeof(self) this = self;
+    dispatch_async(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis.ymsPeripherals setValue:yp forKey:yp.identifier.UUIDString];
+    });
+}
+
+- (void)removePeripheral:(YMSCBPeripheral *)yp {
+    __weak typeof(self) this = self;
+    dispatch_async(self.ymsPeripheralsQueue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis.ymsPeripherals removeObjectForKey:yp.identifier.UUIDString];
+    });
+}
+
+- (nullable YMSCBPeripheral *)findPeripheral:(YMSCBPeripheral *)yPeripheral {
+    YMSCBPeripheral *result = nil;
+    NSString *key = yPeripheral.identifier.UUIDString;
+    result = self.ymsPeripherals[key];
+    return result;
+}
+
+- (nullable YMSCBPeripheral *)findPeripheralWithIdentifier:(NSUUID *)identifier {
+    YMSCBPeripheral *result = nil;
+    NSString *key = identifier.UUIDString;
+    result = self.ymsPeripherals[key];
+    return result;
+}
+
+
+
+- (nullable YMSCBPeripheral *)ymsPeripheralWithInterface:(id<YMSCBPeripheralInterface>)peripheralInterface {
+    /*
+     * THIS METHOD IS TO BE OVERRIDDEN
+     */
+
+    YMSCBPeripheral *result = nil;
+    NSAssert(NO, @"[YMSCBCentralManager ymsPeripheralWithInterface:] must be be overridden.");
+    return result;
+}
+
+
 #pragma mark - Scan Methods
 
-- (void)startScan {
+- (BOOL)startScan {
     /*
      * THIS METHOD IS TO BE OVERRIDDEN
      */
@@ -157,67 +137,119 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     NSAssert(NO, @"[YMSCBCentralManager startScan] must be be overridden and include call to [self scanForPeripherals:options:]");
     
     //[self scanForPeripheralsWithServices:nil options:nil];
-}
-
-
-- (void)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options {
-    [self.manager scanForPeripheralsWithServices:serviceUUIDs options:options];
-    self.isScanning = YES;
-}
-
-
-- (void)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options withBlock:(void (^)(CBPeripheral *, NSDictionary *, NSNumber *, NSError *))discoverCallback {
-    self.discoveredCallback = discoverCallback;
     
-    [self scanForPeripheralsWithServices:serviceUUIDs options:options];
+    BOOL result = NO;
+    return result;
 }
 
-
-- (void)stopScan {
-    [self.manager stopScan];
-    self.isScanning = NO;
-}
-
-
-- (YMSCBPeripheral *)findPeripheral:(CBPeripheral *)peripheral {
+- (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs options:(nullable NSDictionary *)options {
+    BOOL result = NO;
     
-    YMSCBPeripheral *result = nil;
-    NSArray *peripheralsCopy = [NSArray arrayWithArray:self.ymsPeripherals];
-    
-    for (YMSCBPeripheral *yPeripheral in peripheralsCopy) {
-        if (yPeripheral.cbPeripheral == peripheral) {
-            result = yPeripheral;
-            break;
-        }
+    NSString *message = nil;
+    if (self.centralInterface.state == CBCentralManagerStatePoweredOn) {
+        message = [NSString stringWithFormat:@"BLE OPERATION: START SCAN serviceUUIDs: %@ options: %@", serviceUUIDs, options];
+        [self.logger logInfo:message object:self];
+        
+        [self.centralInterface scanForPeripheralsWithServices:serviceUUIDs options:options];
+        self.isScanning = YES;
+        result = YES;
+    } else {
+        message = [NSString stringWithFormat:@"Unable to start scan: CBCentralManagerState is not ON"];
+        [self.logger logError:message object:self];
     }
     
     return result;
 }
 
 
+- (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs
+                               options:(nullable NSDictionary *)options
+                             withBlock:(nullable YMSCBDiscoverCallbackBlockType)discoverCallback
+                            withFilter:(nullable YMSCBFilterCallbackBlockType)filterCallback {
 
-- (void)handleFoundPeripheral:(CBPeripheral *)peripheral {
-    /*
-     * THIS METHOD IS TO BE OVERRIDDEN
-     */
+    BOOL result = NO;
     
-    NSAssert(NO, @"[YMSCBCentralManager handleFoundPeripheral:] must be be overridden.");
-
+    if (self.centralInterface.state == CBCentralManagerStatePoweredOn) {
+        self.discoveredCallback = discoverCallback;
+        self.filteredCallback = filterCallback;
+        result = [self scanForPeripheralsWithServices:serviceUUIDs options:options];
+    }
+    return result;
 }
+
+
+
+- (void)stopScan {
+    NSString *message = [NSString stringWithFormat:@"BLE OPERATION: STOP SCAN"];
+    [self.logger logInfo:message object:self];
+
+    [self.centralInterface stopScan];
+    self.discoveredCallback = nil;
+    self.isScanning = NO;
+}
+
 
 
 #pragma mark - Retrieve Methods
 
-- (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDs {
-    NSArray *result = [self.manager retrieveConnectedPeripheralsWithServices:serviceUUIDs];
+- (NSArray<YMSCBPeripheral *> *)retrievePeripheralsWithIdentifiers:(NSArray *)identifiers {
+    
+    NSArray<YMSCBPeripheral *> *result = nil;
+    NSArray<id<YMSCBPeripheralInterface>> *peripheralInterfaces = [self.centralInterface retrievePeripheralsWithIdentifiers:identifiers];
+    
+    NSMutableArray *tempArray = [NSMutableArray new];
+    
+    for (id<YMSCBPeripheralInterface> peripheralInterface in peripheralInterfaces) {
+        YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+        if (!yPeripheral) {
+            yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface];
+            if (yPeripheral) {
+                [self addPeripheral:yPeripheral];
+            }
+        }
+        
+        [tempArray addObject:yPeripheral];
+    }
+
+    result = [NSArray arrayWithArray:tempArray];
     return result;
 }
 
-- (NSArray *)retrievePeripheralsWithIdentifiers:(NSArray *)identifiers {
-    NSArray *result = [self.manager retrievePeripheralsWithIdentifiers:identifiers];
+- (NSArray<YMSCBPeripheral *> *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDs {
+    
+    NSArray<YMSCBPeripheral *> *result = nil;
+    NSArray<id<YMSCBPeripheralInterface>> *peripheralInterfaces = [self.centralInterface retrieveConnectedPeripheralsWithServices:serviceUUIDs];
+    
+    NSMutableArray *tempArray = [NSMutableArray new];
+    
+    for (id<YMSCBPeripheralInterface> peripheralInterface in peripheralInterfaces) {
+        YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+        if (!yPeripheral) {
+            yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface];
+            if (yPeripheral) {
+                [self addPeripheral:yPeripheral];
+            }
+        }
+        
+        [tempArray addObject:yPeripheral];
+    }
+    
+    result = [NSArray arrayWithArray:tempArray];
+
     return result;
 }
 
+
+
+#pragma mark - Connection Methods
+
+- (void)connectPeripheral:(YMSCBPeripheral *)yPeripheral options:(nullable NSDictionary<NSString *,id> *)options {
+    [self.centralInterface connectPeripheral:yPeripheral.peripheralInterface options:options];
+}
+
+- (void)cancelPeripheralConnection:(YMSCBPeripheral *)yPeripheral {
+    [self.centralInterface cancelPeripheralConnection:yPeripheral.peripheralInterface];
+}
 
 #pragma mark - CBCentralManger state handler methods.
 
@@ -247,117 +279,135 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     // THIS METHOD IS TO BE OVERRIDDEN
 }
 
-#pragma mark - CBCentralManagerDelegate Protocol Methods
+#pragma mark - YMSCBCentralManagerInterfaceDelegate Protocol Methods
 
-- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    __weak YMSCBCentralManager *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        switch (central.state) {
+- (void)centralManagerDidUpdateState:(id<YMSCBCentralManagerInterface>)centralInterface {
+    
+    if (_centralInterface == centralInterface) {
+    
+        switch (centralInterface.state) {
             case CBCentralManagerStatePoweredOn:
-                [this managerPoweredOnHandler];
+                [self managerPoweredOnHandler];
                 break;
                 
             case CBCentralManagerStateUnknown:
-                [this managerUnknownHandler];
+                [self managerUnknownHandler];
                 break;
                 
             case CBCentralManagerStatePoweredOff:
-                [this managerPoweredOffHandler];
+                [self managerPoweredOffHandler];
                 break;
                 
             case CBCentralManagerStateResetting:
-                [this managerResettingHandler];
+                [self managerResettingHandler];
                 break;
                 
             case CBCentralManagerStateUnauthorized:
-                [this managerUnauthorizedHandler];
+                [self managerUnauthorizedHandler];
                 break;
                 
             case CBCentralManagerStateUnsupported: {
-                [this managerUnsupportedHandler];
+                [self managerUnsupportedHandler];
                 break;
             }
         }
-
-        if ([this.delegate respondsToSelector:@selector(centralManagerDidUpdateState:)]) {
-            [this.delegate centralManagerDidUpdateState:central];
-
-        }
-    });
+        
+        [self.delegate centralManagerDidUpdateState:self];
+        
+    }
 }
 
 
-
-- (void)centralManager:(CBCentralManager *)central
- didDiscoverPeripheral:(CBPeripheral *)peripheral
-     advertisementData:(NSDictionary *)advertisementData
-                  RSSI:(NSNumber *)RSSI {
-    __weak YMSCBCentralManager *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        if (this.useStoredPeripherals) {
-            if (peripheral.identifier) {
-                [YMSCBStoredPeripherals saveUUID:peripheral.identifier];
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDiscoverPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
+    
+    BOOL shouldProcess = YES;
+    
+    if (self.filteredCallback) {
+        shouldProcess = self.filteredCallback(peripheralInterface.name, advertisementData, RSSI);
+    }
+    
+    if (shouldProcess && self.discoveredCallback) {
+        YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+        if (!yPeripheral) {
+            yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface];
+            if (yPeripheral) {
+                [self addPeripheral:yPeripheral];
             }
         }
         
-        if (this.discoveredCallback) {
-            this.discoveredCallback(peripheral, advertisementData, RSSI, nil);
-        } else {
-            [this handleFoundPeripheral:peripheral];
-        }
+        self.discoveredCallback(yPeripheral, advertisementData, RSSI);
         
-        if ([this.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
-            [this.delegate centralManager:central
-                    didDiscoverPeripheral:peripheral
-                        advertisementData:advertisementData
-                                     RSSI:RSSI];
+        if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
+            [self.delegate centralManager:self didDiscoverPeripheral:yPeripheral advertisementData:advertisementData RSSI:RSSI];
         }
-    });
+    }
 }
 
 
-- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
-    __weak YMSCBCentralManager *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        YMSCBPeripheral *yp = [this findPeripheral:peripheral];
-        
-        [yp handleConnectionResponse:nil];
-        
-        if ([this.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
-            [this.delegate centralManager:central didConnectPeripheral:peripheral];
-        }
-    });
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface {
+    NSString *message = [NSString stringWithFormat:@"< didConnectPeripheral: %@", peripheralInterface];
+    [self.logger logInfo:message object:self.centralInterface];
+    
+    YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+    [yPeripheral handleConnectionResponse:nil];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
+        [self.delegate centralManager:self didConnectPeripheral:yPeripheral];
+    }
 }
 
 
-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    __weak YMSCBCentralManager *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        YMSCBPeripheral *yp = [this findPeripheral:peripheral];
-        
-        for (id key in yp.serviceDict) {
-            YMSCBService *service = yp.serviceDict[key];
-            service.cbService = nil;
-            service.isOn = NO;
-            service.isEnabled = NO;
-        }
-        
-        if ([this.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
-            [this.delegate centralManager:central didDisconnectPeripheral:peripheral error:error];
-        }
-    });
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< didDisconnectPeripheral: %@ error: %@", peripheralInterface, error];
+    [self.logger logInfo:message object:self.centralInterface];
+    
+    YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+    [yPeripheral reset];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
+        [self.delegate centralManager:self didDisconnectPeripheral:yPeripheral error:error];
+    }
 }
 
 
-- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    __weak YMSCBCentralManager *this = self;
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        YMSCBPeripheral *yp = [this findPeripheral:peripheral];
-        [yp handleConnectionResponse:error];
-        if ([this.delegate respondsToSelector:@selector(centralManager:didFailToConnectPeripheral:error:)]) {
-            [this.delegate centralManager:central didFailToConnectPeripheral:peripheral error:error];
-        }
-    });
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface willRestoreState:(NSDictionary<NSString *,id> *)dict {
+    NSString *message = [NSString stringWithFormat:@"< willRestoreState: %@", dict];
+    [self.logger logInfo:message object:self.centralInterface];
+}
+
+#pragma mark - YMSCBLogger Protocol Methods
+
+- (void)logError:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logError:message object:object];
+    }
+}
+
+- (void)logWarn:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logWarn:message object:object];
+    }
+}
+
+- (void)logInfo:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logInfo:message object:object];
+    }
+}
+
+- (void)logDebug:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logDebug:message object:object];
+    }
+}
+
+- (void)logVerbose:(NSString *)message object:(id)object {
+    if (self.logger) {
+        [self.logger logVerbose:message object:object];
+    }
 }
 
 @end
+
+NS_ASSUME_NONNULL_END
+

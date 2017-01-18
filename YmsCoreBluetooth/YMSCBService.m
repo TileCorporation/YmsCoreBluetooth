@@ -26,7 +26,6 @@
 
 @implementation YMSCBService
 
-
 - (instancetype)initWithName:(NSString *)oName
                       parent:(YMSCBPeripheral *)pObj
                       baseHi:(int64_t)hi
@@ -48,6 +47,8 @@
         } else {
             _uuid = [YMSCBUtils createCBUUID:&_base withIntOffset:serviceOffset];
         }
+        
+        _logger = _parent.logger;
     }
     return self;
 }
@@ -75,6 +76,8 @@
         } else {
             _uuid = [YMSCBUtils createCBUUID:&_base withIntBLEOffset:serviceOffset];
         }
+        
+        _logger = _parent.logger;
     }
     return self;
 }
@@ -121,8 +124,8 @@
 - (void)addCharacteristic:(NSString *)cname withAddress:(int)addr {
     
     YMSCBCharacteristic *yc;
-    NSString *addrString = [NSString stringWithFormat:@"%x", addr];
-    
+    NSString *addrString = [NSString stringWithFormat:@"%04x", addr];
+
     
     CBUUID *uuid = [CBUUID UUIDWithString:addrString];
     yc = [[YMSCBCharacteristic alloc] initWithName:cname
@@ -164,15 +167,17 @@
 }
 
 
-- (void)syncCharacteristics:(NSArray *)foundCharacteristics {
-    @synchronized(self) {
-        for (NSString *key in self.characteristicDict) {
-            YMSCBCharacteristic *yc = self.characteristicDict[key];
-            for (CBCharacteristic *ct in foundCharacteristics) {
-                if ([yc.uuid isEqual:ct.UUID]) {
-                    yc.cbCharacteristic = ct;
-                    break;
-                }
+- (void)syncCharacteristics {
+    // @synchronized(self)
+    NSArray<id<YMSCBCharacteristicInterface>> *ctInterfaces = [self.serviceInterface characteristics];
+    NSArray<YMSCBCharacteristic *> *localCharacteristics = [self.characteristicDict allValues];
+    
+    for (id<YMSCBCharacteristicInterface> ctInterface in ctInterfaces) {
+        for (YMSCBCharacteristic *ct in localCharacteristics) {
+            if ([ctInterface.UUID isEqual:ct.uuid]) {
+                ct.characteristicInterface = ctInterface;
+                ctInterface.owner = ct;
+                break;
             }
         }
     }
@@ -185,12 +190,13 @@
 }
 
 
+// TODO: obsolete
 - (YMSCBCharacteristic *)findCharacteristic:(CBCharacteristic *)ct {
     YMSCBCharacteristic *result;
     for (NSString *key in self.characteristicDict) {
         YMSCBCharacteristic *yc = self.characteristicDict[key];
             
-        if ([yc.cbCharacteristic.UUID isEqual:ct.UUID]) {
+        if ([yc.characteristicInterface.UUID isEqual:ct.UUID]) {
             result = yc;
             break;
         }
@@ -209,8 +215,18 @@
 - (void)discoverCharacteristics:(NSArray *)characteristicUUIDs withBlock:(void (^)(NSDictionary *, NSError *))callback {
     self.discoverCharacteristicsCallback = callback;
     
-    [self.parent.cbPeripheral discoverCharacteristics:characteristicUUIDs
-                                           forService:self.cbService];
+    NSMutableArray *bufArray = [NSMutableArray new];
+    [characteristicUUIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [bufArray addObject:[NSString stringWithFormat:@"%@", obj]];
+    }];
+    NSString *buf = [bufArray componentsJoinedByString:@","];
+    
+    NSString *message = [NSString stringWithFormat:@"> discoverCharacteristics:%@ forService: %@", buf, self.serviceInterface];
+    [self.logger logInfo:message object:self.parent.peripheralInterface];
+    
+    
+    [self.parent.peripheralInterface discoverCharacteristics:characteristicUUIDs
+                                                  forService:self.serviceInterface];
 
 }
 
@@ -227,5 +243,16 @@
     
 }
 
+- (void)reset {
+    self.isEnabled = NO;
+    self.isOn = NO;
+    
+    for (id key in self.characteristicDict) {
+        YMSCBCharacteristic *ct = self.characteristicDict[key];
+        [ct reset];
+    }
+    
+    [self.serviceInterface reset];
+}
 
 @end

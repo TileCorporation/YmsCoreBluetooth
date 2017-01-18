@@ -16,12 +16,14 @@
 //  Author: Charles Y. Choi <charles.choi@yummymelon.com>
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
 /**
  FIFO queue implementation using NSMutableArray
  */
 @interface NSMutableArray (fifoQueue)
+
+@property (nonatomic, readonly) dispatch_queue_t queue;
 
 /**
  Push object to the back of the queue.
@@ -34,5 +36,14 @@
  @return object from the front of the queue.
  */
 - (id)pop;
+
+/**
+ Returns a Boolean value that indicates whether a given object is present in the array.
+ Thread safe.
+ @return YES if anObject is present in the array, otherwise NO
+ */
+- (BOOL)threadSafeContainsObject:(id)anObject;
+
+- (void)threadSafeRemoveObjectsInArray:(NSArray *)array;
 
 @end

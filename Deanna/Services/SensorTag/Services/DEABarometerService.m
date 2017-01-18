@@ -103,19 +103,36 @@ double calcBarPress(int16_t t_r,
     return self;
 }
 
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error {
+
+- (void)turnOn {
+    __weak DEABaseService *this = self;
     
-    if (error) {
-        return;
-    }
-
-    if ([yc.name isEqualToString:@"data"]) {
-
-        if (self.isCalibrated == NO) {
+    YMSCBCharacteristic *configCt = self.characteristicDict[@"config"];
+    [configCt writeByte:0x1 withBlock:^(NSError *error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
             return;
         }
-
-        NSData *data = yc.cbCharacteristic.value;
+        
+        NSLog(@"TURNED ON: %@", this.name);
+    }];
+    
+    YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification for %@ on", this.name);
+        
+    } withNotificationBlock:^(NSData * _Nonnull data, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification received %@ for %@", data, this.name);
         
         char val[data.length];
         [data getBytes:&val length:data.length];
@@ -127,7 +144,7 @@ double calcBarPress(int16_t t_r,
         
         int16_t p_r = ((v2 & 0xff)| ((v3 << 8) & 0xff00));
         int16_t t_r = ((v0 & 0xff)| ((v1 << 8) & 0xff00));
-
+        
         __weak DEABarometerService *this = self;
         _YMS_PERFORM_ON_MAIN_THREAD(^{
             [self willChangeValueForKey:@"sensorValues"];
@@ -135,8 +152,15 @@ double calcBarPress(int16_t t_r,
             this.ambientTemp = @(calcBarTmp(t_r, _c1, _c2));
             [self didChangeValueForKey:@"sensorValues"];
         });
-    }
+
+        
+    }];
+    
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        this.isOn = YES;
+    });
 }
+
 
 - (void)requestCalibration {
     if (self.isCalibrating == NO) {

@@ -19,25 +19,29 @@
 
 #import "DEACentralManager.h"
 #import "DEASensorTag.h"
-#import "YMSCBStoredPeripherals.h"
 #include "TISensorTag.h"
-
+#import "YMSCBLogger.h"
+#import "YMSCBPeripheral.h"
 
 #define CALLBACK_EXAMPLE 1
 
 static DEACentralManager *sharedCentralManager;
 
+@interface DEACentralManager()
+
+
+@end
+
+
 @implementation DEACentralManager
 
 + (DEACentralManager *)initSharedServiceWithDelegate:(id)delegate {
     if (sharedCentralManager == nil) {
-        dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", 0);
-
-        NSArray *nameList = @[@"TI BLE Sensor Tag", @"SensorTag"];
-        sharedCentralManager = [[super allocWithZone:NULL] initWithKnownPeripheralNames:nameList
-                                                                                  queue:queue
-                                                                   useStoredPeripherals:YES
-                                                                               delegate:delegate];
+        dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", DISPATCH_QUEUE_CONCURRENT);
+        sharedCentralManager = [[super allocWithZone:NULL] initWithDelegate:delegate
+                                                                      queue:queue
+                                                                    options:nil
+                                                                     logger:[YMSCBLogger new]];
     }
     return sharedCentralManager;
     
@@ -52,7 +56,7 @@ static DEACentralManager *sharedCentralManager;
 }
 
 
-- (void)startScan {
+- (BOOL)startScan {
     /*
      Setting CBCentralManagerScanOptionAllowDuplicatesKey to YES will allow for repeated updates of the RSSI via advertising.
      */
@@ -68,69 +72,79 @@ static DEACentralManager *sharedCentralManager;
      This may not always be the case, where for example information from advertisementData and the RSSI are to be factored in.
      */
     
+    
 #ifdef CALLBACK_EXAMPLE
-    __weak DEACentralManager *this = self;
-    [self scanForPeripheralsWithServices:nil
+    
+    __weak typeof(self) this = self;
+    BOOL result = [self scanForPeripheralsWithServices:nil
                                  options:options
-                               withBlock:^(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError *error) {
-                                   if (error) {
-                                       NSLog(@"Something bad happened with scanForPeripheralWithServices:options:withBlock:");
-                                       return;
+                               withBlock:^(YMSCBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI) {
+                                   __strong typeof (this) strongThis = this;
+                                   
+                                   //NSLog(@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI);
+                                   NSString *message = [NSString stringWithFormat:@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI];
+                                   
+                                   if (strongThis) {
+                                       [strongThis.logger logInfo:message object:nil];
                                    }
                                    
-                                   NSLog(@"DISCOVERED: %@, %@, %@ db", peripheral, peripheral.name, RSSI);
-                                   [this handleFoundPeripheral:peripheral];
-                               }];
+                               }
+     
+                              withFilter:^BOOL(NSString *name, NSDictionary * _Nonnull advertisementData, NSNumber * _Nonnull RSSI) {
+                                  
+                                  BOOL result = NO;
+                                  if (name &&
+                                      (RSSI.integerValue < 0) &&
+                                      (RSSI.integerValue > -55) &&
+                                      [name containsString:@"Sensor"]
+                                      ) {
+                                      result = YES;
+                                  }
+                                  return result;
+                              }];
     
 #else
-    [self scanForPeripheralsWithServices:nil options:options];
+    BOOL result = [self scanForPeripheralsWithServices:nil options:options];
 #endif
-
+    return result;
 }
 
-- (void)handleFoundPeripheral:(CBPeripheral *)peripheral {
-    YMSCBPeripheral *yp = [self findPeripheral:peripheral];
+- (nullable YMSCBPeripheral *)ymsPeripheralWithInterface:(id<YMSCBPeripheralInterface>)peripheralInterface {
+    YMSCBPeripheral *result = nil;
     
-    if (yp == nil) {
-        BOOL isUnknownPeripheral = YES;
-        for (NSString *pname in self.knownPeripheralNames) {
-            if ([pname isEqualToString:peripheral.name]) {
-                DEASensorTag *sensorTag = [[DEASensorTag alloc] initWithPeripheral:peripheral
-                                                                           central:self
-                                                                            baseHi:kSensorTag_BASE_ADDRESS_HI
-                                                                            baseLo:kSensorTag_BASE_ADDRESS_LO];
-
-                [self addPeripheral:sensorTag];
-                isUnknownPeripheral = NO;
-                break;
-                
-            }
-            
-        }
+    if ([peripheralInterface.name containsString:@"Sensor"] && peripheralInterface.identifier) {
+        DEASensorTag *sensorTag = [[DEASensorTag alloc] initWithPeripheral:peripheralInterface
+                                                                   central:self
+                                                                    baseHi:kSensorTag_BASE_ADDRESS_HI
+                                                                    baseLo:kSensorTag_BASE_ADDRESS_LO];
         
-        if (isUnknownPeripheral) {
-            //TODO: Handle unknown peripheral
-            yp = [[YMSCBPeripheral alloc] initWithPeripheral:peripheral central:self baseHi:0 baseLo:0];
-            [self addPeripheral:yp];
-        }
+        result = sensorTag;
     }
-
+    return result;
 }
+
+- (NSArray *)peripherals {
+    NSArray *result = nil;
+
+    NSArray *sortedKeys = [[self.ymsPeripherals allKeys] sortedArrayUsingSelector: @selector(compare:)];
+    NSMutableArray *sortedValues = [NSMutableArray array];
+    for (NSString *key in sortedKeys)
+        [sortedValues addObject: [self.ymsPeripherals objectForKey: key]];
+    
+    result = [NSArray arrayWithArray:sortedValues];
+    return result;
+}
+
+- (YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index {
+    YMSCBPeripheral *result = nil;
+    result = [[self peripherals] objectAtIndex:index];
+    return result;
+}
+
 
 
 - (void)managerPoweredOnHandler {
-    // TODO: Determine if peripheral retrieval works on stock Macs with BLE support.
-    /* 
-       Using iMac with Cirago BLE USB adapter, retreival with return a CBPeripheral instance without properties 
-       correctly populated such as name. This behavior is not exhibited when running on iOS.
-     */
     
-    if (self.useStoredPeripherals) {
-#if TARGET_OS_IPHONE
-        NSArray *identifiers = [YMSCBStoredPeripherals genIdentifiers];
-        [self retrievePeripheralsWithIdentifiers:identifiers];
-#endif
-    }
 }
 
 

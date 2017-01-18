@@ -56,7 +56,7 @@
 }
 
 - (void)configureWithSensorTag:(DEASensorTag *)sensorTag {
-    self.service = sensorTag.serviceDict[@"accelerometer"];
+    self.service = (DEAAccelerometerService *)sensorTag.serviceDict[@"accelerometer"];
     
     for (NSString *key in @[@"x", @"y", @"z", @"isOn", @"isEnabled", @"period"]) {
         [self.service addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:NULL];

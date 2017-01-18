@@ -81,11 +81,17 @@
     }];
     
     YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
-    [dataCt setNotifyValue:NO withBlock:^(NSError *error) {
-        NSLog(@"Data notification for %@ off", this.name);
-
-    }];
     
+    [dataCt setNotifyValue:NO withStateChangeBlock:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        NSLog(@"Data notification for %@ off", this.name);
+        
+    } withNotificationBlock:nil];
+    
+
 
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         this.isOn = NO;
@@ -106,10 +112,22 @@
     }];
     
     YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
-    [dataCt setNotifyValue:YES withBlock:^(NSError *error) {
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
         NSLog(@"Data notification for %@ on", this.name);
+        
+    } withNotificationBlock:^(NSData * _Nonnull data, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"ERROR: %@", error);
+            return;
+        }
+        
+        NSLog(@"Data notification received %@ for %@", data, this.name);
     }];
-    
 
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         this.isOn = YES;

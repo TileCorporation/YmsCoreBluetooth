@@ -23,7 +23,7 @@
 #import "DEAStyleSheet.h"
 #import "DEATheme.h"
 
-@interface DEAPeripheralsViewController ()
+@interface DEAPeripheralsViewController ()<YMSCBCentralManagerDelegate>
 - (void)editButtonAction:(id)sender;
 @end
 
@@ -53,17 +53,16 @@
     [self.navigationController setToolbarHidden:NO];
 
 
-    self.scanButton = [[UIBarButtonItem alloc] initWithTitle:@"Start Scanning" style:UIBarButtonItemStyleBordered target:self action:@selector(scanButtonAction:)];
+    self.scanButton = [[UIBarButtonItem alloc] initWithTitle:@"Start Scanning" style:UIBarButtonItemStylePlain target:self action:@selector(scanButtonAction:)];
     
     self.toolbarItems = @[self.scanButton];
     
     [self.peripheralsTableView reloadData];
     
     [centralManager addObserver:self
-                  forKeyPath:@"isScanning"
-                     options:NSKeyValueObservingOptionNew
-                     context:NULL];
-    
+                     forKeyPath:@"isScanning"
+                        options:NSKeyValueObservingOptionNew
+                        context:NULL];
     
     UIBarButtonItem *editButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editButtonAction:)];
     
@@ -73,6 +72,8 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     centralManager.delegate = self;
     
@@ -83,7 +84,7 @@
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
-    
+    [super viewDidDisappear:animated];
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -112,15 +113,21 @@
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     
     if (centralManager.isScanning == NO) {
-        [centralManager startScan];
-        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+        BOOL result = [centralManager startScan];
+        if (result) {
+            [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+        } else {
+            NSLog(@"ERROR: Scan failed; BT Server not on");
+        }
+            
+        
     }
     else {
         [centralManager stopScan];
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
         
         for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-            if (cell.yperipheral.cbPeripheral.state == CBPeripheralStateDisconnected) {
+            if (cell.yperipheral.state == CBPeripheralStateDisconnected) {
                 cell.rssiLabel.text = @"—";
                 cell.peripheralStatusLabel.text = @"QUIESCENT";
                 [cell.peripheralStatusLabel setTextColor:[[DEATheme sharedTheme] bodyTextColor]];
@@ -145,163 +152,144 @@
         
 }
 
-#pragma mark - CBCentralManagerDelegate Methods
+#pragma mark - YMSCBCentralManagerDelegate Methods
 
+- (void)centralManagerDidUpdateState:(YMSCBCentralManager *)yCentral {
 
-- (void)centralManagerDidUpdateState:(CBCentralManager *)central {
-    
-    switch (central.state) {
-        case CBCentralManagerStatePoweredOn:
-            break;
-        case CBCentralManagerStatePoweredOff:
-            break;
-            
-        case CBCentralManagerStateUnsupported: {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Dang."
-                                                            message:@"Unfortunately this device can not talk to Bluetooth Smart (Low Energy) Devices"
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"Dismiss"
-                                                  otherButtonTitles:nil];
-            
-            [alert show];
-            break;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        switch (yCentral.state) {
+            case CBCentralManagerStatePoweredOn:
+                break;
+            case CBCentralManagerStatePoweredOff:
+                break;
+                
+            case CBCentralManagerStateUnsupported: {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Dang."
+                                                                message:@"Unfortunately this device can not talk to Bluetooth Smart (Low Energy) Devices"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"Dismiss"
+                                                      otherButtonTitles:nil];
+                
+                [alert show];
+                break;
+            }
+            case CBCentralManagerStateResetting: {
+                [self.peripheralsTableView reloadData];
+                break;
+            }
+            case CBCentralManagerStateUnauthorized:
+                break;
+                
+            case CBCentralManagerStateUnknown:
+                break;
+                
+            default:
+                break;
         }
-        case CBCentralManagerStateResetting: {
-            [self.peripheralsTableView reloadData];
-            break;
-        }
-        case CBCentralManagerStateUnauthorized:
-            break;
-            
-        case CBCentralManagerStateUnknown:
-            break;
-            
-        default:
-            break;
-    }
-    
-    
-    
+    });
 }
 
+- (void)centralManager:(YMSCBCentralManager *)yCentral didConnectPeripheral:(YMSCBPeripheral *)yPeripheral {
 
-- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-    yp.delegate = self;
-    
-    [yp readRSSI];
-    
-    for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-        if (cell.yperipheral == yp) {
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        DEASensorTag *yp = (DEASensorTag *)yPeripheral;
+        yp.delegate = self;
+        
+        [yp readRSSI];
+        
+        for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
+            if (cell.yperipheral == yp) {
+                [cell updateDisplay];
+                break;
+            }
+        }
+    });
+}
+
+- (void)centralManager:(YMSCBCentralManager *)yCentral didDisconnectPeripheral:(YMSCBPeripheral *)yPeripheral error:(NSError *)error {
+
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD(^{
+        for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
             [cell updateDisplay];
-            break;
         }
-    }
+    });
 }
 
-
-
-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
-    for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-        [cell updateDisplay];
-    }
-}
-
-- (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
+- (void)centralManager:(YMSCBCentralManager *)yCentral didDiscoverPeripheral:(YMSCBPeripheral *)yPeripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    
-    YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-    if (yp.isRenderedInViewCell == NO) {
-        [self.peripheralsTableView reloadData];
-        yp.isRenderedInViewCell = YES;
-    }
-    
-    if (centralManager.isScanning) {
-        for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-            if (cell.yperipheral.cbPeripheral == peripheral) {
-                if (peripheral.state == CBPeripheralStateDisconnected) {
-                    cell.rssiLabel.text = [NSString stringWithFormat:@"%d", [RSSI integerValue]];
-                    cell.peripheralStatusLabel.text = @"ADVERTISING";
-                    [cell.peripheralStatusLabel setTextColor:[[DEATheme sharedTheme] advertisingColor]];
-                } else {
-                    continue;
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD((^{
+        DEACentralManager *centralManager = [DEACentralManager sharedService];
+        
+        YMSCBPeripheral *yp = yPeripheral;
+        
+        if ([yp isKindOfClass:[DEASensorTag class]]) {
+            DEASensorTag *sensorTag = (DEASensorTag *)yp;
+            if (sensorTag.isRenderedInViewCell == NO) {
+                [self.peripheralsTableView reloadData];
+                sensorTag.isRenderedInViewCell = YES;
+            }
+        }
+        
+        // SensorTag 2.0 Service UUID AA80
+        if (centralManager.isScanning) {
+            for (DEAPeripheralTableViewCell *cell in [this.peripheralsTableView visibleCells]) {
+                if (cell.yperipheral == yPeripheral) {
+                    if (yPeripheral.state == CBPeripheralStateDisconnected) {
+                        cell.rssiLabel.text = [NSString stringWithFormat:@"%ld", (long)[RSSI integerValue]];
+                        cell.peripheralStatusLabel.text = @"ADVERTISING";
+                        [cell.peripheralStatusLabel setTextColor:[[DEATheme sharedTheme] advertisingColor]];
+                    } else {
+                        continue;
+                    }
                 }
             }
         }
-    }
+    }));
 }
 
 
-- (void)centralManager:(CBCentralManager *)central didRetrievePeripherals:(NSArray *)peripherals {
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    
-    for (CBPeripheral *peripheral in peripherals) {
-        YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-        if (yp) {
-            yp.delegate = self;
-        }
-    }
-    
-    [self.peripheralsTableView reloadData];
 
-}
-
-
-- (void)centralManager:(CBCentralManager *)central didRetrieveConnectedPeripherals:(NSArray *)peripherals {
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    
-    for (CBPeripheral *peripheral in peripherals) {
-        YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-        if (yp) {
-            yp.delegate = self;
-        }
-    }
-    
-    [self.peripheralsTableView reloadData];
-}
 
 #pragma mark - CBPeripheralDelegate Methods
 
-- (void)performUpdateRSSI:(NSArray *)args {
-    CBPeripheral *peripheral = args[0];
+- (void)peripheral:(YMSCBPeripheral *)yPeripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
     
-    [peripheral readRSSI];
-
-}
-
-
-- (void)peripheralDidUpdateRSSI:(CBPeripheral *)peripheral error:(NSError *)error {
-
-    if (error) {
-        NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+    
+    __weak typeof(self) this = self;
+    _YMS_PERFORM_ON_MAIN_THREAD((^{
+        __strong typeof (this) strongThis = this;
         
-        if (peripheral.state == CBPeripheralStateConnected) {
-            NSArray *args = @[peripheral];
-            [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:2.0];
+        DEASensorTag *sensorTag = (DEASensorTag *)yPeripheral;
+        
+        if (error) {
+            NSLog(@"ERROR: readRSSI failed, retrying. %@", error.description);
+            if (yPeripheral.state == CBPeripheralStateConnected) {
+                [sensorTag readRSSI];
+            }
         }
-
-        return;
-    }
-    
-    for (DEAPeripheralTableViewCell *cell in [self.peripheralsTableView visibleCells]) {
-        if (cell.yperipheral) {
-            if (cell.yperipheral.isConnected) {
-                if (cell.yperipheral.cbPeripheral == peripheral) {
-                    cell.rssiLabel.text = [NSString stringWithFormat:@"%@", peripheral.RSSI];
-                    break;
+        
+        
+        for (DEAPeripheralTableViewCell *cell in [strongThis.peripheralsTableView visibleCells]) {
+            if (cell.yperipheral) {
+                if (cell.yperipheral.isConnected) {
+                    if (cell.yperipheral == yPeripheral) {
+                        cell.rssiLabel.text = [NSString stringWithFormat:@"%@", RSSI];
+                        break;
+                    }
                 }
             }
         }
-    }
-    
-    DEACentralManager *centralManager = [DEACentralManager sharedService];
-    YMSCBPeripheral *yp = [centralManager findPeripheral:peripheral];
-    
-    NSArray *args = @[peripheral];
-    [self performSelector:@selector(performUpdateRSSI:) withObject:args afterDelay:yp.rssiPingPeriod];
+        
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [sensorTag readRSSI];
+        });
+    }));
 }
+
+
 
 #pragma mark - UITableViewDelegate and UITableViewDataSource methods
 
@@ -323,6 +311,7 @@
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     YMSCBPeripheral *yp = [centralManager peripheralAtIndex:indexPath.row];
     
+    
     UITableViewCell *cell = nil;
     
     DEAPeripheralTableViewCell *pcell = (DEAPeripheralTableViewCell *)[tableView dequeueReusableCellWithIdentifier:SensorTagCellIdentifier];
@@ -333,7 +322,9 @@
         self.tvCell = nil;
     }
     
-    yp.isRenderedInViewCell = YES;
+    DEASensorTag *sensorTag = (DEASensorTag *)yp;
+    
+    sensorTag.isRenderedInViewCell = YES;
     
     [pcell configureWithPeripheral:yp];
     
@@ -358,7 +349,7 @@
             DEACentralManager *centralManager = [DEACentralManager sharedService];
             YMSCBPeripheral *yp = [centralManager peripheralAtIndex:indexPath.row];
             if ([yp isKindOfClass:[DEASensorTag class]]) {
-                if (yp.cbPeripheral.state == CBPeripheralStateConnected) {
+                if (yp.state == CBPeripheralStateConnected) {
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
                                                                     message:@"Disconnect the peripheral before deleting."
                                                                    delegate:nil cancelButtonTitle:@"Dismiss"
@@ -397,7 +388,7 @@
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     
-    DEASensorTag *sensorTag = (DEASensorTag *)[centralManager.ymsPeripherals objectAtIndex:indexPath.row];
+    DEASensorTag *sensorTag = (DEASensorTag *)[centralManager peripheralAtIndex:indexPath.row];
     
     DEASensorTagViewController *stvc = [[DEASensorTagViewController alloc] initWithNibName:@"DEASensorTagViewController" bundle:nil];
     stvc.sensorTag = sensorTag;
