@@ -557,6 +557,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 #else
 
+- (void)peripheralDidUpdateRSSI:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateRSSI: %@ %@ error:%@", peripheralInterface, peripheralInterface.RSSI, error];
+    [self.logger logInfo:message object:nil];
+
+    if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateRSSI:error:)]) {
+        [self.delegate peripheralDidUpdateRSSI:self error:error];
+    }
+}
+
 /**
  CBPeripheralDelegate implementation.
  

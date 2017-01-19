@@ -50,6 +50,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 @property(readonly) CBPeripheralState state;
 
+#if TARGET_OS_IPHONE
+#else
+@property(readonly) NSNumber *RSSI;
+#endif
+
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *services;
 
 - (void)readRSSI;
@@ -84,7 +89,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didModifyServices:(NSArray<id<YMSCBServiceInterface>> *)invalidatedServices;
 
+#if TARGET_OS_IPHONE
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error;
+#else
+- (void)peripheralDidUpdateRSSI:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
+#endif
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error;
 
@@ -117,7 +126,12 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)peripheral:(YMSCBPeripheral *)yPeripheral didModifyServices:(NSArray<YMSCBService *> *)invalidatedServices;
 
+#if TARGET_OS_IPHONE
 - (void)peripheral:(YMSCBPeripheral *)yPeripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error;
+#else
+- (void)peripheralDidUpdateRSSI:(YMSCBPeripheral *)yPeripheral error:(nullable NSError *)error;
+#endif
+
 
 - (void)peripheral:(YMSCBPeripheral *)yPeripheral didDiscoverServices:(nullable NSError *)error;
 

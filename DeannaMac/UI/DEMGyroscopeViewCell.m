@@ -23,7 +23,7 @@
 @implementation DEMGyroscopeViewCell
 
 - (void)configureWithSensorTag:(DEASensorTag *)sensorTag {
-    self.service = sensorTag.serviceDict[@"gyroscope"];
+    self.service = (DEABaseService *)sensorTag[@"gyroscope"];
     
     for (NSString *key in @[@"roll", @"pitch", @"yaw", @"isOn", @"isEnabled"]) {
         [self.service addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:NULL];

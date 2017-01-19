@@ -17,12 +17,15 @@
 //
 
 #import <Cocoa/Cocoa.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
 @class DEASensorTag;
 @class DEABaseService;
 
 @interface DEMBaseViewCell : NSView
 
-@property (strong, nonatomic) DEABaseService *service;
+@property (strong, nonatomic, nullable) DEABaseService *service;
 
 @property (strong) IBOutlet NSButton *notifySwitch;
 
@@ -47,3 +50,5 @@
 
 
 @end
+
+NS_ASSUME_NONNULL_END

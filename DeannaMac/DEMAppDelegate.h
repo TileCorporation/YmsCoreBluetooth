@@ -17,8 +17,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <IOBluetooth/IOBluetooth.h>
 #import "DEMPeripheralViewCell.h"
+#import "YMSCBCentralManager.h"
+
+@protocol YMSCBPeripheralDelegate;
 
 /**
  DeannaMac application delegate.
@@ -31,8 +33,8 @@
 @interface DEMAppDelegate : NSObject <NSApplicationDelegate,
  NSTableViewDataSource,
  NSTableViewDelegate,
- CBCentralManagerDelegate,
- CBPeripheralDelegate,
+ YMSCBCentralManagerDelegate,
+ YMSCBPeripheralDelegate,
  DEAPeripheralViewCellDelegate>
 
 /**
