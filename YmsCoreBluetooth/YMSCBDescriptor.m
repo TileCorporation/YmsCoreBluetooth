@@ -23,7 +23,7 @@
 
 @implementation YMSCBDescriptor
 
-- (CBUUID *)UUID {
+- (nullable CBUUID *)UUID {
     CBUUID *result = nil;
     if (self.descriptorInterface) {
         result = self.descriptorInterface.UUID;
@@ -32,7 +32,7 @@
     return result;
 }
 
-- (id)value {
+- (nullable id)value {
     id result = nil;
     
     if (self.descriptorInterface) {

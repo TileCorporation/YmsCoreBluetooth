@@ -211,7 +211,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
             }
         }
         
-        [tempArray addObject:yPeripheral];
+        if (yPeripheral) {
+            [tempArray addObject:yPeripheral];
+        }
     }
 
     result = [NSArray arrayWithArray:tempArray];
@@ -233,8 +235,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
                 [self addPeripheral:yPeripheral];
             }
         }
-        
-        [tempArray addObject:yPeripheral];
+        if (yPeripheral) {
+            [tempArray addObject:yPeripheral];
+        }
     }
     
     result = [NSArray arrayWithArray:tempArray];
@@ -316,7 +319,6 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         }
         
         [self.delegate centralManagerDidUpdateState:self];
-        
     }
 }
 
@@ -340,7 +342,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         
         self.discoveredCallback(yPeripheral, advertisementData, RSSI);
         
-        if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
+        if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
             [self.delegate centralManager:self didDiscoverPeripheral:yPeripheral advertisementData:advertisementData RSSI:RSSI];
         }
     }
@@ -354,7 +356,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
     [yPeripheral handleConnectionResponse:nil];
     
-    if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
+    if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
         [self.delegate centralManager:self didConnectPeripheral:yPeripheral];
     }
 }
@@ -367,7 +369,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
     [yPeripheral reset];
     
-    if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
+    if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
         [self.delegate centralManager:self didDisconnectPeripheral:yPeripheral error:error];
     }
 }
@@ -380,7 +382,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
     [yPeripheral reset];
     
-    if ([self.delegate respondsToSelector:@selector(centralManager:didFailToConnectPeripheral:error:)]) {
+    if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didFailToConnectPeripheral:error:)]) {
         [self.delegate centralManager:self didFailToConnectPeripheral:yPeripheral error:error];
     }
 }

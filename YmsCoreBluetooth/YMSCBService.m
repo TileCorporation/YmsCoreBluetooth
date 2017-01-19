@@ -205,21 +205,6 @@
 }
 
 
-// TODO: obsolete
-- (YMSCBCharacteristic *)findCharacteristic:(CBCharacteristic *)ct {
-    YMSCBCharacteristic *result;
-    for (NSString *key in self.characteristicDict) {
-        YMSCBCharacteristic *yc = self.characteristicDict[key];
-            
-        if ([yc.characteristicInterface.UUID isEqual:ct.UUID]) {
-            result = yc;
-            break;
-        }
-    }
-    return result;
-}
-
-
 - (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error {
     if (error) {
         return;

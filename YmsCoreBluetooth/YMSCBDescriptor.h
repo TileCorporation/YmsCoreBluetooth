@@ -49,9 +49,9 @@ NS_ASSUME_NONNULL_BEGIN
 // TODO: define constructor with id<YMSCBDescriptorInterface>
 
 /// Descriptor UUID
-@property(readonly, nonatomic) CBUUID *UUID;
+@property(readonly, nonatomic, nullable) CBUUID *UUID;
 
-@property(retain, readonly) id value;
+@property(retain, readonly, nullable) id value;
 
 @property (nonatomic, strong, nullable) id<YMSCBLogging> logger;
 

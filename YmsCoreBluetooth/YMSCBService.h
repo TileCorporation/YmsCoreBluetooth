@@ -182,15 +182,6 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  */
 - (void)syncCharacteristics;
 
-/** @name Find a YMSCBCharacteristic */
-/**
- Find characteristic container for CBCharacteristic.
- 
- @param ct CBCharacteristic 
- @return container of ct
- */
-- (YMSCBCharacteristic *)findCharacteristic:(CBCharacteristic *)ct;
-
 /**
  Method to handle response update for a prior read or write request to a characteristic.  
  

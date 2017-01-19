@@ -162,20 +162,6 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
-- (nullable YMSCBService *)findService:(CBService *)service {
-    YMSCBService *result;
-    
-    for (NSString *key in self.serviceDict) {
-        YMSCBService *btService = self.serviceDict[key];
-        
-        if ([service.UUID isEqual:btService.uuid]) {
-            result = btService;
-            break;
-        }
-        
-    }
-    return result;
-}
 
 #pragma mark - Connection Methods
 
