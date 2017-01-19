@@ -72,13 +72,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)writeValue:(NSData *)data forDescriptor:(id<YMSCBDescriptorInterface>)yDescriptor;
 
-- (void)reset;
-
 @end
 
 // ------------------------------------------------------------------------
 
-@protocol YMSCBPeripheralInterfaceDelegate <NSObject>
+@protocol YMSCBPeripheralInterfaceDelegate <CBPeripheralDelegate>
 
 @optional
 

@@ -176,7 +176,6 @@
         for (YMSCBCharacteristic *ct in localCharacteristics) {
             if ([ctInterface.UUID isEqual:ct.uuid]) {
                 ct.characteristicInterface = ctInterface;
-                ctInterface.owner = ct;
                 break;
             }
         }
@@ -251,8 +250,6 @@
         YMSCBCharacteristic *ct = self.characteristicDict[key];
         [ct reset];
     }
-    
-    [self.serviceInterface reset];
 }
 
 @end

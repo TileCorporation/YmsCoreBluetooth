@@ -42,10 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly) BOOL isBroadcasted;
 @property(readonly) BOOL isNotifying;
 
-@property (nonatomic, weak, nullable) YMSCBCharacteristic *owner;
-
-- (void)reset;
-
 @end
 
 

@@ -48,9 +48,6 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *includedServices;
 @property(retain, readonly, nullable) NSArray<id<YMSCBCharacteristicInterface>> *characteristics;
 
-@property (nonatomic, weak, nullable) YMSCBService *owner;
-
-- (void)reset;
 @end
 
 

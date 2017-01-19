@@ -32,9 +32,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, readonly, nonatomic) id<YMSCBCharacteristicInterface> characteristicInterface;
 @property(retain, readonly) id value;
 
-@property (nonatomic, weak, nullable) YMSCBDescriptor *owner;
-
-
 @end
 
 

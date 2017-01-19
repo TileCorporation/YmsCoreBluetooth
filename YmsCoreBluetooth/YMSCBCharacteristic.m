@@ -218,7 +218,6 @@
         }
         
         yDescriptor.descriptorInterface = descriptorInterface;
-        descriptorInterface.owner = yDescriptor;
     }
 }
 
@@ -239,7 +238,7 @@
     
     // reset descriptors
     
-    [self.characteristicInterface reset];
+    //[self.characteristicInterface reset];
 }
 
 

@@ -181,6 +181,7 @@
 		D97EC6CE172B08AB00CAECFC /* DEABaseService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEABaseService.h; sourceTree = "<group>"; };
 		D97EC6CF172B08AB00CAECFC /* DEABaseService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEABaseService.m; sourceTree = "<group>"; };
 		D97EC6D1172B1B8C00CAECFC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		D97F4C491E3033560047006B /* YMSCBNativeInterfaces.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeInterfaces.h; sourceTree = "<group>"; };
 		D988A5C416DD26A100D7D392 /* DEASensorTag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASensorTag.h; sourceTree = "<group>"; };
 		D988A5C516DD26A100D7D392 /* DEASensorTag.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASensorTag.m; sourceTree = "<group>"; };
 		D98D66601BB8CE7600E82BE4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
@@ -533,6 +534,7 @@
 				D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */,
 				D9E5BB131E26AD4300EAA87E /* YMSCBNativeDescriptor.h */,
 				D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */,
+				D97F4C491E3033560047006B /* YMSCBNativeInterfaces.h */,
 			);
 			path = Implementations;
 			sourceTree = "<group>";

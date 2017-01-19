@@ -22,7 +22,7 @@
 #import "YMSCBCharacteristic.h"
 #import "YMSCBDescriptor.h"
 #import "NSMutableArray+fifoQueue.h"
-#import "YMSCBNativePeripheral.h"
+#import "YMSCBNativeInterfaces.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -320,7 +320,13 @@ NS_ASSUME_NONNULL_BEGIN
         [service reset];
     }
     
-    [self.peripheralInterface reset];
+}
+
+
+- (nullable NSArray<YMSCBService *> *)services {
+    NSArray<YMSCBService *> *result = nil;
+    result = [self.serviceDict allValues];
+    return result;
 }
 
 
@@ -366,7 +372,6 @@ NS_ASSUME_NONNULL_BEGIN
             for (YMSCBService *yService in tempArray) {
                 if ([serviceInterface.UUID isEqual:yService.uuid]) {
                     yService.serviceInterface = serviceInterface;
-                    serviceInterface.owner = yService;
                     [services addObject:yService];
                     break;
                 }
@@ -387,8 +392,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< didDiscoverCharacteristicsForService: %@ error:%@", serviceInterface, error.description];
     [self.logger logInfo:message object:_peripheralInterface];
     
-    
-    /*
+
     YMSCBService *yService = nil;
     for (YMSCBService *service in self.services) {
         if ([serviceInterface.UUID isEqual:service.uuid]) {
@@ -396,10 +400,7 @@ NS_ASSUME_NONNULL_BEGIN
             break;
         }
     }
-     */
-    
-    YMSCBService *yService = serviceInterface.owner;
-    
+
     [yService syncCharacteristics];
     [yService handleDiscoveredCharacteristicsResponse:yService.characteristicDict withError:error];
 
@@ -438,7 +439,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
     
-    YMSCBCharacteristic *yCharacteristic = characteristicInterface.owner;
+    
+    YMSCBCharacteristic *yCharacteristic = nil;//characteristicInterface.owner;
+    
+    for (YMSCBService *service in self.services) {
+        for (YMSCBCharacteristic *characteristic in service.characteristicDict.allValues) {
+            if ([characteristic.uuid.UUIDString isEqualToString:characteristicInterface.UUID.UUIDString]) {
+                yCharacteristic = characteristic;
+            }
+        }
+    }
+
     [yCharacteristic syncDescriptors];
     [yCharacteristic handleDiscoveredDescriptorsResponse:yCharacteristic.descriptors withError:error];
     
@@ -478,7 +489,16 @@ NS_ASSUME_NONNULL_BEGIN
         self.valueValid = YES;
     }
     
-    YMSCBCharacteristic *ct = characteristicInterface.owner;
+    YMSCBCharacteristic *ct = nil;//characteristicInterface.owner;
+    
+    for (YMSCBService *service in self.services) {
+        for (YMSCBCharacteristic *characteristic in service.characteristicDict.allValues) {
+            if ([characteristic.uuid.UUIDString isEqualToString:characteristicInterface.UUID.UUIDString]) {
+                ct = characteristic;
+            }
+        }
+    }
+
 
     if (ct.readCallbacks && (ct.readCallbacks.count > 0)) {
         self.lastValue = [characteristicInterface.value copy];;
@@ -545,7 +565,17 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristicInterface, error.description];
     [self.logger logInfo:message object:_peripheralInterface];
     
-    YMSCBCharacteristic *ct = characteristicInterface.owner;
+    
+    YMSCBCharacteristic *ct = nil;//characteristicInterface.owner;
+    
+    for (YMSCBService *service in self.services) {
+        for (YMSCBCharacteristic *characteristic in service.characteristicDict.allValues) {
+            if ([characteristic.uuid.UUIDString isEqualToString:characteristicInterface.UUID.UUIDString]) {
+                ct = characteristic;
+            }
+        }
+    }
+
     
     [ct executeNotificationStateCallback:error];
     if (!characteristicInterface.isNotifying) {
@@ -553,7 +583,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateNotificationStateForCharacteristic:error:)]) {
-        [self.delegate peripheral:self didUpdateNotificationStateForCharacteristic:characteristicInterface.owner error:error];
+        [self.delegate peripheral:self didUpdateNotificationStateForCharacteristic:ct error:error];
     }
 }
 
@@ -571,7 +601,20 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristicInterface, error.description];
     [self.logger logInfo:message object:_peripheralInterface];
     
-    YMSCBCharacteristic *ct = characteristicInterface.owner;
+
+    
+    YMSCBCharacteristic *ct = nil;//characteristicInterface.owner;
+    
+    // TODO: reimplement
+    for (YMSCBService *service in self.services) {
+        for (YMSCBCharacteristic *characteristic in service.characteristicDict.allValues) {
+            if ([characteristic.uuid.UUIDString isEqualToString:characteristicInterface.UUID.UUIDString]) {
+                ct = characteristic;
+                break;
+            }
+        }
+    }
+
     
     if (ct.writeCallbacks && (ct.writeCallbacks.count > 0)) {
         [ct executeWriteCallback:error];

@@ -20,7 +20,9 @@
 #import "YMSCBPeripheral.h"
 #import "YMSCBService.h"
 #import "YMSCBCharacteristic.h"
-#import "YMSCBNativeCentralManager.h"
+#import "YMSCBNativeInterfaces.h"
+
+//#import "YMSCBNativeCentralManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -52,7 +54,8 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         _queue = queue;
 
         // TODO: conditional compile based on environment
-        _centralInterface = [[YMSCBNativeCentralManager alloc] initWithDelegate:self queue:queue options:options];
+        //_centralInterface = [[YMSCBNativeCentralManager alloc] initWithDelegate:self queue:queue options:options];
+        _centralInterface = [[CBCentralManager alloc] initWithDelegate:self queue:queue options:options];
 
         _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
         _discoveredCallback = nil;
