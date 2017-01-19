@@ -199,7 +199,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  
  The NSString `key` is typically a "human-readable" string to easily reference a YMSCBService.
  */
-@property (nonatomic, strong) NSDictionary<NSString *, YMSCBService*> *serviceDict;
+//@property (nonatomic, strong, readonly) NSDictionary<NSString *, YMSCBService*> *serviceDict;
 
 
 /**
@@ -257,6 +257,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
                                     central:(YMSCBCentralManager *)owner
                                      baseHi:(int64_t)hi
                                      baseLo:(int64_t)lo;
+
+
 
 /** @name Get all CBService CBUUIDs for this peripheral  */
 /**
@@ -363,7 +365,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  @param key The key for which to return the corresponding value in serviceDict.
  @return object in serviceDict.
  */
-- (nullable id)objectForKeyedSubscript:(id)key;
+- (nullable YMSCBService *)objectForKeyedSubscript:(NSString *)key;
+
+- (void)setObject:(YMSCBService *)obj forKeyedSubscript:(NSString *)key;
+
+- (nullable YMSCBService *)serviceForUUID:(CBUUID *)uuid;
 
 //- (void)replaceCBPeripheral:(CBPeripheral *)peripheral;
 

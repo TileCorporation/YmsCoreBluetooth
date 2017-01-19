@@ -83,8 +83,6 @@
 		D997ACE3175B331F00C91B0D /* DEMDeviceInfoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D997ACE2175B331F00C91B0D /* DEMDeviceInfoViewCell.m */; };
 		D997ACE6175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D997ACE5175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m */; };
 		D9AA81C91753E00700C2836D /* YMSCBDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */; };
-		D9BAA8701E25A5B200952268 /* YMSCBNativeCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D9BAA86F1E25A5B200952268 /* YMSCBNativeCentralManager.m */; };
-		D9BAA8711E25A5B200952268 /* YMSCBNativeCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D9BAA86F1E25A5B200952268 /* YMSCBNativeCentralManager.m */; };
 		D9C5012216AB37DD001D4D4F /* DEAPeripheralsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D9C5012016AB37DD001D4D4F /* DEAPeripheralsViewController.m */; };
 		D9C5012316AB37DD001D4D4F /* DEAPeripheralsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9C5012116AB37DD001D4D4F /* DEAPeripheralsViewController.xib */; };
 		D9C6137A177672BA00826EBF /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9C61379177672BA00826EBF /* QuartzCore.framework */; };
@@ -94,14 +92,6 @@
 		D9DA1AFE1E256A32007C2740 /* YmsCoreBluetoothTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D9DA1AFD1E256A32007C2740 /* YmsCoreBluetoothTests.m */; };
 		D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9DE671016E0223E00F1B15C /* DEABarometerService.m */; };
 		D9E012F71797D66400677FC1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9E012F61797D66400677FC1 /* Images.xcassets */; };
-		D9E5BB051E26AC7C00EAA87E /* YMSCBNativePeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB041E26AC7C00EAA87E /* YMSCBNativePeripheral.m */; };
-		D9E5BB061E26AC7C00EAA87E /* YMSCBNativePeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB041E26AC7C00EAA87E /* YMSCBNativePeripheral.m */; };
-		D9E5BB091E26AC9E00EAA87E /* YMSCBNativeService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB081E26AC9E00EAA87E /* YMSCBNativeService.m */; };
-		D9E5BB0A1E26AC9E00EAA87E /* YMSCBNativeService.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB081E26AC9E00EAA87E /* YMSCBNativeService.m */; };
-		D9E5BB0D1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */; };
-		D9E5BB0E1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */; };
-		D9E5BB151E26AD4300EAA87E /* YMSCBNativeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */; };
-		D9E5BB161E26AD4300EAA87E /* YMSCBNativeDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */; };
 		D9F412F016DED0030094FEFA /* DEASensorTagViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412EE16DED0030094FEFA /* DEASensorTagViewController.m */; };
 		D9F412F116DED0030094FEFA /* DEASensorTagViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D9F412EF16DED0030094FEFA /* DEASensorTagViewController.xib */; };
 		D9F412F416DED7510094FEFA /* DEATemperatureViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F316DED7510094FEFA /* DEATemperatureViewCell.m */; };
@@ -222,8 +212,6 @@
 		D997ACE5175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEMSimpleKeysViewCell.m; sourceTree = "<group>"; };
 		D9AA81C71753E00700C2836D /* YMSCBDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBDescriptor.h; sourceTree = "<group>"; };
 		D9AA81C81753E00700C2836D /* YMSCBDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBDescriptor.m; sourceTree = "<group>"; };
-		D9BAA86E1E25A5B200952268 /* YMSCBNativeCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeCentralManager.h; sourceTree = "<group>"; };
-		D9BAA86F1E25A5B200952268 /* YMSCBNativeCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativeCentralManager.m; sourceTree = "<group>"; };
 		D9C5011F16AB37DD001D4D4F /* DEAPeripheralsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEAPeripheralsViewController.h; sourceTree = "<group>"; };
 		D9C5012016AB37DD001D4D4F /* DEAPeripheralsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEAPeripheralsViewController.m; sourceTree = "<group>"; };
 		D9C5012116AB37DD001D4D4F /* DEAPeripheralsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DEAPeripheralsViewController.xib; sourceTree = "<group>"; };
@@ -241,14 +229,6 @@
 		D9DE670F16E0223E00F1B15C /* DEABarometerService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEABarometerService.h; sourceTree = "<group>"; };
 		D9DE671016E0223E00F1B15C /* DEABarometerService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEABarometerService.m; sourceTree = "<group>"; };
 		D9E012F61797D66400677FC1 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		D9E5BB031E26AC7C00EAA87E /* YMSCBNativePeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativePeripheral.h; sourceTree = "<group>"; };
-		D9E5BB041E26AC7C00EAA87E /* YMSCBNativePeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativePeripheral.m; sourceTree = "<group>"; };
-		D9E5BB071E26AC9E00EAA87E /* YMSCBNativeService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeService.h; sourceTree = "<group>"; };
-		D9E5BB081E26AC9E00EAA87E /* YMSCBNativeService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativeService.m; sourceTree = "<group>"; };
-		D9E5BB0B1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeCharacteristic.h; sourceTree = "<group>"; };
-		D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativeCharacteristic.m; sourceTree = "<group>"; };
-		D9E5BB131E26AD4300EAA87E /* YMSCBNativeDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBNativeDescriptor.h; sourceTree = "<group>"; };
-		D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSCBNativeDescriptor.m; sourceTree = "<group>"; };
 		D9F412ED16DED0030094FEFA /* DEASensorTagViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASensorTagViewController.h; sourceTree = "<group>"; };
 		D9F412EE16DED0030094FEFA /* DEASensorTagViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASensorTagViewController.m; sourceTree = "<group>"; };
 		D9F412EF16DED0030094FEFA /* DEASensorTagViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DEASensorTagViewController.xib; sourceTree = "<group>"; };
@@ -524,16 +504,6 @@
 		D9BAA86D1E25A57400952268 /* Implementations */ = {
 			isa = PBXGroup;
 			children = (
-				D9BAA86E1E25A5B200952268 /* YMSCBNativeCentralManager.h */,
-				D9BAA86F1E25A5B200952268 /* YMSCBNativeCentralManager.m */,
-				D9E5BB031E26AC7C00EAA87E /* YMSCBNativePeripheral.h */,
-				D9E5BB041E26AC7C00EAA87E /* YMSCBNativePeripheral.m */,
-				D9E5BB071E26AC9E00EAA87E /* YMSCBNativeService.h */,
-				D9E5BB081E26AC9E00EAA87E /* YMSCBNativeService.m */,
-				D9E5BB0B1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.h */,
-				D9E5BB0C1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m */,
-				D9E5BB131E26AD4300EAA87E /* YMSCBNativeDescriptor.h */,
-				D9E5BB141E26AD4300EAA87E /* YMSCBNativeDescriptor.m */,
 				D97F4C491E3033560047006B /* YMSCBNativeInterfaces.h */,
 			);
 			path = Implementations;
@@ -761,8 +731,6 @@
 				D9718B52167F9F9F0001E42C /* main.m in Sources */,
 				D9718B56167F9F9F0001E42C /* DEAAppDelegate.m in Sources */,
 				D91170531681251900E2D19A /* DEATemperatureService.m in Sources */,
-				D9E5BB091E26AC9E00EAA87E /* YMSCBNativeService.m in Sources */,
-				D9E5BB0D1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m in Sources */,
 				D91170561681461300E2D19A /* DEAAccelerometerService.m in Sources */,
 				D9D8316D168449FE00F51E42 /* DEASimpleKeysService.m in Sources */,
 				D9C5012216AB37DD001D4D4F /* DEAPeripheralsViewController.m in Sources */,
@@ -774,7 +742,6 @@
 				D933CED016DDAFA700EDDAD6 /* YMSCBCentralManager.m in Sources */,
 				D933CED116DDAFA700EDDAD6 /* YMSCBCharacteristic.m in Sources */,
 				D933CED216DDAFA700EDDAD6 /* YMSCBPeripheral.m in Sources */,
-				D9E5BB151E26AD4300EAA87E /* YMSCBNativeDescriptor.m in Sources */,
 				D933CED316DDAFA700EDDAD6 /* YMSCBService.m in Sources */,
 				D933CED416DDAFA700EDDAD6 /* YMSCBUtils.m in Sources */,
 				D9F412F016DED0030094FEFA /* DEASensorTagViewController.m in Sources */,
@@ -782,7 +749,6 @@
 				D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */,
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
-				D9BAA8701E25A5B200952268 /* YMSCBNativeCentralManager.m in Sources */,
 				D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */,
 				D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */,
 				D907A76B16E0393300EA8D5B /* DEABarometerViewCell.m in Sources */,
@@ -796,7 +762,6 @@
 				D9268B46173081E2009C4284 /* DEADeviceInfoService.m in Sources */,
 				D9960A54173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m in Sources */,
 				D9AA81C91753E00700C2836D /* YMSCBDescriptor.m in Sources */,
-				D9E5BB051E26AC7C00EAA87E /* YMSCBNativePeripheral.m in Sources */,
 				D9D70095177782CB0066AB1B /* DEATheme.m in Sources */,
 				D9D70098177783DB0066AB1B /* DEADefaultTheme.m in Sources */,
 			);
@@ -823,14 +788,10 @@
 				D997ACC4175B257000C91B0D /* DEAAccelerometerService.m in Sources */,
 				D997ACC5175B257000C91B0D /* DEABarometerService.m in Sources */,
 				D997ACC6175B257000C91B0D /* DEADeviceInfoService.m in Sources */,
-				D9E5BB0E1E26ACBB00EAA87E /* YMSCBNativeCharacteristic.m in Sources */,
-				D9BAA8711E25A5B200952268 /* YMSCBNativeCentralManager.m in Sources */,
 				D997ACC7175B257000C91B0D /* DEAGyroscopeService.m in Sources */,
 				D997ACC8175B257000C91B0D /* DEAHumidityService.m in Sources */,
 				D997ACC9175B257000C91B0D /* DEAMagnetometerService.m in Sources */,
-				D9E5BB0A1E26AC9E00EAA87E /* YMSCBNativeService.m in Sources */,
 				D997ACCA175B257000C91B0D /* DEASimpleKeysService.m in Sources */,
-				D9E5BB161E26AD4300EAA87E /* YMSCBNativeDescriptor.m in Sources */,
 				D997ACCB175B257000C91B0D /* DEATemperatureService.m in Sources */,
 				D997ACDA175B288900C91B0D /* DEMPeripheralViewCell.m in Sources */,
 				D997ACDB175B288900C91B0D /* DEMBaseViewCell.m in Sources */,
@@ -843,7 +804,6 @@
 				D9211E23175BC2870081143F /* DEMMagnetometerViewCell.m in Sources */,
 				D9211E26175BCA860081143F /* DEMGyroscopeViewCell.m in Sources */,
 				D9211E29175BCF040081143F /* DEMHumidityViewCell.m in Sources */,
-				D9E5BB061E26AC7C00EAA87E /* YMSCBNativePeripheral.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

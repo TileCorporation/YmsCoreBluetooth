@@ -47,7 +47,7 @@
 
 
 - (void)configureWithSensorTag:(DEASensorTag *)sensorTag {
-    self.service = (DEATemperatureService *)sensorTag.serviceDict[@"temperature"];
+    self.service = (DEATemperatureService *)sensorTag[@"temperature"];
     
     for (NSString *key in @[@"ambientTemp", @"objectTemp", @"isOn", @"isEnabled"]) {
         [self.service addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:NULL];

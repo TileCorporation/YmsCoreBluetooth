@@ -71,8 +71,8 @@ double calcTmpTarget(int16_t objT, double m_tempAmb) {
                  serviceOffset:serviceOffset];
     
     if (self) {
-        [self addCharacteristic:@"data" withOffset:kSensorTag_TEMPERATURE_DATA];
-        [self addCharacteristic:@"config" withOffset:kSensorTag_TEMPERATURE_CONFIG];
+        [self addCharacteristic:@"data" withBLEOffset:kSensorTag_TEMPERATURE_DATA];
+        [self addCharacteristic:@"config" withBLEOffset:kSensorTag_TEMPERATURE_CONFIG];
     }
     return self;
 }

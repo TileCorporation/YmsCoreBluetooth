@@ -79,6 +79,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 /// 128 bit base address struct
 @property (atomic, assign) yms_u128_t base;
 
+// TODO: change name to UUID
 /// Service UUID
 @property (atomic, strong) CBUUID *uuid;
 
@@ -160,7 +161,9 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  
  @return array of CBUUIDs
  */
-- (nullable NSArray *)characteristics;
+- (nullable NSArray<id<YMSCBCharacteristicInterface>> *)characteristics;
+
+- (nullable NSArray<CBUUID *> *)characteristicUUIDs;
 
 /**
  Return array of CBUUIDs for YMSCBCharacteristic instances in characteristicDict whose key is included in keys.
@@ -225,7 +228,10 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  @param key The key for which to return the corresponding value in characteristicDict.
  @return object in characteristicDict.
  */
-- (nullable id)objectForKeyedSubscript:(id)key;
+- (nullable YMSCBCharacteristic *)objectForKeyedSubscript:(id)key;
+
+- (nullable YMSCBCharacteristic *)characteristicForUUID:(CBUUID *)uuid;
+
 
 //- (void)defaultDiscoveredCharacteristicsHandler:(NSDictionary *)chDict withError:(NSError *)error;
 

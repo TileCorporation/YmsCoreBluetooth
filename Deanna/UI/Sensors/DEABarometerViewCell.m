@@ -53,7 +53,7 @@
 
 
 - (void)configureWithSensorTag:(DEASensorTag *)sensorTag {
-    self.service = (DEABarometerService *)sensorTag.serviceDict[@"barometer"];
+    self.service = (DEABarometerService *)sensorTag[@"barometer"];
     
     for (NSString *key in @[@"ambientTemp", @"pressure", @"isOn", @"isEnabled", @"isCalibrating"]) {
         [self.service addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:NULL];

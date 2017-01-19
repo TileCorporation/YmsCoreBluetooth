@@ -30,6 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (atomic, copy, nullable) NSData *lastValue;
 @property (atomic, assign) BOOL valueValid;
 
+@property (nonatomic, strong) NSMutableDictionary<NSString *, YMSCBService*> *serviceDict;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, YMSCBService*> *servicesByUUIDs;
+
 @end
 
 @implementation YMSCBPeripheral
@@ -52,6 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
         _rssiPingPeriod = 2.0;
         _watchdogTimerInterval = 5.0;
         _logger = _central.logger;
+        
+        _serviceDict = [NSMutableDictionary new];
+        _servicesByUUIDs = [NSMutableDictionary new];
     }
 
     return self;
@@ -112,9 +118,33 @@ NS_ASSUME_NONNULL_BEGIN
 //     */
 //}
 
+- (nullable YMSCBService *)objectForKeyedSubscript:(NSString *)key {
+    YMSCBService *result = nil;
+    result = self.serviceDict[key];
+    return result;
+}
 
-- (nullable id)objectForKeyedSubscript:(id)key {
-    return self.serviceDict[key];
+- (void)setObject:(YMSCBService *)obj forKeyedSubscript:(NSString *)key {
+    self.serviceDict[key] = obj;
+    self.servicesByUUIDs[obj.uuid.UUIDString] = obj;
+}
+
+- (nullable YMSCBService *)serviceForUUID:(CBUUID *)uuid {
+    YMSCBService *result = nil;
+    result = self.servicesByUUIDs[uuid.UUIDString];
+    return result;
+}
+
+
+- (nullable YMSCBCharacteristic *)characteristicForInterface:(id<YMSCBCharacteristicInterface>)characteristicInterface {
+    
+    YMSCBCharacteristic *result = nil;
+    id<YMSCBServiceInterface> serviceInterface = characteristicInterface.service;
+    
+    YMSCBService *service = [self serviceForUUID:serviceInterface.UUID];
+    result = [service characteristicForUUID:characteristicInterface.UUID];
+    
+    return result;
 }
 
 
@@ -186,7 +216,7 @@ NS_ASSUME_NONNULL_BEGIN
             for (YMSCBService *service in yservices) {
                 __weak YMSCBService *thisService = (YMSCBService *)service;
                 
-                [service discoverCharacteristics:[service characteristics] withBlock:^(NSDictionary *chDict, NSError *error) {
+                [service discoverCharacteristics:[service characteristicUUIDs] withBlock:^(NSDictionary *chDict, NSError *error) {
                     if (error) {
                         return;
                     }
@@ -391,15 +421,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverCharacteristicsForService:(id<YMSCBServiceInterface>)serviceInterface error:(nullable NSError *)error {
     NSString *message = [NSString stringWithFormat:@"< didDiscoverCharacteristicsForService: %@ error:%@", serviceInterface, error.description];
     [self.logger logInfo:message object:_peripheralInterface];
-    
 
-    YMSCBService *yService = nil;
-    for (YMSCBService *service in self.services) {
-        if ([serviceInterface.UUID isEqual:service.uuid]) {
-            yService = service;
-            break;
-        }
-    }
+    YMSCBService *yService = [self serviceForUUID:serviceInterface.UUID];
 
     [yService syncCharacteristics];
     [yService handleDiscoveredCharacteristicsResponse:yService.characteristicDict withError:error];
@@ -438,17 +461,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
-    
-    
-    YMSCBCharacteristic *yCharacteristic = nil;//characteristicInterface.owner;
-    
-    for (YMSCBService *service in self.services) {
-        for (YMSCBCharacteristic *characteristic in service.characteristicDict.allValues) {
-            if ([characteristic.uuid.UUIDString isEqualToString:characteristicInterface.UUID.UUIDString]) {
-                yCharacteristic = characteristic;
-            }
-        }
-    }
+    YMSCBCharacteristic *yCharacteristic = [self characteristicForInterface:characteristicInterface];
 
     [yCharacteristic syncDescriptors];
     [yCharacteristic handleDiscoveredDescriptorsResponse:yCharacteristic.descriptors withError:error];
@@ -489,16 +502,7 @@ NS_ASSUME_NONNULL_BEGIN
         self.valueValid = YES;
     }
     
-    YMSCBCharacteristic *ct = nil;//characteristicInterface.owner;
-    
-    for (YMSCBService *service in self.services) {
-        for (YMSCBCharacteristic *characteristic in service.characteristicDict.allValues) {
-            if ([characteristic.uuid.UUIDString isEqualToString:characteristicInterface.UUID.UUIDString]) {
-                ct = characteristic;
-            }
-        }
-    }
-
+    YMSCBCharacteristic *ct = [self characteristicForInterface:characteristicInterface];
 
     if (ct.readCallbacks && (ct.readCallbacks.count > 0)) {
         self.lastValue = [characteristicInterface.value copy];;
@@ -552,6 +556,7 @@ NS_ASSUME_NONNULL_BEGIN
 //    }
 //}
 
+
 /**
  CBPeripheralDelegate implementation. Not yet supported.
  
@@ -565,17 +570,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristicInterface, error.description];
     [self.logger logInfo:message object:_peripheralInterface];
     
-    
-    YMSCBCharacteristic *ct = nil;//characteristicInterface.owner;
-    
-    for (YMSCBService *service in self.services) {
-        for (YMSCBCharacteristic *characteristic in service.characteristicDict.allValues) {
-            if ([characteristic.uuid.UUIDString isEqualToString:characteristicInterface.UUID.UUIDString]) {
-                ct = characteristic;
-            }
-        }
-    }
-
+    YMSCBCharacteristic *ct = [self characteristicForInterface:characteristicInterface];
     
     [ct executeNotificationStateCallback:error];
     if (!characteristicInterface.isNotifying) {
@@ -601,20 +596,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristicInterface, error.description];
     [self.logger logInfo:message object:_peripheralInterface];
     
-
-    
-    YMSCBCharacteristic *ct = nil;//characteristicInterface.owner;
-    
-    // TODO: reimplement
-    for (YMSCBService *service in self.services) {
-        for (YMSCBCharacteristic *characteristic in service.characteristicDict.allValues) {
-            if ([characteristic.uuid.UUIDString isEqualToString:characteristicInterface.UUID.UUIDString]) {
-                ct = characteristic;
-                break;
-            }
-        }
-    }
-
+    YMSCBCharacteristic *ct = [self characteristicForInterface:characteristicInterface];
     
     if (ct.writeCallbacks && (ct.writeCallbacks.count > 0)) {
         [ct executeWriteCallback:error];
@@ -622,32 +604,11 @@ NS_ASSUME_NONNULL_BEGIN
         
     }
     
-    
     if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
         [self.delegate peripheral:self didWriteValueForCharacteristic:ct error:error];
     }
 
 }
-
-
-//- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
-//    NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristic, error.description];
-//    [self.logger logInfo:message object:_peripheralInterface];
-//
-//    YMSCBService *btService = [self findService:characteristic.service];
-//    YMSCBCharacteristic *ct = [btService findCharacteristic:characteristic];
-//    
-//    if (ct.writeCallbacks && (ct.writeCallbacks.count > 0)) {
-//        [ct executeWriteCallback:error];
-//    } else {
-//        //message = [NSString stringWithFormat:@"No write callback in didWriteValueForCharacteristic:%@ for peripheral %@", characteristic, peripheral];
-//        //TILAssert(NO, message);
-//    }
-//    
-//    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
-//       // [self.delegate peripheral:_peripheralInterface didWriteValueForCharacteristic:ct.cbCharacteristic error:error];
-//    }
-//}
 
 
 /**

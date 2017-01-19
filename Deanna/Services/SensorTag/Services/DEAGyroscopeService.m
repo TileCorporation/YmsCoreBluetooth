@@ -58,8 +58,8 @@ float calcGyro(int16_t v, float c, int16_t d) {
                  serviceOffset:serviceOffset];
     
     if (self) {
-        [self addCharacteristic:@"data" withOffset:kSensorTag_GYROSCOPE_DATA];
-        [self addCharacteristic:@"config" withOffset:kSensorTag_GYROSCOPE_CONFIG];
+        [self addCharacteristic:@"data" withBLEOffset:kSensorTag_GYROSCOPE_DATA];
+        [self addCharacteristic:@"config" withBLEOffset:kSensorTag_GYROSCOPE_CONFIG];
         _lastPitch = 0.0;
         _lastRoll = 0.0;
         _lastYaw = 0.0;

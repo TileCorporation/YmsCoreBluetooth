@@ -22,6 +22,8 @@
 #import "YMSCBCharacteristic.h"
 
 @interface YMSCBService ()
+
+@property (nonatomic, strong) NSMutableDictionary *characteristicsByUUID;
 @end
 
 @implementation YMSCBService
@@ -38,7 +40,8 @@
         _parent = pObj;
         _base.hi = hi;
         _base.lo = lo;
-        _characteristicDict = [[NSMutableDictionary alloc] init];
+        _characteristicDict = [NSMutableDictionary new];
+        _characteristicsByUUID = [NSMutableDictionary new];
         
         if ((hi == 0) && (lo == 0)) {
             NSString *addrString = [NSString stringWithFormat:@"%x", serviceOffset];
@@ -82,9 +85,16 @@
     return self;
 }
 
+- (nullable YMSCBCharacteristic *)objectForKeyedSubscript:(id)key {
+    YMSCBCharacteristic *result = nil;
+    result = self.characteristicDict[key];
+    return result;
+}
 
-- (id)objectForKeyedSubscript:(id)key {
-    return self.characteristicDict[key];
+- (YMSCBCharacteristic *)characteristicForUUID:(CBUUID *)uuid {
+    YMSCBCharacteristic *result = nil;
+    result = self.characteristicsByUUID[uuid.UUIDString];
+    return result;
 }
 
 
@@ -97,11 +107,12 @@
     
     yc = [[YMSCBCharacteristic alloc] initWithName:cname
                                             parent:self.parent
-                                            uuid:uuid
-                                          offset:addrOffset];
+                                              uuid:uuid
+                                            offset:addrOffset];
     yc.parent = self.parent;
     
     self.characteristicDict[cname] = yc;
+    self.characteristicsByUUID[yc.uuid.UUIDString] = yc;
 }
 
 
@@ -119,6 +130,7 @@
     yc.parent = self.parent;
     
     self.characteristicDict[cname] = yc;
+    self.characteristicsByUUID[yc.uuid.UUIDString] = yc;
 }
 
 - (void)addCharacteristic:(NSString *)cname withAddress:(int)addr {
@@ -133,17 +145,21 @@
                                             uuid:uuid
                                           offset:addr];
     self.characteristicDict[cname] = yc;
+    self.characteristicsByUUID[yc.uuid.UUIDString] = yc;
 }
 
 
-- (NSArray *)characteristics {
-    NSArray *tempArray = [self.characteristicDict allValues];
+- (NSArray<id<YMSCBCharacteristicInterface>> *)characteristics {
+    NSArray<id<YMSCBCharacteristicInterface>> *result = nil;
+    result = [self.characteristicDict allValues];
+    return result;
+}
+
+- (NSArray<CBUUID *> *)characteristicUUIDs {
+    NSArray<CBUUID *> *result = nil;
     
-    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:[self.characteristicDict count]];
-    
-    for (YMSCBCharacteristic *yc in tempArray) {
-        [result addObject:yc.uuid];
-    }
+    NSArray<id<YMSCBCharacteristicInterface>> *characteristics = self.characteristics;
+    result = [characteristics valueForKeyPath:@"uuid"];
     
     return result;
 }

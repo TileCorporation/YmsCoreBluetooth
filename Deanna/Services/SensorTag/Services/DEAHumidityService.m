@@ -54,8 +54,8 @@ double calcHumRel(uint16_t rawH) {
                  serviceOffset:serviceOffset];
     
     if (self) {
-        [self addCharacteristic:@"data" withOffset:kSensorTag_HUMIDITY_DATA];
-        [self addCharacteristic:@"config" withOffset:kSensorTag_HUMIDITY_CONFIG];
+        [self addCharacteristic:@"data" withBLEOffset:kSensorTag_HUMIDITY_DATA];
+        [self addCharacteristic:@"config" withBLEOffset:kSensorTag_HUMIDITY_CONFIG];
     }
     return self;
     

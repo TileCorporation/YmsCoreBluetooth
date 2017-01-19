@@ -38,7 +38,7 @@
 
 
 - (void)configureWithSensorTag:(DEASensorTag *)sensorTag {
-    self.service = (DEASimpleKeysService *)sensorTag.serviceDict[@"simplekeys"];
+    self.service = (DEASimpleKeysService *)sensorTag[@"simplekeys"];
     
     for (NSString *key in @[@"keyValue", @"isOn", @"isEnabled"]) {
         [self.service addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:NULL];

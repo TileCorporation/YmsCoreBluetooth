@@ -52,9 +52,9 @@ float calcAccel(int16_t rawV) {
                  serviceOffset:serviceOffset];
 
     if (self) {
-        [self addCharacteristic:@"data" withOffset:kSensorTag_ACCELEROMETER_DATA];
-        [self addCharacteristic:@"config" withOffset:kSensorTag_ACCELEROMETER_CONFIG];
-        [self addCharacteristic:@"period" withOffset:kSensorTag_ACCELEROMETER_PERIOD];
+        [self addCharacteristic:@"data" withBLEOffset:kSensorTag_ACCELEROMETER_DATA];
+        [self addCharacteristic:@"config" withBLEOffset:kSensorTag_ACCELEROMETER_CONFIG];
+        [self addCharacteristic:@"period" withBLEOffset:kSensorTag_ACCELEROMETER_PERIOD];
     }
     return self;
 }
