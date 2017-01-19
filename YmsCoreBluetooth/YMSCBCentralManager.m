@@ -373,9 +373,27 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didFailToConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< didFailToConnectPeripheral: %@ error: %@", peripheralInterface, error];
+    [self.logger logInfo:message object:self.centralInterface];
+    
+    YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+    [yPeripheral reset];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:didFailToConnectPeripheral:error:)]) {
+        [self.delegate centralManager:self didFailToConnectPeripheral:yPeripheral error:error];
+    }
+}
+
+
+
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface willRestoreState:(NSDictionary<NSString *,id> *)dict {
     NSString *message = [NSString stringWithFormat:@"< willRestoreState: %@", dict];
     [self.logger logInfo:message object:self.centralInterface];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:willRestoreState:)]) {
+        [self.delegate centralManager:self willRestoreState:dict];
+    }
 }
 
 #pragma mark - YMSCBLogger Protocol Methods
