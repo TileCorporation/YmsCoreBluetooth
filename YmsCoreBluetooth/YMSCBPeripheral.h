@@ -327,7 +327,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  @param options A dictionary to customize the behavior of the connection. See "Peripheral Connection Options" for CBCentralManager.
  @param connectCallback Callback block to handle peripheral connection.
  */
-- (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(nullable void (^)(YMSCBPeripheral *yp, NSError * _Nullable error))connectCallback;
+- (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(void (^)(YMSCBPeripheral * _Nullable yp, NSError * _Nullable error))connectCallback;
 
 /**
  Cancels an active or pending local connection to a peripheral.
@@ -340,15 +340,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  @param error Error object.
  */
 - (void)handleConnectionResponse:(nullable NSError *)error;
-
-/**
- Default connection handler routine that is invoked only if connectCallback is nil.
- 
- This method is only invoked if a connection request to an instance of this peripheral is done without
- a callback block defined.
-
- */
-- (void)defaultConnectionHandler;
 
 
 /**

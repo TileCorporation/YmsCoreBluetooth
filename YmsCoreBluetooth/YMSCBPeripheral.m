@@ -262,13 +262,24 @@ NS_ASSUME_NONNULL_BEGIN
     self.watchdogTimer = nil;
 }
 
-- (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(nullable void (^)(YMSCBPeripheral * _Nonnull yp, NSError * _Nullable error))connectCallback {
-    NSString *message = [NSString stringWithFormat:@"> connectPeripheral: %@", _peripheralInterface];
-    [self.logger logInfo:message object:self.central];
-    
-    self.connectCallback = connectCallback;
-    
-    [self.central connectPeripheral:self options:options];
+- (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(void (^)(YMSCBPeripheral * _Nullable yp, NSError * _Nullable error))connectCallback {
+    if (!self.connectCallback) {
+        NSString *message = [NSString stringWithFormat:@"> connectPeripheral: %@", _peripheralInterface];
+        [self.logger logInfo:message object:self.central];
+        self.connectCallback = [connectCallback copy];
+        [self.central connectPeripheral:self options:options];
+    } else {
+        NSDictionary *userInfo = @{
+                                   NSLocalizedDescriptionKey: NSLocalizedString(@"Connection request conflict", nil),
+                                   NSLocalizedFailureReasonErrorKey: NSLocalizedString(@"A connection request to this peripheral is already underway.", nil),
+                                   NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(@"Wait for previous connection request to complete or cancel connection and retry.", nil)
+                                   };
+        NSError *error = [NSError errorWithDomain:kYMSCBErrorDomain
+                                             code:409
+                                         userInfo:userInfo];
+        
+        connectCallback(nil, error);
+    }
 }
 
 
@@ -286,22 +297,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (void)handleConnectionResponse:(nullable NSError *)error {
-    YMSCBPeripheralConnectCallbackBlockType callback = [self.connectCallback copy];
-    
     [self invalidateWatchdog];
     
-    if (callback) {
-        callback(self, error);
+    if (self.connectCallback) {
+        self.connectCallback(self, error);
         self.connectCallback = nil;
-        
-    } else {
-        [self defaultConnectionHandler];
     }
 }
 
-- (void)defaultConnectionHandler {
-    NSAssert(NO, @"[YMSCBPeripheral defaultConnectionHandler] must be overridden if connectCallback is nil.");
-}
 
 - (void)readRSSI {
     NSString *message = [NSString stringWithFormat:@"> readRSSI"];
@@ -426,15 +429,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 
-
-/**
- CBPeripheralDelegate implementation.
- 
- @param peripheral The peripheral providing this information.
- @param characteristic The characteristic whose value has been retrieved.
- @param error If an error occured, the cause of the failure.
- */
-
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
     NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristicInterface, error];
     [self.logger logInfo:message object:_peripheralInterface];
@@ -487,13 +481,6 @@ NS_ASSUME_NONNULL_BEGIN
 //}
 
 
-/**
- CBPeripheralDelegate implementation. Not yet supported.
- 
- @param peripheral The peripheral providing this information.
- @param characteristic The characteristic whose value has been retrieved.
- @param error If an error occured, the cause of the failure.
- */
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateNotificationStateForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
     
@@ -513,13 +500,6 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 
-/**
- CBPeripheralDelegate implementation.
- 
- @param peripheral The peripheral providing this information.
- @param characteristic The characteristic whose value has been retrieved.
- @param error If an error occured, the cause of the failure.
- */
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
     
@@ -603,11 +583,6 @@ NS_ASSUME_NONNULL_BEGIN
         [self.delegate peripheralDidUpdateName:self];
     }
 }
-
-
-
-
-
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didModifyServices:(NSArray<id<YMSCBServiceInterface>> *)invalidatedServices {
     NSString *message = [NSString stringWithFormat:@"< didModifyServices: %@", invalidatedServices];
