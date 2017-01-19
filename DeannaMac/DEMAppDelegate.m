@@ -168,12 +168,12 @@
         YMSCBPeripheral *yp = [centralManager findPeripheral:yPeripheral];
         yp.delegate = strongThis;
         
-        if (self.oldCount == 0) {
-            self.oldCount = (int)centralManager.count;
+        if (strongThis.oldCount == 0) {
+            strongThis.oldCount = (int)centralManager.count;
             [strongThis.peripheralTableView reloadData];
         } else {
-            if (centralManager.count != self.oldCount) {
-                self.oldCount = (int)centralManager.count;
+            if (centralManager.count != strongThis.oldCount) {
+                strongThis.oldCount = (int)centralManager.count;
                 [strongThis.peripheralTableView reloadData];
             }
         }
