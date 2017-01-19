@@ -48,7 +48,7 @@ static DEACentralManager *sharedCentralManager;
 }
 
 
-+ (DEACentralManager *)sharedService {
++ (nullable DEACentralManager *)sharedService {
     if (sharedCentralManager == nil) {
         NSLog(@"ERROR: must call initSharedServiceWithDelegate: first.");
     }

@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  Return singleton instance.
  */
 
-+ (DEACentralManager *)sharedService;
++ (nullable DEACentralManager *)sharedService;
 
 - (NSArray *)peripherals ;
 

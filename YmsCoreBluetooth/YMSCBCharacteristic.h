@@ -42,10 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly) BOOL isBroadcasted;
 @property(readonly) BOOL isNotifying;
 
-@property (nonatomic, weak, nullable) YMSCBCharacteristic *owner;
-
-- (void)reset;
-
 @end
 
 
@@ -71,6 +67,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
 /// Human-friendly name for this BLE characteristic.
 @property (atomic, strong) NSString *name;
 
+// TODO: change name to UUID
 /// Characterisic CBUUID.
 @property (atomic, strong) CBUUID *uuid;
 

@@ -20,7 +20,7 @@
 #import "YMSCBPeripheral.h"
 #import "YMSCBService.h"
 #import "YMSCBCharacteristic.h"
-#import "YMSCBNativeCentralManager.h"
+#import "YMSCBNativeInterfaces.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -52,7 +52,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         _queue = queue;
 
         // TODO: conditional compile based on environment
-        _centralInterface = [[YMSCBNativeCentralManager alloc] initWithDelegate:self queue:queue options:options];
+        _centralInterface = [[CBCentralManager alloc] initWithDelegate:self queue:queue options:options];
 
         _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
         _discoveredCallback = nil;
@@ -208,7 +208,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
             }
         }
         
-        [tempArray addObject:yPeripheral];
+        if (yPeripheral) {
+            [tempArray addObject:yPeripheral];
+        }
     }
 
     result = [NSArray arrayWithArray:tempArray];
@@ -230,8 +232,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
                 [self addPeripheral:yPeripheral];
             }
         }
-        
-        [tempArray addObject:yPeripheral];
+        if (yPeripheral) {
+            [tempArray addObject:yPeripheral];
+        }
     }
     
     result = [NSArray arrayWithArray:tempArray];
@@ -313,7 +316,6 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         }
         
         [self.delegate centralManagerDidUpdateState:self];
-        
     }
 }
 
@@ -337,7 +339,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         
         self.discoveredCallback(yPeripheral, advertisementData, RSSI);
         
-        if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
+        if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
             [self.delegate centralManager:self didDiscoverPeripheral:yPeripheral advertisementData:advertisementData RSSI:RSSI];
         }
     }
@@ -351,7 +353,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
     [yPeripheral handleConnectionResponse:nil];
     
-    if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
+    if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
         [self.delegate centralManager:self didConnectPeripheral:yPeripheral];
     }
 }
@@ -364,15 +366,33 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
     [yPeripheral reset];
     
-    if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
+    if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
         [self.delegate centralManager:self didDisconnectPeripheral:yPeripheral error:error];
     }
 }
 
 
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didFailToConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
+    NSString *message = [NSString stringWithFormat:@"< didFailToConnectPeripheral: %@ error: %@", peripheralInterface, error];
+    [self.logger logInfo:message object:self.centralInterface];
+    
+    YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+    [yPeripheral reset];
+    
+    if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didFailToConnectPeripheral:error:)]) {
+        [self.delegate centralManager:self didFailToConnectPeripheral:yPeripheral error:error];
+    }
+}
+
+
+
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface willRestoreState:(NSDictionary<NSString *,id> *)dict {
     NSString *message = [NSString stringWithFormat:@"< willRestoreState: %@", dict];
     [self.logger logInfo:message object:self.centralInterface];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:willRestoreState:)]) {
+        [self.delegate centralManager:self willRestoreState:dict];
+    }
 }
 
 #pragma mark - YMSCBLogger Protocol Methods

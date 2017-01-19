@@ -28,7 +28,7 @@
         
     }
     
-    self.service = sensorTag.serviceDict[@"devinfo"];
+    self.service = (DEABaseService *)sensorTag[@"devinfo"];
     
     for (NSString *key in self.keyList) {
         NSString *labelKey = [NSString stringWithFormat:@"%@Label", key];

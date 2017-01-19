@@ -75,7 +75,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
 
 // ------------------------------------------------------------------------
 
-@protocol YMSCBCentralManagerInterfaceDelegate <NSObject>
+@protocol YMSCBCentralManagerInterfaceDelegate <CBCentralManagerDelegate>
 
 @required
 - (void)centralManagerDidUpdateState:(id<YMSCBCentralManagerInterface>)centralInterface;

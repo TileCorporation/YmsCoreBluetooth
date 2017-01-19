@@ -95,9 +95,9 @@ double calcBarPress(int16_t t_r,
                  serviceOffset:serviceOffset];
 
     if (self) {
-        [self addCharacteristic:@"data" withOffset:kSensorTag_BAROMETER_DATA];
-        [self addCharacteristic:@"config" withOffset:kSensorTag_BAROMETER_CONFIG];
-        [self addCharacteristic:@"calibration" withOffset:kSensorTag_BAROMETER_CALIBRATION];
+        [self addCharacteristic:@"data" withBLEOffset:kSensorTag_BAROMETER_DATA];
+        [self addCharacteristic:@"config" withBLEOffset:kSensorTag_BAROMETER_CONFIG];
+        [self addCharacteristic:@"calibration" withBLEOffset:kSensorTag_BAROMETER_CALIBRATION];
         _isCalibrating = NO;
     }
     return self;

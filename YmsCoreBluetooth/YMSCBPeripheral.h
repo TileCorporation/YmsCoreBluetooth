@@ -50,6 +50,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 @property(readonly) CBPeripheralState state;
 
+#if TARGET_OS_IPHONE
+#else
+@property(readonly) NSNumber *RSSI;
+#endif
+
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *services;
 
 - (void)readRSSI;
@@ -72,13 +77,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)writeValue:(NSData *)data forDescriptor:(id<YMSCBDescriptorInterface>)yDescriptor;
 
-- (void)reset;
-
 @end
 
 // ------------------------------------------------------------------------
 
-@protocol YMSCBPeripheralInterfaceDelegate <NSObject>
+@protocol YMSCBPeripheralInterfaceDelegate <CBPeripheralDelegate>
 
 @optional
 
@@ -86,7 +89,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didModifyServices:(NSArray<id<YMSCBServiceInterface>> *)invalidatedServices;
 
+#if TARGET_OS_IPHONE
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error;
+#else
+- (void)peripheralDidUpdateRSSI:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
+#endif
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error;
 
@@ -119,7 +126,12 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)peripheral:(YMSCBPeripheral *)yPeripheral didModifyServices:(NSArray<YMSCBService *> *)invalidatedServices;
 
+#if TARGET_OS_IPHONE
 - (void)peripheral:(YMSCBPeripheral *)yPeripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error;
+#else
+- (void)peripheralDidUpdateRSSI:(YMSCBPeripheral *)yPeripheral error:(nullable NSError *)error;
+#endif
+
 
 - (void)peripheral:(YMSCBPeripheral *)yPeripheral didDiscoverServices:(nullable NSError *)error;
 
@@ -201,7 +213,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  
  The NSString `key` is typically a "human-readable" string to easily reference a YMSCBService.
  */
-@property (nonatomic, strong) NSDictionary<NSString *, YMSCBService*> *serviceDict;
+//@property (nonatomic, strong, readonly) NSDictionary<NSString *, YMSCBService*> *serviceDict;
 
 
 /**
@@ -260,6 +272,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
                                      baseHi:(int64_t)hi
                                      baseLo:(int64_t)lo;
 
+
+
 /** @name Get all CBService CBUUIDs for this peripheral  */
 /**
  Generate array of CBUUID for all CoreBluetooth services associated with this peripheral.
@@ -281,15 +295,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  */
 - (NSArray<CBUUID *> *)servicesSubset:(NSArray<NSString *> *)keys;
 
-
-/** @name Find a YMSCBService */
-/**
- Find YMSCBService given its corresponding CBService.
- 
- @param service CBService to search for in serviceDict.
- @return YMSCBService instance which holds *service*.
- */
-- (nullable YMSCBService *)findService:(CBService *)service;
 
 /**
  Connect peripheral
@@ -327,7 +332,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  @param options A dictionary to customize the behavior of the connection. See "Peripheral Connection Options" for CBCentralManager.
  @param connectCallback Callback block to handle peripheral connection.
  */
-- (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(nullable void (^)(YMSCBPeripheral *yp, NSError * _Nullable error))connectCallback;
+- (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(void (^)(YMSCBPeripheral * _Nullable yp, NSError * _Nullable error))connectCallback;
 
 /**
  Cancels an active or pending local connection to a peripheral.
@@ -340,15 +345,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  @param error Error object.
  */
 - (void)handleConnectionResponse:(nullable NSError *)error;
-
-/**
- Default connection handler routine that is invoked only if connectCallback is nil.
- 
- This method is only invoked if a connection request to an instance of this peripheral is done without
- a callback block defined.
-
- */
-- (void)defaultConnectionHandler;
 
 
 /**
@@ -365,7 +361,11 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  @param key The key for which to return the corresponding value in serviceDict.
  @return object in serviceDict.
  */
-- (nullable id)objectForKeyedSubscript:(id)key;
+- (nullable YMSCBService *)objectForKeyedSubscript:(NSString *)key;
+
+- (void)setObject:(YMSCBService *)obj forKeyedSubscript:(NSString *)key;
+
+- (nullable YMSCBService *)serviceForUUID:(CBUUID *)uuid;
 
 //- (void)replaceCBPeripheral:(CBPeripheral *)peripheral;
 

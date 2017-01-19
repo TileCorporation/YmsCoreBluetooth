@@ -51,22 +51,6 @@
 }
 
 
-- (void)addCharacteristic:(NSString *)cname withOffset:(int)addrOffset {
-    YMSCBCharacteristic *yc;
-    
-    yms_u128_t pbase = self.base;
-    
-    CBUUID *uuid = [YMSCBUtils createCBUUID:&pbase withIntBLEOffset:addrOffset];
-    
-    yc = [[YMSCBCharacteristic alloc] initWithName:cname
-                                            parent:self.parent
-                                              uuid:uuid
-                                            offset:addrOffset];
-    
-    self.characteristicDict[cname] = yc;
-}
-
-
 - (void)turnOff {
     __weak DEABaseService *this = self;
 

@@ -58,9 +58,9 @@ float calcMag(int16_t v, float c, int16_t d) {
                  serviceOffset:serviceOffset];
     
     if (self) {
-        [self addCharacteristic:@"data" withOffset:kSensorTag_MAGNETOMETER_DATA];
-        [self addCharacteristic:@"config" withOffset:kSensorTag_MAGNETOMETER_CONFIG];
-        [self addCharacteristic:@"period" withOffset:kSensorTag_MAGNETOMETER_PERIOD];
+        [self addCharacteristic:@"data" withBLEOffset:kSensorTag_MAGNETOMETER_DATA];
+        [self addCharacteristic:@"config" withBLEOffset:kSensorTag_MAGNETOMETER_CONFIG];
+        [self addCharacteristic:@"period" withBLEOffset:kSensorTag_MAGNETOMETER_PERIOD];
         _lastX = 0.0;
         _lastY = 0.0;
         _lastZ = 0.0;

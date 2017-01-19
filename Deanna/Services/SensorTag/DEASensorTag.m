@@ -42,25 +42,31 @@
     
     if (self) {
         DEATemperatureService *ts = [[DEATemperatureService alloc] initWithName:@"temperature" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_TEMPERATURE_SERVICE];
-        DEAAccelerometerService *as = [[DEAAccelerometerService alloc] initWithName:@"accelerometer" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_ACCELEROMETER_SERVICE];
-        DEASimpleKeysService *sks = [[DEASimpleKeysService alloc] initWithName:@"simplekeys" parent:self baseHi:0 baseLo:0 serviceOffset:kSensorTag_SIMPLEKEYS_SERVICE];
-        DEAHumidityService *hs = [[DEAHumidityService alloc] initWithName:@"humidity" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_HUMIDITY_SERVICE];
-        DEABarometerService *bs = [[DEABarometerService alloc] initWithName:@"barometer" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_BAROMETER_SERVICE];
-        DEAGyroscopeService *gs = [[DEAGyroscopeService alloc] initWithName:@"gyroscope" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_GYROSCOPE_SERVICE];
-        DEAMagnetometerService *ms = [[DEAMagnetometerService alloc] initWithName:@"magnetometer" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_MAGNETOMETER_SERVICE];
-        DEADeviceInfoService *ds = [[DEADeviceInfoService alloc] initWithName:@"devinfo" parent:self baseHi:0 baseLo:0 serviceOffset:kSensorTag_DEVINFO_SERV_UUID];
-        
-        self.serviceDict = @{@"temperature": ts,
-                             @"accelerometer": as,
-                             @"simplekeys": sks,
-                             @"humidity": hs,
-                             @"magnetometer": ms,
-                             @"gyroscope": gs,
-                             @"barometer": bs,
-                             @"devinfo": ds};
-    }
-    return self;
+        self[@"temperature"] = ts;
 
+        DEAAccelerometerService *as = [[DEAAccelerometerService alloc] initWithName:@"accelerometer" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_ACCELEROMETER_SERVICE];
+        self[@"accelerometer"] = as;
+        
+        DEASimpleKeysService *sks = [[DEASimpleKeysService alloc] initWithName:@"simplekeys" parent:self baseHi:0 baseLo:0 serviceOffset:kSensorTag_SIMPLEKEYS_SERVICE];
+        self[@"simplekeys"] = sks;
+        
+        DEAHumidityService *hs = [[DEAHumidityService alloc] initWithName:@"humidity" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_HUMIDITY_SERVICE];
+        self[@"humidity"] = hs;
+        
+        DEABarometerService *bs = [[DEABarometerService alloc] initWithName:@"barometer" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_BAROMETER_SERVICE];
+        self[@"barometer"] = bs;
+        
+        DEAGyroscopeService *gs = [[DEAGyroscopeService alloc] initWithName:@"gyroscope" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_GYROSCOPE_SERVICE];
+        self[@"gyroscope"] = gs;
+        
+        DEAMagnetometerService *ms = [[DEAMagnetometerService alloc] initWithName:@"magnetometer" parent:self baseHi:hi baseLo:lo serviceOffset:kSensorTag_MAGNETOMETER_SERVICE];
+        self[@"magnetometer"] = ms;
+        
+        DEADeviceInfoService *ds = [[DEADeviceInfoService alloc] initWithName:@"devinfo" parent:self baseHi:0 baseLo:0 serviceOffset:kSensorTag_DEVINFO_SERV_UUID];
+        self[@"devinfo"] = ds;
+    }
+
+    return self;
 }
 
 - (void)connect {
@@ -85,19 +91,19 @@
             for (YMSCBService *service in yservices) {
                 if ([service.name isEqualToString:@"simplekeys"]) {
                     __weak DEASimpleKeysService *thisService = (DEASimpleKeysService *)service;
-                    [service discoverCharacteristics:[service characteristics] withBlock:^(NSDictionary *chDict, NSError *error) {
+                    [service discoverCharacteristics:[service characteristicUUIDs] withBlock:^(NSDictionary *chDict, NSError *error) {
                         [thisService turnOn];
                     }];
                     
                 } else if ([service.name isEqualToString:@"devinfo"]) {
                     __weak DEADeviceInfoService *thisService = (DEADeviceInfoService *)service;
-                    [service discoverCharacteristics:[service characteristics] withBlock:^(NSDictionary *chDict, NSError *error) {
+                    [service discoverCharacteristics:[service characteristicUUIDs] withBlock:^(NSDictionary *chDict, NSError *error) {
                         [thisService readDeviceInfo];
                     }];
                     
                 } else {
                     __weak DEABaseService *thisService = (DEABaseService *)service;
-                    [service discoverCharacteristics:[service characteristics] withBlock:^(NSDictionary *chDict, NSError *error) {
+                    [service discoverCharacteristics:[service characteristicUUIDs] withBlock:^(NSDictionary *chDict, NSError *error) {
                         if (error) {
                             NSString *message = [NSString stringWithFormat:@"%@", error];
                             [this.logger logError:message object:this];
@@ -128,35 +134,35 @@
 
 
 - (DEAAccelerometerService *)accelerometer {
-    return (DEAAccelerometerService *)self.serviceDict[@"accelerometer"];
+    return (DEAAccelerometerService *)self[@"accelerometer"];
 }
 
 - (DEABarometerService *)barometer {
-    return (DEABarometerService *)self.serviceDict[@"barometer"];
+    return (DEABarometerService *)self[@"barometer"];
 }
 
 - (DEADeviceInfoService *)devinfo {
-    return (DEADeviceInfoService *)self.serviceDict[@"devinfo"];
+    return (DEADeviceInfoService *)self[@"devinfo"];
 }
 
 - (DEAGyroscopeService *)gyroscope {
-    return (DEAGyroscopeService *)self.serviceDict[@"gyroscope"];
+    return (DEAGyroscopeService *)self[@"gyroscope"];
 }
 
 - (DEAHumidityService *)humidity {
-    return (DEAHumidityService *)self.serviceDict[@"humidity"];
+    return (DEAHumidityService *)self[@"humidity"];
 }
 
 - (DEAMagnetometerService *)magnetometer {
-    return (DEAMagnetometerService *)self.serviceDict[@"magnetometer"];
+    return (DEAMagnetometerService *)self[@"magnetometer"];
 }
 
 - (DEASimpleKeysService *)simplekeys {
-    return (DEASimpleKeysService *)self.serviceDict[@"simplekeys"];
+    return (DEASimpleKeysService *)self[@"simplekeys"];
 }
 
 - (DEATemperatureService *)temperature {
-    return (DEATemperatureService *)self.serviceDict[@"temperature"];
+    return (DEATemperatureService *)self[@"temperature"];
 }
 
 @end
