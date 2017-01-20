@@ -10,6 +10,7 @@
 #import "YMSBFMCentralManager.h"
 #import "YMSBFMService.h"
 #import "YMSCBService.h"
+#import "YMSBFMCharacteristic.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +32,16 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)readRSSI {
+    NSError *error = nil;
     
+    int lowerBound = 1;
+    int upperBound = 100;
+    int rndValue = lowerBound + arc4random() % (upperBound - lowerBound);
+    NSNumber *randomNumber = @(-rndValue);
+    
+    if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
+        [self.delegate peripheral:self didReadRSSI:randomNumber error:error];
+    }
 }
 
 - (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs {
@@ -65,15 +75,27 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic {
-    
+    NSError *error = nil;
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didUpdateValueForCharacteristic:yCharacteristic error:error];
+    }
 }
 
 - (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic type:(CBCharacteristicWriteType)type {
-    
+    NSError *error = nil;
+    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didWriteValueForCharacteristic:yCharacteristic error:error];
+    }
 }
 
 - (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic {
+    NSError *error = nil;
+    YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)yCharacteristic;
+    characteristic.isNotifying = enabled;
     
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateNotificationStateForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didUpdateNotificationStateForCharacteristic:yCharacteristic error:error];
+    }
 }
 
 - (void)discoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic {
@@ -92,6 +114,10 @@ NS_ASSUME_NONNULL_BEGIN
     NSArray<id<YMSCBServiceInterface>> *result = nil;
     result = _servicesByUUID.allValues;
     return result;
+}
+
+- (void)setConnectionState:(CBPeripheralState)state {
+    _state = state;
 }
 
 @end

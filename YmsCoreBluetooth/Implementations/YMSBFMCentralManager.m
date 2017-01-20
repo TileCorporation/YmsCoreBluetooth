@@ -73,11 +73,25 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)connectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface options:(nullable NSDictionary<NSString *, id> *)options {
+    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
     
+    [peripheral setConnectionState:CBPeripheralStateConnected];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
+        [self.delegate centralManager:self didConnectPeripheral:peripheralInterface];
+    }
 }
 
 - (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface {
+    NSError *error = nil;
     
+    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
+    
+    [peripheral setConnectionState:CBPeripheralStateDisconnected];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
+        [self.delegate centralManager:self didDisconnectPeripheral:peripheralInterface error:error];
+    }
 }
 
 @end

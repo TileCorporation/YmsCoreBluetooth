@@ -26,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
+- (void)setIsNotifying:(BOOL)isNotifying {
+    _isNotifying = isNotifying;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

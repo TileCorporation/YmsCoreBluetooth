@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly) BOOL isNotifying;
 
 - (nullable instancetype)initWithCBUUID:(CBUUID *)uuid serviceInterface:(id<YMSCBServiceInterface>)serviceInterface;
+- (void)setIsNotifying:(BOOL)isNotifying;
 
 @end
 

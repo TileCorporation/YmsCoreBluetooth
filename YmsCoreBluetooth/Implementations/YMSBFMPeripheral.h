@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, weak, nullable) id<YMSCBCentralManagerInterface> central;
 
 - (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central;
+- (void)setConnectionState:(CBPeripheralState)state;
 
 @end
 
