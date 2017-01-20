@@ -98,6 +98,16 @@
 		D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F616DEE76C0094FEFA /* DEAAccelerometerViewCell.m */; };
 		D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F916DEF6130094FEFA /* DEAHumidityViewCell.m */; };
 		D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412FC16DEFA510094FEFA /* DEASimpleKeysViewCell.m */; };
+		EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
+		EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
+		EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */; };
+		EA74AC141E3170B400E3878D /* YMSBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */; };
+		EA74AC171E3170D800E3878D /* YMSBFMService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC161E3170D800E3878D /* YMSBFMService.m */; };
+		EA74AC181E3170D800E3878D /* YMSBFMService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC161E3170D800E3878D /* YMSBFMService.m */; };
+		EA74AC1B1E3170E500E3878D /* YMSBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC1A1E3170E500E3878D /* YMSBFMCharacteristic.m */; };
+		EA74AC1C1E3170E500E3878D /* YMSBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC1A1E3170E500E3878D /* YMSBFMCharacteristic.m */; };
+		EA74AC1F1E3170EE00E3878D /* YMSBFMDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC1E1E3170EE00E3878D /* YMSBFMDescriptor.m */; };
+		EA74AC201E3170EE00E3878D /* YMSBFMDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC1E1E3170EE00E3878D /* YMSBFMDescriptor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -240,6 +250,16 @@
 		D9F412F916DEF6130094FEFA /* DEAHumidityViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEAHumidityViewCell.m; sourceTree = "<group>"; };
 		D9F412FB16DEFA500094FEFA /* DEASimpleKeysViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASimpleKeysViewCell.h; sourceTree = "<group>"; };
 		D9F412FC16DEFA510094FEFA /* DEASimpleKeysViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASimpleKeysViewCell.m; sourceTree = "<group>"; };
+		EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMCentralManager.h; sourceTree = "<group>"; };
+		EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMCentralManager.m; sourceTree = "<group>"; };
+		EA74AC111E3170B400E3878D /* YMSBFMPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMPeripheral.h; sourceTree = "<group>"; };
+		EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMPeripheral.m; sourceTree = "<group>"; };
+		EA74AC151E3170D800E3878D /* YMSBFMService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMService.h; sourceTree = "<group>"; };
+		EA74AC161E3170D800E3878D /* YMSBFMService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMService.m; sourceTree = "<group>"; };
+		EA74AC191E3170E500E3878D /* YMSBFMCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMCharacteristic.h; sourceTree = "<group>"; };
+		EA74AC1A1E3170E500E3878D /* YMSBFMCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMCharacteristic.m; sourceTree = "<group>"; };
+		EA74AC1D1E3170EE00E3878D /* YMSBFMDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMDescriptor.h; sourceTree = "<group>"; };
+		EA74AC1E1E3170EE00E3878D /* YMSBFMDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMDescriptor.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -505,6 +525,16 @@
 			isa = PBXGroup;
 			children = (
 				D97F4C491E3033560047006B /* YMSCBNativeInterfaces.h */,
+				EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */,
+				EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */,
+				EA74AC111E3170B400E3878D /* YMSBFMPeripheral.h */,
+				EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */,
+				EA74AC151E3170D800E3878D /* YMSBFMService.h */,
+				EA74AC161E3170D800E3878D /* YMSBFMService.m */,
+				EA74AC191E3170E500E3878D /* YMSBFMCharacteristic.h */,
+				EA74AC1A1E3170E500E3878D /* YMSBFMCharacteristic.m */,
+				EA74AC1D1E3170EE00E3878D /* YMSBFMDescriptor.h */,
+				EA74AC1E1E3170EE00E3878D /* YMSBFMDescriptor.m */,
 			);
 			path = Implementations;
 			sourceTree = "<group>";
@@ -738,14 +768,18 @@
 				D988A5C616DD26A100D7D392 /* DEASensorTag.m in Sources */,
 				D90C0C3A16DD6297002D3FFD /* DEABaseViewController.m in Sources */,
 				D90C0C3D16DD9133002D3FFD /* DEAHumidityService.m in Sources */,
+				EA74AC171E3170D800E3878D /* YMSBFMService.m in Sources */,
 				D933CECF16DDAFA700EDDAD6 /* YMS128.c in Sources */,
 				D933CED016DDAFA700EDDAD6 /* YMSCBCentralManager.m in Sources */,
 				D933CED116DDAFA700EDDAD6 /* YMSCBCharacteristic.m in Sources */,
+				EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */,
 				D933CED216DDAFA700EDDAD6 /* YMSCBPeripheral.m in Sources */,
+				EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */,
 				D933CED316DDAFA700EDDAD6 /* YMSCBService.m in Sources */,
 				D933CED416DDAFA700EDDAD6 /* YMSCBUtils.m in Sources */,
 				D9F412F016DED0030094FEFA /* DEASensorTagViewController.m in Sources */,
 				D9F412F416DED7510094FEFA /* DEATemperatureViewCell.m in Sources */,
+				EA74AC1F1E3170EE00E3878D /* YMSBFMDescriptor.m in Sources */,
 				D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */,
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
@@ -757,6 +791,7 @@
 				D93EAC5616E1DAC8008B1BD3 /* DEAMagnetometerViewCell.m in Sources */,
 				D93EAC5916E1DAF5008B1BD3 /* DEAMagnetometerService.m in Sources */,
 				D9971AEE1720AA7E00B1A068 /* DEAPeripheralTableViewCell.m in Sources */,
+				EA74AC1B1E3170E500E3878D /* YMSBFMCharacteristic.m in Sources */,
 				D97EC6D0172B08AB00CAECFC /* DEABaseService.m in Sources */,
 				D9268B4317306295009C4284 /* NSMutableArray+fifoQueue.m in Sources */,
 				D9268B46173081E2009C4284 /* DEADeviceInfoService.m in Sources */,
@@ -774,6 +809,7 @@
 				D99659161E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D997AC9E175B245800C91B0D /* main.m in Sources */,
 				D997ACA5175B245800C91B0D /* DEMAppDelegate.m in Sources */,
+				EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */,
 				D997ACB6175B254500C91B0D /* YMS128.c in Sources */,
 				D997ACB7175B254500C91B0D /* YMSCBCentralManager.m in Sources */,
 				D997ACB8175B254500C91B0D /* YMSCBPeripheral.m in Sources */,
@@ -784,6 +820,7 @@
 				D997ACBE175B254500C91B0D /* NSMutableArray+fifoQueue.m in Sources */,
 				D997ACBF175B255E00C91B0D /* DEACentralManager.m in Sources */,
 				D997ACC2175B255E00C91B0D /* DEASensorTag.m in Sources */,
+				EA74AC201E3170EE00E3878D /* YMSBFMDescriptor.m in Sources */,
 				D997ACC3175B257000C91B0D /* DEABaseService.m in Sources */,
 				D997ACC4175B257000C91B0D /* DEAAccelerometerService.m in Sources */,
 				D997ACC5175B257000C91B0D /* DEABarometerService.m in Sources */,
@@ -795,8 +832,11 @@
 				D997ACCB175B257000C91B0D /* DEATemperatureService.m in Sources */,
 				D997ACDA175B288900C91B0D /* DEMPeripheralViewCell.m in Sources */,
 				D997ACDB175B288900C91B0D /* DEMBaseViewCell.m in Sources */,
+				EA74AC181E3170D800E3878D /* YMSBFMService.m in Sources */,
 				D997ACDC175B288900C91B0D /* DEMAccelerometerViewCell.m in Sources */,
 				D997ACDD175B288900C91B0D /* DEMBarometerViewCell.m in Sources */,
+				EA74AC1C1E3170E500E3878D /* YMSBFMCharacteristic.m in Sources */,
+				EA74AC141E3170B400E3878D /* YMSBFMPeripheral.m in Sources */,
 				D997ACE0175B28E900C91B0D /* DEASensorTagWindow.m in Sources */,
 				D997ACE3175B331F00C91B0D /* DEMDeviceInfoViewCell.m in Sources */,
 				D997ACE6175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m in Sources */,
