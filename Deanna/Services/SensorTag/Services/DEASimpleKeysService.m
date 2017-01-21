@@ -48,36 +48,11 @@
 
 
 - (void)turnOff {
-    __weak DEASimpleKeysService *this = self;
-    YMSCBCharacteristic *ct = self.characteristicDict[@"data"];
-    [ct setNotifyValue:NO withStateChangeBlock:^(NSError * _Nonnull error) {
-        if (error) {
-            NSLog(@"ERROR: %@", error);
-            return;
-        }
-        
-        NSLog(@"Data notification for %@ off", this.name);
 
-      
-    } withNotificationBlock:nil];
-    
-    _YMS_PERFORM_ON_MAIN_THREAD(^{
-        this.isOn = NO;
-    });
 }
 
 - (void)turnOn {
     __weak DEABaseService *this = self;
-    
-    YMSCBCharacteristic *configCt = self.characteristicDict[@"config"];
-    [configCt writeByte:0x1 withBlock:^(NSError *error) {
-        if (error) {
-            NSLog(@"ERROR: %@", error);
-            return;
-        }
-        
-        NSLog(@"TURNED ON: %@", this.name);
-    }];
     
     YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
     [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError * _Nullable error) {

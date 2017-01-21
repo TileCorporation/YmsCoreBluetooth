@@ -35,6 +35,12 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
+- (nullable NSArray<id<YMSCBCharacteristicInterface>> *)characteristics {
+    NSArray<id<YMSCBCharacteristicInterface>> *result = nil;
+    result = _characteristicsByUUID.allValues;
+    return result;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

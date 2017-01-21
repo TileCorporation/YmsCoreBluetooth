@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable instancetype)initWithCBUUID:(CBUUID *)uuid serviceInterface:(id<YMSCBServiceInterface>)serviceInterface;
 - (void)setIsNotifying:(BOOL)isNotifying;
+- (void)writeValue:(NSData *)value;
 
 @end
 

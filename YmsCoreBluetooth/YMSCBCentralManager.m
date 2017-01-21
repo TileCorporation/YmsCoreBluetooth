@@ -52,9 +52,11 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         _delegate = delegate;
         _queue = queue;
 
-        // TODO: conditional compile based on environment
-//        _centralInterface = [[CBCentralManager alloc] initWithDelegate:self queue:queue options:options];
+#if TARGET_IPHONE_SIMULATOR
         _centralInterface = [[YMSBFMCentralManager alloc] initWithDelegate:self queue:queue options:options];
+#else
+        _centralInterface = [[CBCentralManager alloc] initWithDelegate:self queue:queue options:options];
+#endif
 
         _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
         _discoveredCallback = nil;

@@ -83,6 +83,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic type:(CBCharacteristicWriteType)type {
     NSError *error = nil;
+    YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)yCharacteristic;
+    if ([characteristic.UUID.UUIDString isEqualToString:@"F000AA02-0451-4000-B000-000000000000"]) {
+        [characteristic writeValue:data];
+    }
+    
     if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
         [self.delegate peripheral:self didWriteValueForCharacteristic:yCharacteristic error:error];
     }
