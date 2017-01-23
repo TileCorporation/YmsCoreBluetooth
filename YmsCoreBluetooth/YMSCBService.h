@@ -92,7 +92,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 @property (atomic, assign) BOOL isEnabled;
 
 /// Dictionary of (`key`, `value`) pairs of (NSString, YMSCBCharacteristic) instances
-@property (atomic, strong, nullable) NSMutableDictionary *characteristicDict;
+@property (atomic, strong, nullable) NSMutableDictionary<NSString *, YMSCBCharacteristic *> *characteristicDict;
 
 /// Callback for characteristics that are discovered.
 @property (atomic, copy, nullable) YMSCBDiscoverCharacteristicsCallbackBlockType discoverCharacteristicsCallback;

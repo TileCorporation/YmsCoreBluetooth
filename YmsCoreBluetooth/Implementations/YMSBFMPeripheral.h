@@ -22,10 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(readonly) CBPeripheralState state;
 
-#if TARGET_OS_IPHONE
-#else
 @property(readonly) NSNumber *RSSI;
-#endif
 
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *services;
 
