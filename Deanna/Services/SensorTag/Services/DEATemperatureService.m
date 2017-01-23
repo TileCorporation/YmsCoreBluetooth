@@ -108,16 +108,16 @@ double calcTmpTarget(int16_t objT, double m_tempAmb) {
         
         NSLog(@"Data notification received %@ for %@", data, this.name);
         
-        char val[data.length];
+        uint8_t val[data.length];
         [data getBytes:&val length:data.length];
+
+        uint8_t v0 = val[0];
+        uint8_t v1 = val[1];
+        uint8_t v2 = val[2];
+        uint8_t v3 = val[3];
         
-        int16_t v0 = val[0];
-        int16_t v1 = val[1];
-        int16_t v2 = val[2];
-        int16_t v3 = val[3];
-        
-        int16_t amb = ((v2 & 0xff)| ((v3 << 8) & 0xff00));
-        int16_t objT = ((v0 & 0xff)| ((v1 << 8) & 0xff00));
+        uint16_t amb = ((v2 & 0xff)| ((v3 << 8) & 0xff00));
+        uint16_t objT = ((v0 & 0xff)| ((v1 << 8) & 0xff00));
         
         double tempAmb = calcTmpLocal(amb);
         

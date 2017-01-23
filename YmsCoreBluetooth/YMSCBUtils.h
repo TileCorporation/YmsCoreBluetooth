@@ -121,7 +121,7 @@ typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
  @param data data to convert
  @return 8-bit integer
  */
-+ (int8_t)dataToByte:(NSData *)data;
++ (uint8_t)dataToByte:(NSData *)data;
 
 /**
  Convert data to 16-bit integer
@@ -129,13 +129,13 @@ typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
  @return 16-bit integer
 
  */
-+ (int16_t)dataToInt16:(NSData *)data;
++ (uint16_t)dataToUInt16:(NSData *)data;
 
 /**
  Convert data to 32-bit integer
  @param data data to convert
  @return 32-bit integer
  */
-+ (int32_t)dataToInt32:(NSData *)data;
++ (uint32_t)dataToUInt32:(NSData *)data;
 
 @end
