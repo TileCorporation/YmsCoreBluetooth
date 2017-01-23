@@ -130,15 +130,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<CBUUID *> *)serviceUUIDs {
     NSArray<CBUUID *> *result;
-    
-    NSMutableArray<CBUUID *> *tempArray = [NSMutableArray new];
 
-    for (NSString *key in self.serviceDict) {
-        YMSCBService *service = self.serviceDict[key];
-        [tempArray addObject:service.uuid];
-    }
+    NSArray<YMSCBService *> *services = [_serviceDict allValues];
+    result = [services valueForKeyPath:@"uuid"];
 
-    result = [NSArray arrayWithArray:tempArray];
     return result;
 }
 
@@ -322,6 +317,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSArray<YMSCBService *> *)services {
     NSArray<YMSCBService *> *result = nil;
     result = [self.serviceDict allValues];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"serviceInterface != NULL"];
+    result = [result filteredArrayUsingPredicate:predicate];
+
     return result;
 }
 
@@ -369,7 +368,7 @@ NS_ASSUME_NONNULL_BEGIN
         self.discoverServicesCallback = nil;
 
     }
-    
+
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
         [self.delegate peripheral:self didDiscoverServices:error];
     }
@@ -383,7 +382,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [yService syncCharacteristics];
     [yService handleDiscoveredCharacteristicsResponse:yService.characteristicDict withError:error];
-
+    
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
         [self.delegate peripheral:self didDiscoverCharacteristicsForService:yService error:error];
     }

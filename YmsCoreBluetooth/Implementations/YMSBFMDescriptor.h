@@ -12,7 +12,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMDescriptor : NSObject<YMSCBDescriptorInterface>
+@property(readonly, nonatomic) CBUUID *UUID;
+@property(assign, readonly, nonatomic) id<YMSCBCharacteristicInterface> characteristicInterface;
+@property(retain, readonly) id value;
 
 @end
+
 
 NS_ASSUME_NONNULL_END

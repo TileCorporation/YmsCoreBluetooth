@@ -50,10 +50,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 @property(readonly) CBPeripheralState state;
 
-#if TARGET_OS_IPHONE
-#else
-@property(readonly) NSNumber *RSSI;
-#endif
 
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *services;
 
@@ -61,21 +57,25 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs;
 
-- (void)discoverIncludedServices:(nullable NSArray<CBUUID *> *)includedServiceUUIDs forService:(id<YMSCBServiceInterface>)yService;
+- (void)discoverIncludedServices:(nullable NSArray<CBUUID *> *)includedServiceUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface;
 
-- (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)yService;
+- (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface;
 
-- (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic;
+- (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface;
 
-- (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic type:(CBCharacteristicWriteType)type;
+- (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface type:(CBCharacteristicWriteType)type;
 
-- (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic;
+- (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface;
 
-- (void)discoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)yCharacteristic;
+- (void)discoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface;
 
-- (void)readValueForDescriptor:(id<YMSCBDescriptorInterface>)yDescriptor;
+- (void)readValueForDescriptor:(id<YMSCBDescriptorInterface>)descriptorInterface;
 
-- (void)writeValue:(NSData *)data forDescriptor:(id<YMSCBDescriptorInterface>)yDescriptor;
+- (void)writeValue:(NSData *)data forDescriptor:(id<YMSCBDescriptorInterface>)descriptorInterface;
+
+@optional
+
+@property(readonly) NSNumber *RSSI;
 
 @end
 
@@ -89,11 +89,9 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didModifyServices:(NSArray<id<YMSCBServiceInterface>> *)invalidatedServices;
 
-#if TARGET_OS_IPHONE
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error;
-#else
+
 - (void)peripheralDidUpdateRSSI:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
-#endif
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error;
 

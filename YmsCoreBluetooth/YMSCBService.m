@@ -149,16 +149,20 @@
 }
 
 
-- (NSArray<id<YMSCBCharacteristicInterface>> *)characteristics {
-    NSArray<id<YMSCBCharacteristicInterface>> *result = nil;
+- (NSArray<YMSCBCharacteristic *> *)characteristics {
+    NSArray<YMSCBCharacteristic *> *result = nil;
     result = [self.characteristicDict allValues];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"characteristicInterface != NULL"];
+    result = [result filteredArrayUsingPredicate:predicate];
+    
     return result;
 }
 
 - (NSArray<CBUUID *> *)characteristicUUIDs {
     NSArray<CBUUID *> *result = nil;
     
-    NSArray<id<YMSCBCharacteristicInterface>> *characteristics = self.characteristics;
+    NSArray<YMSCBCharacteristic *> *characteristics = [_characteristicDict allValues];
     result = [characteristics valueForKeyPath:@"uuid"];
     
     return result;
