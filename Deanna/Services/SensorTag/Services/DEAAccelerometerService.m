@@ -92,9 +92,9 @@ float calcAccel(int16_t rawV) {
         
         char val[data.length];
         [data getBytes:&val length:data.length];
-        int16_t xx = val[0];
-        int16_t yy = val[1];
-        int16_t zz = val[2];
+        int8_t xx = val[0];
+        int8_t yy = val[1];
+        int8_t zz = val[2];
         
         __weak DEAAccelerometerService *this = self;
         _YMS_PERFORM_ON_MAIN_THREAD(^{

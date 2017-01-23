@@ -85,6 +85,10 @@ NS_ASSUME_NONNULL_BEGIN
     NSError *error = nil;
     YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)yCharacteristic;
     if ([characteristic.UUID.UUIDString isEqualToString:@"F000AA02-0451-4000-B000-000000000000"]) {
+        // temperature config characteristic
+        [characteristic writeValue:data];
+    } else if ([characteristic.UUID.UUIDString isEqualToString:@"F000AA12-0451-4000-B000-000000000000"]) {
+        // accelerometer config characteristic
         [characteristic writeValue:data];
     }
     
