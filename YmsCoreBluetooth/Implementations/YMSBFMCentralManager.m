@@ -8,6 +8,7 @@
 
 #import "YMSBFMCentralManager.h"
 #import "YMSBFMPeripheral.h"
+#import "YMSBFMConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) dispatch_queue_t queue;
 @property (nullable, nonatomic, strong) NSDictionary<NSString *, id> *options;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBPeripheralInterface>> *peripherals;
+@property (nonatomic, strong) YMSBFMConfiguration *modelConfiguration;
 @end
 
 @implementation YMSBFMCentralManager
@@ -43,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
         _queue = queue;
         _options = options;
         _peripherals = [NSMutableDictionary new];
+        _modelConfiguration = [[YMSBFMConfiguration alloc] initWithConfigurationFile:nil];
         
         _state = CBCentralManagerStatePoweredOn;
         [self.delegate centralManagerDidUpdateState:self];
