@@ -1,0 +1,14 @@
+{
+	"peripheral": {
+		"name": "SensorTagPeripheral",
+		"uuid": "D54414EB-2229-43C5-91C8-748F37F200E1",
+		"services": [{
+			"name": "SimpleKeysService",
+			"uuid": "FFE0",
+			"characteristics": [{
+				"name": "SimpleKeysDataCharacteristic",
+				"uuid": "FFE1"
+			}]
+		}]
+	}
+}

@@ -98,6 +98,16 @@
 		D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F616DEE76C0094FEFA /* DEAAccelerometerViewCell.m */; };
 		D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F916DEF6130094FEFA /* DEAHumidityViewCell.m */; };
 		D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412FC16DEFA510094FEFA /* DEASimpleKeysViewCell.m */; };
+		EA0686341E36E20000DDE565 /* SensorTagPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA0686331E36E20000DDE565 /* SensorTagPeripheral.m */; };
+		EA0686351E36E20000DDE565 /* SensorTagPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA0686331E36E20000DDE565 /* SensorTagPeripheral.m */; };
+		EA0686381E36E43200DDE565 /* YMSBFMConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = EA0686371E36E43200DDE565 /* YMSBFMConfig.m */; };
+		EA0686391E36E43200DDE565 /* YMSBFMConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = EA0686371E36E43200DDE565 /* YMSBFMConfig.m */; };
+		EA06863B1E36EB3800DDE565 /* sensortag.json in Resources */ = {isa = PBXBuildFile; fileRef = EA06863A1E36EB3800DDE565 /* sensortag.json */; };
+		EA06863C1E36EB3800DDE565 /* sensortag.json in Resources */ = {isa = PBXBuildFile; fileRef = EA06863A1E36EB3800DDE565 /* sensortag.json */; };
+		EA657D3D1E36EFF800216E2B /* SimpleKeysService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D3C1E36EFF800216E2B /* SimpleKeysService.m */; };
+		EA657D3E1E36EFF800216E2B /* SimpleKeysService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D3C1E36EFF800216E2B /* SimpleKeysService.m */; };
+		EA657D451E36F23400216E2B /* SimpleKeysDataCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D441E36F23400216E2B /* SimpleKeysDataCharacteristic.m */; };
+		EA657D461E36F23400216E2B /* SimpleKeysDataCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D441E36F23400216E2B /* SimpleKeysDataCharacteristic.m */; };
 		EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */; };
@@ -250,6 +260,15 @@
 		D9F412F916DEF6130094FEFA /* DEAHumidityViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEAHumidityViewCell.m; sourceTree = "<group>"; };
 		D9F412FB16DEFA500094FEFA /* DEASimpleKeysViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASimpleKeysViewCell.h; sourceTree = "<group>"; };
 		D9F412FC16DEFA510094FEFA /* DEASimpleKeysViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASimpleKeysViewCell.m; sourceTree = "<group>"; };
+		EA0686321E36E20000DDE565 /* SensorTagPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SensorTagPeripheral.h; path = SensorTag/SensorTagPeripheral.h; sourceTree = "<group>"; };
+		EA0686331E36E20000DDE565 /* SensorTagPeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SensorTagPeripheral.m; path = SensorTag/SensorTagPeripheral.m; sourceTree = "<group>"; };
+		EA0686361E36E43200DDE565 /* YMSBFMConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMConfig.h; sourceTree = "<group>"; };
+		EA0686371E36E43200DDE565 /* YMSBFMConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMConfig.m; sourceTree = "<group>"; };
+		EA06863A1E36EB3800DDE565 /* sensortag.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sensortag.json; sourceTree = "<group>"; };
+		EA657D3B1E36EFF800216E2B /* SimpleKeysService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleKeysService.h; path = SensorTag/SimpleKeysService.h; sourceTree = "<group>"; };
+		EA657D3C1E36EFF800216E2B /* SimpleKeysService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SimpleKeysService.m; path = SensorTag/SimpleKeysService.m; sourceTree = "<group>"; };
+		EA657D431E36F23400216E2B /* SimpleKeysDataCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleKeysDataCharacteristic.h; path = SensorTag/SimpleKeysDataCharacteristic.h; sourceTree = "<group>"; };
+		EA657D441E36F23400216E2B /* SimpleKeysDataCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SimpleKeysDataCharacteristic.m; path = SensorTag/SimpleKeysDataCharacteristic.m; sourceTree = "<group>"; };
 		EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMCentralManager.h; sourceTree = "<group>"; };
 		EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMCentralManager.m; sourceTree = "<group>"; };
 		EA74AC111E3170B400E3878D /* YMSBFMPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMPeripheral.h; sourceTree = "<group>"; };
@@ -524,6 +543,7 @@
 		D9BAA86D1E25A57400952268 /* Implementations */ = {
 			isa = PBXGroup;
 			children = (
+				EA0686311E36E1CF00DDE565 /* SensorTag */,
 				D97F4C491E3033560047006B /* YMSCBNativeInterfaces.h */,
 				EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */,
 				EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */,
@@ -535,6 +555,8 @@
 				EA74AC1A1E3170E500E3878D /* YMSBFMCharacteristic.m */,
 				EA74AC1D1E3170EE00E3878D /* YMSBFMDescriptor.h */,
 				EA74AC1E1E3170EE00E3878D /* YMSBFMDescriptor.m */,
+				EA0686361E36E43200DDE565 /* YMSBFMConfig.h */,
+				EA0686371E36E43200DDE565 /* YMSBFMConfig.m */,
 			);
 			path = Implementations;
 			sourceTree = "<group>";
@@ -618,6 +640,20 @@
 			path = Sensors;
 			sourceTree = "<group>";
 		};
+		EA0686311E36E1CF00DDE565 /* SensorTag */ = {
+			isa = PBXGroup;
+			children = (
+				EA06863A1E36EB3800DDE565 /* sensortag.json */,
+				EA0686321E36E20000DDE565 /* SensorTagPeripheral.h */,
+				EA0686331E36E20000DDE565 /* SensorTagPeripheral.m */,
+				EA657D3B1E36EFF800216E2B /* SimpleKeysService.h */,
+				EA657D3C1E36EFF800216E2B /* SimpleKeysService.m */,
+				EA657D431E36F23400216E2B /* SimpleKeysDataCharacteristic.h */,
+				EA657D441E36F23400216E2B /* SimpleKeysDataCharacteristic.m */,
+			);
+			name = SensorTag;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -685,7 +721,7 @@
 				ORGANIZATIONNAME = "Yummy Melon Software";
 				TargetAttributes = {
 					D9718B40167F9F9F0001E42C = {
-						DevelopmentTeam = N5X6YV9N92;
+						DevelopmentTeam = 8P6K4D35K5;
 					};
 					D997AC8F175B245800C91B0D = {
 						DevelopmentTeam = N5X6YV9N92;
@@ -727,6 +763,7 @@
 				D9C5012316AB37DD001D4D4F /* DEAPeripheralsViewController.xib in Resources */,
 				D9F412F116DED0030094FEFA /* DEASensorTagViewController.xib in Resources */,
 				D9971AEA1720A9A100B1A068 /* DEAPeripheralTableViewCell.xib in Resources */,
+				EA06863B1E36EB3800DDE565 /* sensortag.json in Resources */,
 				D9E012F71797D66400677FC1 /* Images.xcassets in Resources */,
 				D97EC6D2172B1B8C00CAECFC /* README.md in Resources */,
 				D92049D51742C836001380A6 /* CHANGES.md in Resources */,
@@ -739,6 +776,7 @@
 			files = (
 				D997AC9C175B245800C91B0D /* InfoPlist.strings in Resources */,
 				D997ACA2175B245800C91B0D /* Credits.rtf in Resources */,
+				EA06863C1E36EB3800DDE565 /* sensortag.json in Resources */,
 				D997ACCD175B27C000C91B0D /* MainMenu.xib in Resources */,
 				D997ACD1175B287200C91B0D /* DEASensorTagWindow.xib in Resources */,
 			);
@@ -758,6 +796,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA657D451E36F23400216E2B /* SimpleKeysDataCharacteristic.m in Sources */,
 				D9718B52167F9F9F0001E42C /* main.m in Sources */,
 				D9718B56167F9F9F0001E42C /* DEAAppDelegate.m in Sources */,
 				D91170531681251900E2D19A /* DEATemperatureService.m in Sources */,
@@ -767,13 +806,16 @@
 				D906E5F116DCAC55001D7932 /* DEACentralManager.m in Sources */,
 				D988A5C616DD26A100D7D392 /* DEASensorTag.m in Sources */,
 				D90C0C3A16DD6297002D3FFD /* DEABaseViewController.m in Sources */,
+				EA657D3D1E36EFF800216E2B /* SimpleKeysService.m in Sources */,
 				D90C0C3D16DD9133002D3FFD /* DEAHumidityService.m in Sources */,
+				EA0686341E36E20000DDE565 /* SensorTagPeripheral.m in Sources */,
 				EA74AC171E3170D800E3878D /* YMSBFMService.m in Sources */,
 				D933CECF16DDAFA700EDDAD6 /* YMS128.c in Sources */,
 				D933CED016DDAFA700EDDAD6 /* YMSCBCentralManager.m in Sources */,
 				D933CED116DDAFA700EDDAD6 /* YMSCBCharacteristic.m in Sources */,
 				EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */,
 				D933CED216DDAFA700EDDAD6 /* YMSCBPeripheral.m in Sources */,
+				EA0686381E36E43200DDE565 /* YMSBFMConfig.m in Sources */,
 				EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */,
 				D933CED316DDAFA700EDDAD6 /* YMSCBService.m in Sources */,
 				D933CED416DDAFA700EDDAD6 /* YMSCBUtils.m in Sources */,
@@ -809,8 +851,10 @@
 				D99659161E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D997AC9E175B245800C91B0D /* main.m in Sources */,
 				D997ACA5175B245800C91B0D /* DEMAppDelegate.m in Sources */,
+				EA657D3E1E36EFF800216E2B /* SimpleKeysService.m in Sources */,
 				EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */,
 				D997ACB6175B254500C91B0D /* YMS128.c in Sources */,
+				EA657D461E36F23400216E2B /* SimpleKeysDataCharacteristic.m in Sources */,
 				D997ACB7175B254500C91B0D /* YMSCBCentralManager.m in Sources */,
 				D997ACB8175B254500C91B0D /* YMSCBPeripheral.m in Sources */,
 				D997ACB9175B254500C91B0D /* YMSCBService.m in Sources */,
@@ -827,10 +871,12 @@
 				D997ACC6175B257000C91B0D /* DEADeviceInfoService.m in Sources */,
 				D997ACC7175B257000C91B0D /* DEAGyroscopeService.m in Sources */,
 				D997ACC8175B257000C91B0D /* DEAHumidityService.m in Sources */,
+				EA0686391E36E43200DDE565 /* YMSBFMConfig.m in Sources */,
 				D997ACC9175B257000C91B0D /* DEAMagnetometerService.m in Sources */,
 				D997ACCA175B257000C91B0D /* DEASimpleKeysService.m in Sources */,
 				D997ACCB175B257000C91B0D /* DEATemperatureService.m in Sources */,
 				D997ACDA175B288900C91B0D /* DEMPeripheralViewCell.m in Sources */,
+				EA0686351E36E20000DDE565 /* SensorTagPeripheral.m in Sources */,
 				D997ACDB175B288900C91B0D /* DEMBaseViewCell.m in Sources */,
 				EA74AC181E3170D800E3878D /* YMSBFMService.m in Sources */,
 				D997ACDC175B288900C91B0D /* DEMAccelerometerViewCell.m in Sources */,
@@ -981,12 +1027,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = N5X6YV9N92;
+				DEVELOPMENT_TEAM = 8P6K4D35K5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Deanna/Deanna-Prefix.pch";
 				INFOPLIST_FILE = "Deanna/Deanna-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ppp.Deanna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
@@ -999,12 +1045,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = N5X6YV9N92;
+				DEVELOPMENT_TEAM = 8P6K4D35K5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Deanna/Deanna-Prefix.pch";
 				INFOPLIST_FILE = "Deanna/Deanna-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.yummymelon.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ppp.Deanna;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;

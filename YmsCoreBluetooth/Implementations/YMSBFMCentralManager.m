@@ -8,6 +8,7 @@
 
 #import "YMSBFMCentralManager.h"
 #import "YMSBFMPeripheral.h"
+#import "YMSBFMConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -15,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) dispatch_queue_t queue;
 @property (nullable, nonatomic, strong) NSDictionary<NSString *, id> *options;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBPeripheralInterface>> *peripherals;
+@property (nonatomic, strong) YMSBFMConfig *config;
 @end
 
 @implementation YMSBFMCentralManager
@@ -29,6 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
         
         _state = CBCentralManagerStatePoweredOn;
         [self.delegate centralManagerDidUpdateState:self];
+        _config = [[YMSBFMConfig alloc] initWithJsonFile:@"sensortag"];
     }
     return self;
 }
@@ -46,6 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
         
         _state = CBCentralManagerStatePoweredOn;
         [self.delegate centralManagerDidUpdateState:self];
+        _config = [[YMSBFMConfig alloc] initWithJsonFile:@"sensortag"];
     }
     return self;
 }
@@ -61,10 +65,13 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options {
-    YMSBFMPeripheral *peripheral = [[YMSBFMPeripheral alloc] initWithCentral:self];
-    
-    if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
-        [self.delegate centralManager:self didDiscoverPeripheral:peripheral advertisementData:@{} RSSI:@(-54)];
+    Class YMSBFMPeripheral = NSClassFromString(_config.peripheralName);
+    if (YMSBFMPeripheral) {
+         id peripheral = [[YMSBFMPeripheral alloc] initWithCentral:self config:_config];
+        
+        if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
+            [self.delegate centralManager:self didDiscoverPeripheral:peripheral advertisementData:@{} RSSI:@(-54)];
+        }
     }
 }
 

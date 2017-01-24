@@ -9,6 +9,7 @@
 #import "YMSBFMService.h"
 #import "YMSCBCharacteristic.h"
 #import "YMSBFMCharacteristic.h"
+#import "YMSBFMConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,10 +29,25 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (void)addCharacteristicsWithUUIDs:(nullable NSArray<CBUUID *> *)uuids {
-    // TODO: Handle nil uuids
-    for (CBUUID *uuid in uuids) {
-        _characteristicsByUUID[uuid.UUIDString] = [[YMSBFMCharacteristic alloc] initWithCBUUID:uuid serviceInterface:self];
+- (void)addCharacteristicsWithUUIDs:(nullable NSArray<CBUUID *> *)uuids config:(YMSBFMConfig *)config {
+    if (!uuids) {
+        // TODO: Handle nil uuids
+    } else {
+        for (CBUUID *uuid in uuids) {
+            NSString *serviceClass = NSStringFromClass([self class]);
+            NSArray<NSDictionary<NSString *, id> *> *characteristics = config.firstServiceCharacteristics;
+            
+            /*NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", serviceClass];
+            NSArray *result = [characteristics filteredArrayUsingPredicate:predicate];
+            
+            if (result.count == 1) {*/
+                Class YMSBFMCharacteristic = NSClassFromString(characteristics.firstObject[@"name"]);
+                if (YMSBFMCharacteristic) {
+                    id characteristic = [[YMSBFMCharacteristic alloc] initWithCBUUID:uuid serviceInterface:self];
+                   _characteristicsByUUID[characteristics.firstObject[@"uuid"]] = characteristic;
+                }
+            //}
+        }
     }
 }
 

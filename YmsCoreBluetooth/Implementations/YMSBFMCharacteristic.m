@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setIsNotifying:(BOOL)isNotifying {
     _isNotifying = isNotifying;
-    uint8_t uuidLength = _UUID.UUIDString.length;
+    /*uint8_t uuidLength = _UUID.UUIDString.length;
     if (uuidLength == 4) {
         // 16 bit
         uint16_t uuidValue = [YMSCBUtils dataToUInt16:_UUID.data];
@@ -106,13 +106,13 @@ NS_ASSUME_NONNULL_BEGIN
                 });
             }
         }
-    }
+    }*/
 }
 
 - (void)writeValue:(NSData *)value {
-    if ([_UUID.UUIDString isEqualToString:@"F000AA02-0451-4000-B000-000000000000"]) {
+    //if ([_UUID.UUIDString isEqualToString:@"F000AA02-0451-4000-B000-000000000000"]) {
         _value = value;
-    }
+    //}
 }
 
 @end

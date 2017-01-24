@@ -11,47 +11,51 @@
 #import "YMSBFMService.h"
 #import "YMSCBService.h"
 #import "YMSBFMCharacteristic.h"
+#import "YMSBFMConfig.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMPeripheral ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBServiceInterface>> *servicesByUUID;
+@property (nonatomic, strong) YMSBFMConfig *config;
 @end
 
 @implementation YMSBFMPeripheral
 
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central {
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central config:(YMSBFMConfig *)config {
     self = [super init];
     if (self) {
         _central = central;
+        _name = config.peripheralName;
+        _identifier = [[NSUUID alloc] initWithUUIDString:config.peripheralUUID];
         _servicesByUUID = [NSMutableDictionary new];
-        _name = @"Sensor";
-        _identifier = [[NSUUID alloc] initWithUUIDString:@"D54414EB-2229-43C5-91C8-748F37F200E1"];
+        _config = config;
     }
     return self;
 }
 
 - (void)readRSSI {
-    NSError *error = nil;
-    
-    int lowerBound = 1;
-    int upperBound = 100;
-    int rndValue = lowerBound + arc4random() % (upperBound - lowerBound);
-    NSNumber *randomNumber = @(-rndValue);
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
-        [self.delegate peripheral:self didReadRSSI:randomNumber error:error];
-    }
+
 }
 
 - (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs {
     NSError *didDiscoverServices = nil;
     
-    // TODO: Handle case when serviceUUIDs is nil
-    
-    for (CBUUID *serviceUUID in serviceUUIDs) {
-        YMSBFMService *service = [[YMSBFMService alloc] initWithCBUUID:serviceUUID peripheralInterface:self];
-        _servicesByUUID[serviceUUID.UUIDString] = service;
+    if (!serviceUUIDs) {
+        // TODO: Handle case when serviceUUIDs is nil
+    } else {
+        for (NSDictionary<NSString *, id> *service in _config.services) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"UUIDString == %@", service[@"uuid"]];
+            NSArray *result = [serviceUUIDs filteredArrayUsingPredicate:predicate];
+            
+            if (result.count == 1) {
+                Class YMSBFMService = NSClassFromString(service[@"name"]);
+                if (YMSBFMService) {
+                    id service = [[YMSBFMService alloc] initWithCBUUID:result.firstObject peripheralInterface:self];
+                    _servicesByUUID[result.firstObject] = service;
+                }
+            }
+        }
     }
     
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
@@ -67,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSError *error = nil;
     
     YMSBFMService *service = (YMSBFMService *)serviceInterface;
-    [service addCharacteristicsWithUUIDs:characteristicUUIDs];
+    [service addCharacteristicsWithUUIDs:characteristicUUIDs config:self.config];
     
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
         [self.delegate peripheral:self didDiscoverCharacteristicsForService:serviceInterface error:error];
