@@ -100,6 +100,24 @@
 		D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F616DEE76C0094FEFA /* DEAAccelerometerViewCell.m */; };
 		D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412F916DEF6130094FEFA /* DEAHumidityViewCell.m */; };
 		D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9F412FC16DEFA510094FEFA /* DEASimpleKeysViewCell.m */; };
+		EA657D491E38221200216E2B /* SensorTagBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D481E38221200216E2B /* SensorTagBFMPeripheral.m */; };
+		EA657D4A1E38221200216E2B /* SensorTagBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D481E38221200216E2B /* SensorTagBFMPeripheral.m */; };
+		EA657D4D1E38314100216E2B /* SensorTagSimpleKeysBFMService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D4C1E38314100216E2B /* SensorTagSimpleKeysBFMService.m */; };
+		EA657D4E1E38314100216E2B /* SensorTagSimpleKeysBFMService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D4C1E38314100216E2B /* SensorTagSimpleKeysBFMService.m */; };
+		EA657D511E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D501E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.m */; };
+		EA657D521E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D501E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.m */; };
+		EA657D551E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D541E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.m */; };
+		EA657D561E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D541E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.m */; };
+		EA657D591E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D581E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m */; };
+		EA657D5A1E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D581E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m */; };
+		EA657D5D1E3835A100216E2B /* SensorTagTemperatureBFMService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D5C1E3835A100216E2B /* SensorTagTemperatureBFMService.m */; };
+		EA657D5E1E3835A100216E2B /* SensorTagTemperatureBFMService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D5C1E3835A100216E2B /* SensorTagTemperatureBFMService.m */; };
+		EA657D611E38363400216E2B /* SensorTagAccelerometerBFMService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D601E38363400216E2B /* SensorTagAccelerometerBFMService.m */; };
+		EA657D621E38363400216E2B /* SensorTagAccelerometerBFMService.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D601E38363400216E2B /* SensorTagAccelerometerBFMService.m */; };
+		EA657D651E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D641E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m */; };
+		EA657D661E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D641E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m */; };
+		EA657D691E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D681E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m */; };
+		EA657D6A1E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D681E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m */; };
 		EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */; };
@@ -254,6 +272,24 @@
 		D9F412F916DEF6130094FEFA /* DEAHumidityViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEAHumidityViewCell.m; sourceTree = "<group>"; };
 		D9F412FB16DEFA500094FEFA /* DEASimpleKeysViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEASimpleKeysViewCell.h; sourceTree = "<group>"; };
 		D9F412FC16DEFA510094FEFA /* DEASimpleKeysViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEASimpleKeysViewCell.m; sourceTree = "<group>"; };
+		EA657D471E38221200216E2B /* SensorTagBFMPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagBFMPeripheral.h; sourceTree = "<group>"; };
+		EA657D481E38221200216E2B /* SensorTagBFMPeripheral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagBFMPeripheral.m; sourceTree = "<group>"; };
+		EA657D4B1E38314100216E2B /* SensorTagSimpleKeysBFMService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagSimpleKeysBFMService.h; sourceTree = "<group>"; };
+		EA657D4C1E38314100216E2B /* SensorTagSimpleKeysBFMService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagSimpleKeysBFMService.m; sourceTree = "<group>"; };
+		EA657D4F1E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagSimpleKeysDataBFMCharacteristic.h; sourceTree = "<group>"; };
+		EA657D501E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagSimpleKeysDataBFMCharacteristic.m; sourceTree = "<group>"; };
+		EA657D531E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagTemperatureDataBFMCharacteristic.h; sourceTree = "<group>"; };
+		EA657D541E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagTemperatureDataBFMCharacteristic.m; sourceTree = "<group>"; };
+		EA657D571E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagTemperatureConfigBFMCharacteristic.h; sourceTree = "<group>"; };
+		EA657D581E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagTemperatureConfigBFMCharacteristic.m; sourceTree = "<group>"; };
+		EA657D5B1E3835A100216E2B /* SensorTagTemperatureBFMService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagTemperatureBFMService.h; sourceTree = "<group>"; };
+		EA657D5C1E3835A100216E2B /* SensorTagTemperatureBFMService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagTemperatureBFMService.m; sourceTree = "<group>"; };
+		EA657D5F1E38363400216E2B /* SensorTagAccelerometerBFMService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagAccelerometerBFMService.h; sourceTree = "<group>"; };
+		EA657D601E38363400216E2B /* SensorTagAccelerometerBFMService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagAccelerometerBFMService.m; sourceTree = "<group>"; };
+		EA657D631E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagAccelerometerConfigBFMCharacteristic.h; sourceTree = "<group>"; };
+		EA657D641E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagAccelerometerConfigBFMCharacteristic.m; sourceTree = "<group>"; };
+		EA657D671E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagAccelerometerDataBFMCharacteristic.h; sourceTree = "<group>"; };
+		EA657D681E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagAccelerometerDataBFMCharacteristic.m; sourceTree = "<group>"; };
 		EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMCentralManager.h; sourceTree = "<group>"; };
 		EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMCentralManager.m; sourceTree = "<group>"; };
 		EA74AC111E3170B400E3878D /* YMSBFMPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMPeripheral.h; sourceTree = "<group>"; };
@@ -330,6 +366,24 @@
 		D953245C1E37E22600B763BB /* Behavioral */ = {
 			isa = PBXGroup;
 			children = (
+				EA657D471E38221200216E2B /* SensorTagBFMPeripheral.h */,
+				EA657D481E38221200216E2B /* SensorTagBFMPeripheral.m */,
+				EA657D4B1E38314100216E2B /* SensorTagSimpleKeysBFMService.h */,
+				EA657D4C1E38314100216E2B /* SensorTagSimpleKeysBFMService.m */,
+				EA657D4F1E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.h */,
+				EA657D501E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.m */,
+				EA657D5B1E3835A100216E2B /* SensorTagTemperatureBFMService.h */,
+				EA657D5C1E3835A100216E2B /* SensorTagTemperatureBFMService.m */,
+				EA657D571E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.h */,
+				EA657D581E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m */,
+				EA657D531E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.h */,
+				EA657D541E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.m */,
+				EA657D5F1E38363400216E2B /* SensorTagAccelerometerBFMService.h */,
+				EA657D601E38363400216E2B /* SensorTagAccelerometerBFMService.m */,
+				EA657D631E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.h */,
+				EA657D641E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m */,
+				EA657D671E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.h */,
+				EA657D681E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m */,
 			);
 			path = Behavioral;
 			sourceTree = "<group>";
@@ -777,9 +831,11 @@
 				D91170531681251900E2D19A /* DEATemperatureService.m in Sources */,
 				D91170561681461300E2D19A /* DEAAccelerometerService.m in Sources */,
 				D9D8316D168449FE00F51E42 /* DEASimpleKeysService.m in Sources */,
+				EA657D611E38363400216E2B /* SensorTagAccelerometerBFMService.m in Sources */,
 				D9C5012216AB37DD001D4D4F /* DEAPeripheralsViewController.m in Sources */,
 				D906E5F116DCAC55001D7932 /* DEACentralManager.m in Sources */,
 				D988A5C616DD26A100D7D392 /* DEASensorTag.m in Sources */,
+				EA657D4D1E38314100216E2B /* SensorTagSimpleKeysBFMService.m in Sources */,
 				D90C0C3A16DD6297002D3FFD /* DEABaseViewController.m in Sources */,
 				D90C0C3D16DD9133002D3FFD /* DEAHumidityService.m in Sources */,
 				EA74AC171E3170D800E3878D /* YMSBFMService.m in Sources */,
@@ -787,6 +843,7 @@
 				D933CED016DDAFA700EDDAD6 /* YMSCBCentralManager.m in Sources */,
 				D933CED116DDAFA700EDDAD6 /* YMSCBCharacteristic.m in Sources */,
 				EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */,
+				EA657D491E38221200216E2B /* SensorTagBFMPeripheral.m in Sources */,
 				D933CED216DDAFA700EDDAD6 /* YMSCBPeripheral.m in Sources */,
 				EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */,
 				D933CED316DDAFA700EDDAD6 /* YMSCBService.m in Sources */,
@@ -796,10 +853,12 @@
 				EA74AC1F1E3170EE00E3878D /* YMSBFMDescriptor.m in Sources */,
 				D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */,
+				EA657D5D1E3835A100216E2B /* SensorTagTemperatureBFMService.m in Sources */,
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
 				D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */,
 				D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */,
 				D907A76B16E0393300EA8D5B /* DEABarometerViewCell.m in Sources */,
+				EA657D591E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m in Sources */,
 				D953245F1E38023600B763BB /* YMSBFMConfiguration.m in Sources */,
 				D93EAC5016E18711008B1BD3 /* DEAGyroscopeService.m in Sources */,
 				D93EAC5316E18748008B1BD3 /* DEAGyroscopeViewCell.m in Sources */,
@@ -807,7 +866,11 @@
 				D93EAC5916E1DAF5008B1BD3 /* DEAMagnetometerService.m in Sources */,
 				D9971AEE1720AA7E00B1A068 /* DEAPeripheralTableViewCell.m in Sources */,
 				EA74AC1B1E3170E500E3878D /* YMSBFMCharacteristic.m in Sources */,
+				EA657D691E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m in Sources */,
 				D97EC6D0172B08AB00CAECFC /* DEABaseService.m in Sources */,
+				EA657D551E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.m in Sources */,
+				EA657D511E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.m in Sources */,
+				EA657D651E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m in Sources */,
 				D9268B4317306295009C4284 /* NSMutableArray+fifoQueue.m in Sources */,
 				D9268B46173081E2009C4284 /* DEADeviceInfoService.m in Sources */,
 				D9960A54173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m in Sources */,
@@ -821,8 +884,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA657D5A1E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m in Sources */,
+				EA657D6A1E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m in Sources */,
 				D99659161E1F569300F67BCA /* YMSCBLogger.m in Sources */,
+				EA657D621E38363400216E2B /* SensorTagAccelerometerBFMService.m in Sources */,
 				D997AC9E175B245800C91B0D /* main.m in Sources */,
+				EA657D561E3834A800216E2B /* SensorTagTemperatureDataBFMCharacteristic.m in Sources */,
 				D997ACA5175B245800C91B0D /* DEMAppDelegate.m in Sources */,
 				EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */,
 				D997ACB6175B254500C91B0D /* YMS128.c in Sources */,
@@ -844,13 +911,16 @@
 				D997ACC7175B257000C91B0D /* DEAGyroscopeService.m in Sources */,
 				D997ACC8175B257000C91B0D /* DEAHumidityService.m in Sources */,
 				D997ACC9175B257000C91B0D /* DEAMagnetometerService.m in Sources */,
+				EA657D521E38319300216E2B /* SensorTagSimpleKeysDataBFMCharacteristic.m in Sources */,
 				D997ACCA175B257000C91B0D /* DEASimpleKeysService.m in Sources */,
 				D997ACCB175B257000C91B0D /* DEATemperatureService.m in Sources */,
 				D997ACDA175B288900C91B0D /* DEMPeripheralViewCell.m in Sources */,
+				EA657D4A1E38221200216E2B /* SensorTagBFMPeripheral.m in Sources */,
 				D997ACDB175B288900C91B0D /* DEMBaseViewCell.m in Sources */,
 				EA74AC181E3170D800E3878D /* YMSBFMService.m in Sources */,
 				D997ACDC175B288900C91B0D /* DEMAccelerometerViewCell.m in Sources */,
 				D997ACDD175B288900C91B0D /* DEMBarometerViewCell.m in Sources */,
+				EA657D4E1E38314100216E2B /* SensorTagSimpleKeysBFMService.m in Sources */,
 				EA74AC1C1E3170E500E3878D /* YMSBFMCharacteristic.m in Sources */,
 				EA74AC141E3170B400E3878D /* YMSBFMPeripheral.m in Sources */,
 				D997ACE0175B28E900C91B0D /* DEASensorTagWindow.m in Sources */,
@@ -858,8 +928,10 @@
 				D997ACE6175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m in Sources */,
 				D9211E20175BBEFB0081143F /* DEMTemperatureViewCell.m in Sources */,
 				D9211E23175BC2870081143F /* DEMMagnetometerViewCell.m in Sources */,
+				EA657D661E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m in Sources */,
 				D9211E26175BCA860081143F /* DEMGyroscopeViewCell.m in Sources */,
 				D9211E29175BCF040081143F /* DEMHumidityViewCell.m in Sources */,
+				EA657D5E1E3835A100216E2B /* SensorTagTemperatureBFMService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

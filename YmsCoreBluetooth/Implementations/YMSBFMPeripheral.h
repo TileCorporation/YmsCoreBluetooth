@@ -8,6 +8,7 @@
 
 @import Foundation;
 #import "YMSCBPeripheral.h"
+@class YMSBFMConfiguration;
 @protocol YMSCBCentralManagerInterfaceDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -28,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, weak, nullable) id<YMSCBCentralManagerInterface> central;
 
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central;
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central modelConfiguration:(YMSBFMConfiguration *)modelConfiguration;
 - (void)setConnectionState:(CBPeripheralState)state;
 
 @end

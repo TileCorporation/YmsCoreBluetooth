@@ -8,6 +8,7 @@
 
 @import Foundation;
 #import "YMSCBService.h"
+@class YMSBFMConfiguration;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *includedServices;
 @property(retain, readonly, nullable) NSArray<id<YMSCBCharacteristicInterface>> *characteristics;
 
-- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface;
+- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface modelConfiguration:(YMSBFMConfiguration *)modelConfiguration;
 - (void)addCharacteristicsWithUUIDs:(nullable NSArray<CBUUID *> *)uuids;
 
 @end

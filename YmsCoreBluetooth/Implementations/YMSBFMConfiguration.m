@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YMSBFMConfiguration ()
 
 @property (nonatomic, strong) NSFileManager *fileManager;
-@property (nonatomic, strong) NSDictionary<NSString *, NSDictionary *> *configuration;
+@property (nonatomic, strong) NSDictionary<NSString *, NSArray<NSDictionary<NSString *, id> *> *> *configuration;
 
 @end
 
@@ -60,6 +60,49 @@ NS_ASSUME_NONNULL_BEGIN
         
     }
     return self;
+}
+
+- (NSArray<NSDictionary<id, id> *> *)peripherals {
+    NSArray<NSDictionary<id, id> *> *result = nil;
+    
+    result = _configuration[@"peripherals"];
+    
+    return result;
+}
+
+- (NSDictionary<NSString *, id> *)peripheralWithName:(NSString *)className {
+    NSDictionary<NSString *, id> *result = nil;
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"class_name == %@", className];
+    NSArray<NSDictionary<id, id> *> *filteredPeripherals = [self.peripherals filteredArrayUsingPredicate:predicate];
+    
+    if (filteredPeripherals.firstObject) {
+        result = filteredPeripherals.firstObject;
+    }
+    
+    return result;
+}
+
+- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheral:(NSString *)className {
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
+
+    NSDictionary<NSString *, id> *peripheral = [self peripheralWithName:className];
+    
+    if (peripheral) {
+        result = peripheral[@"services"];
+    }
+    
+    return result;
+}
+
+- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicsForServiceUUID:(NSString *)serviceUUID peripheral:(NSString *)peripheralClassName {
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
+    
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *services = [self servicesForPeripheral:peripheralClassName];
+    NSDictionary *service = services[serviceUUID];
+    result = service[@"characteristics"];
+    
+    return result;
 }
 
 @end

@@ -8,6 +8,7 @@
 
 @import Foundation;
 #import "YMSCBCentralManager.h"
+@class YMSBFMConfiguration;
 
 NS_ASSUME_NONNULL_BEGIN
 

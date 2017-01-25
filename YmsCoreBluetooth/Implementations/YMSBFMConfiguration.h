@@ -14,13 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) NSArray<NSDictionary<id, id> *> *peripherals;
 
-
 - (nullable instancetype)initWithConfigurationFile:(nullable NSString *)filename;
 
-- (NSArray<NSDictionary<id, id> *> *)servicesForPeripheral:(NSString *)className;
+- (NSDictionary<NSString *, id> *)peripheralWithName:(NSString *)className;
 
-- (NSArray<NSDictionary<id, id> *> *)characteristicsForService:(NSString *)className;
+- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheral:(NSString *)className;
 
+- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicsForServiceUUID:(NSString *)serviceUUID peripheral:(NSString *)peripheralClassName;
 
 
 @end

@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
         _delegate = delegate;
         _queue = queue;
         _peripherals = [NSMutableDictionary new];
+        _modelConfiguration = [[YMSBFMConfiguration alloc] initWithConfigurationFile:nil];
         
         _state = CBCentralManagerStatePoweredOn;
         [self.delegate centralManagerDidUpdateState:self];
@@ -64,10 +65,16 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options {
-    YMSBFMPeripheral *peripheral = [[YMSBFMPeripheral alloc] initWithCentral:self];
-    
-    if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
-        [self.delegate centralManager:self didDiscoverPeripheral:peripheral advertisementData:@{} RSSI:@(-54)];
+    // TODO: Stimulus generator should handle this
+    for (NSDictionary<id, id> *peripheral in _modelConfiguration.peripherals) {
+        Class YMSBFMPeripheral = NSClassFromString(peripheral[@"class_name"]);
+        if (YMSBFMPeripheral) {
+            id peripheral = [[YMSBFMPeripheral alloc] initWithCentral:self modelConfiguration:_modelConfiguration];
+            
+            if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
+                [self.delegate centralManager:self didDiscoverPeripheral:peripheral advertisementData:@{} RSSI:@(-54)];
+            }
+        }
     }
 }
 
