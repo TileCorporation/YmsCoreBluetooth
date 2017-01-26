@@ -9,6 +9,7 @@
 #import "YMSBFMCentralManager.h"
 #import "YMSBFMPeripheral.h"
 #import "YMSBFMConfiguration.h"
+#import "YMSBFMStimulusGenerator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

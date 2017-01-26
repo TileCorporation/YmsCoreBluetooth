@@ -118,6 +118,10 @@
 		EA657D661E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D641E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m */; };
 		EA657D691E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D681E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m */; };
 		EA657D6A1E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D681E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m */; };
+		EA657D6D1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D6C1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.m */; };
+		EA657D6E1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D6C1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.m */; };
+		EA657D711E3AA01D00216E2B /* SensorTagStimulusGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D701E3AA01D00216E2B /* SensorTagStimulusGenerator.m */; };
+		EA657D721E3AA01D00216E2B /* SensorTagStimulusGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D701E3AA01D00216E2B /* SensorTagStimulusGenerator.m */; };
 		EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */; };
@@ -290,6 +294,10 @@
 		EA657D641E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagAccelerometerConfigBFMCharacteristic.m; sourceTree = "<group>"; };
 		EA657D671E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagAccelerometerDataBFMCharacteristic.h; sourceTree = "<group>"; };
 		EA657D681E38364B00216E2B /* SensorTagAccelerometerDataBFMCharacteristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagAccelerometerDataBFMCharacteristic.m; sourceTree = "<group>"; };
+		EA657D6B1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMStimulusGenerator.h; sourceTree = "<group>"; };
+		EA657D6C1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMStimulusGenerator.m; sourceTree = "<group>"; };
+		EA657D6F1E3AA01D00216E2B /* SensorTagStimulusGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SensorTagStimulusGenerator.h; sourceTree = "<group>"; };
+		EA657D701E3AA01D00216E2B /* SensorTagStimulusGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SensorTagStimulusGenerator.m; sourceTree = "<group>"; };
 		EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMCentralManager.h; sourceTree = "<group>"; };
 		EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMCentralManager.m; sourceTree = "<group>"; };
 		EA74AC111E3170B400E3878D /* YMSBFMPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMPeripheral.h; sourceTree = "<group>"; };
@@ -366,6 +374,8 @@
 		D953245C1E37E22600B763BB /* Behavioral */ = {
 			isa = PBXGroup;
 			children = (
+				EA657D6F1E3AA01D00216E2B /* SensorTagStimulusGenerator.h */,
+				EA657D701E3AA01D00216E2B /* SensorTagStimulusGenerator.m */,
 				EA657D471E38221200216E2B /* SensorTagBFMPeripheral.h */,
 				EA657D481E38221200216E2B /* SensorTagBFMPeripheral.m */,
 				EA657D4B1E38314100216E2B /* SensorTagSimpleKeysBFMService.h */,
@@ -602,6 +612,8 @@
 				EA74AC1E1E3170EE00E3878D /* YMSBFMDescriptor.m */,
 				D953245D1E38023600B763BB /* YMSBFMConfiguration.h */,
 				D953245E1E38023600B763BB /* YMSBFMConfiguration.m */,
+				EA657D6B1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.h */,
+				EA657D6C1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.m */,
 			);
 			path = Implementations;
 			sourceTree = "<group>";
@@ -833,6 +845,7 @@
 				D9D8316D168449FE00F51E42 /* DEASimpleKeysService.m in Sources */,
 				EA657D611E38363400216E2B /* SensorTagAccelerometerBFMService.m in Sources */,
 				D9C5012216AB37DD001D4D4F /* DEAPeripheralsViewController.m in Sources */,
+				EA657D6D1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.m in Sources */,
 				D906E5F116DCAC55001D7932 /* DEACentralManager.m in Sources */,
 				D988A5C616DD26A100D7D392 /* DEASensorTag.m in Sources */,
 				EA657D4D1E38314100216E2B /* SensorTagSimpleKeysBFMService.m in Sources */,
@@ -853,6 +866,7 @@
 				EA74AC1F1E3170EE00E3878D /* YMSBFMDescriptor.m in Sources */,
 				D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */,
 				D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */,
+				EA657D711E3AA01D00216E2B /* SensorTagStimulusGenerator.m in Sources */,
 				EA657D5D1E3835A100216E2B /* SensorTagTemperatureBFMService.m in Sources */,
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
 				D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */,
@@ -894,6 +908,7 @@
 				EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */,
 				D997ACB6175B254500C91B0D /* YMS128.c in Sources */,
 				D997ACB7175B254500C91B0D /* YMSCBCentralManager.m in Sources */,
+				EA657D721E3AA01D00216E2B /* SensorTagStimulusGenerator.m in Sources */,
 				D997ACB8175B254500C91B0D /* YMSCBPeripheral.m in Sources */,
 				D997ACB9175B254500C91B0D /* YMSCBService.m in Sources */,
 				D997ACBA175B254500C91B0D /* YMSCBCharacteristic.m in Sources */,
@@ -901,6 +916,7 @@
 				D997ACBD175B254500C91B0D /* YMSCBDescriptor.m in Sources */,
 				D997ACBE175B254500C91B0D /* NSMutableArray+fifoQueue.m in Sources */,
 				D997ACBF175B255E00C91B0D /* DEACentralManager.m in Sources */,
+				EA657D6E1E3A9E0F00216E2B /* YMSBFMStimulusGenerator.m in Sources */,
 				D997ACC2175B255E00C91B0D /* DEASensorTag.m in Sources */,
 				EA74AC201E3170EE00E3878D /* YMSBFMDescriptor.m in Sources */,
 				D997ACC3175B257000C91B0D /* DEABaseService.m in Sources */,

@@ -22,6 +22,11 @@
 #include "TISensorTag.h"
 #import "YMSCBLogger.h"
 #import "YMSCBPeripheral.h"
+#import "SensorTagStimulusGenerator.h"
+
+#if TARGET_IPHONE_SIMULATOR
+#import "YMSBFMCentralManager.h"
+#endif
 
 #define CALLBACK_EXAMPLE 1
 
@@ -42,6 +47,11 @@ static DEACentralManager *sharedCentralManager;
                                                                       queue:queue
                                                                     options:nil
                                                                      logger:[YMSCBLogger new]];
+#if TARGET_IPHONE_SIMULATOR
+        SensorTagStimulusGenerator *stimulusGenerator = [[SensorTagStimulusGenerator alloc] init];
+        YMSBFMCentralManager *centralInterface = (YMSBFMCentralManager *)sharedCentralManager.centralInterface;
+        centralInterface.stimulusGenerator = stimulusGenerator;
+#endif
     }
     return sharedCentralManager;
     
