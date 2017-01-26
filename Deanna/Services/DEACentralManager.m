@@ -48,8 +48,8 @@ static DEACentralManager *sharedCentralManager;
                                                                     options:nil
                                                                      logger:[YMSCBLogger new]];
 #if TARGET_IPHONE_SIMULATOR
-        SensorTagStimulusGenerator *stimulusGenerator = [[SensorTagStimulusGenerator alloc] init];
         YMSBFMCentralManager *centralInterface = (YMSBFMCentralManager *)sharedCentralManager.centralInterface;
+        SensorTagStimulusGenerator *stimulusGenerator = [[SensorTagStimulusGenerator alloc] initWithCentral:centralInterface];
         centralInterface.stimulusGenerator = stimulusGenerator;
 #endif
     }

@@ -9,19 +9,19 @@
 #import "YMSBFMService.h"
 #import "YMSCBCharacteristic.h"
 #import "YMSBFMCharacteristic.h"
-#import "YMSBFMConfiguration.h"
+#import "YMSBFMPeripheralConfiguration.h"
 #import "YMSCBPeripheral.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMService ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBCharacteristicInterface>> *characteristicsByUUID;
-@property (nonatomic, strong, readonly) YMSBFMConfiguration *modelConfiguration;
+@property (nonatomic, strong, readonly) YMSBFMPeripheralConfiguration *modelConfiguration;
 @end
 
 @implementation YMSBFMService
 
-- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface modelConfiguration:(YMSBFMConfiguration *)modelConfiguration {
+- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface modelConfiguration:(YMSBFMPeripheralConfiguration *)modelConfiguration {
     self = [super init];
     if (self) {
         _UUID = uuid;

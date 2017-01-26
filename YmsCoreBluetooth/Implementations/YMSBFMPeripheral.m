@@ -11,26 +11,22 @@
 #import "YMSBFMService.h"
 #import "YMSCBService.h"
 #import "YMSBFMCharacteristic.h"
-#import "YMSBFMConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMPeripheral ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBServiceInterface>> *servicesByUUID;
-@property (nonatomic, strong) YMSBFMConfiguration *modelConfiguration;
 @end
 
 @implementation YMSBFMPeripheral
 
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central modelConfiguration:(YMSBFMConfiguration *)modelConfiguration {
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central identifier:(NSString *)identifier name:(NSString *)name {
     self = [super init];
     if (self) {
         _central = central;
         _servicesByUUID = [NSMutableDictionary new];
-        // TODO: Get ID from the stimulus generator
-        _identifier = [[NSUUID alloc] initWithUUIDString:@"D54414EB-2229-43C5-91C8-748F37F200E1"];
-        _modelConfiguration = modelConfiguration;
-        _name = [_modelConfiguration peripheralWithName:NSStringFromClass(self.class)][@"name"];
+        _identifier = [[NSUUID alloc] initWithUUIDString:identifier];
+        _name = name;
     }
     return self;
 }
@@ -55,16 +51,17 @@ NS_ASSUME_NONNULL_BEGIN
     if (!serviceUUIDs) {
         // TODO: Handle case when serviceUUIDs is nil
     } else {
-        NSDictionary<NSString *, NSDictionary<NSString *, id> *> *services = [_modelConfiguration servicesForPeripheral:NSStringFromClass(self.class)];
+        // TODO: Let stimulus generator handle this
+        /*NSDictionary<NSString *, NSDictionary<NSString *, id> *> *services = [_modelConfiguration servicesForPeripheral:NSStringFromClass(self.class)];
         for (CBUUID *serviceUUID in serviceUUIDs) {
             NSDictionary<NSString *, id> *service = services[serviceUUID.UUIDString];
             
             Class YMSBFMService = NSClassFromString(service[@"class_name"]);
             if (YMSBFMService) {
-                id service = [[YMSBFMService alloc] initWithCBUUID:serviceUUID peripheralInterface:self modelConfiguration:_modelConfiguration];
+                id service = [[YMSBFMService alloc] initWithCBUUID:serviceUUID peripheralInterface:self];
                 _servicesByUUID[serviceUUID.UUIDString] = service;
             }
-        }
+        }*/
     }
     
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {

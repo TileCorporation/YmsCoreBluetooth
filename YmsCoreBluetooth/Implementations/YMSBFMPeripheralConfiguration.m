@@ -6,20 +6,20 @@
 //  Copyright © 2017 Yummy Melon Software. All rights reserved.
 //
 
-#import "YMSBFMConfiguration.h"
+#import "YMSBFMPeripheralConfiguration.h"
 
-NSString *const kYMSBFMConfigDefaultFilename = @"bfm.json";
+NSString *const kYMSBFMPeripheralConfigDefaultFilename = @"bfm.json";
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface YMSBFMConfiguration ()
+@interface YMSBFMPeripheralConfiguration ()
 
 @property (nonatomic, strong) NSFileManager *fileManager;
 @property (nonatomic, strong) NSDictionary<NSString *, NSArray<NSDictionary<NSString *, id> *> *> *configuration;
 
 @end
 
-@implementation YMSBFMConfiguration
+@implementation YMSBFMPeripheralConfiguration
 
 - (nullable instancetype)initWithConfigurationFile:(nullable NSString *)filename {
     self = [super init];
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (filename) {
             configFileURL = [documentURL URLByAppendingPathComponent:filename];
         } else {
-            configFileURL = [documentURL URLByAppendingPathComponent:kYMSBFMConfigDefaultFilename];
+            configFileURL = [documentURL URLByAppendingPathComponent:kYMSBFMPeripheralConfigDefaultFilename];
         }
         
         if ([_fileManager fileExistsAtPath:configFileURL.path]) {

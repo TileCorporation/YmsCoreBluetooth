@@ -7,10 +7,13 @@
 //
 
 @import Foundation;
+@protocol YMSCBCentralManagerInterface;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMStimulusGenerator : NSObject
+
+- (instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central;
 
 @end
 

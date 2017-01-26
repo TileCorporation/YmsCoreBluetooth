@@ -8,7 +8,7 @@
 
 #import "YMSBFMCentralManager.h"
 #import "YMSBFMPeripheral.h"
-#import "YMSBFMConfiguration.h"
+#import "YMSBFMPeripheralConfiguration.h"
 #import "YMSBFMStimulusGenerator.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,7 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) dispatch_queue_t queue;
 @property (nullable, nonatomic, strong) NSDictionary<NSString *, id> *options;
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBPeripheralInterface>> *peripherals;
-@property (nonatomic, strong) YMSBFMConfiguration *modelConfiguration;
 @end
 
 @implementation YMSBFMCentralManager
@@ -29,7 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
         _delegate = delegate;
         _queue = queue;
         _peripherals = [NSMutableDictionary new];
-        _modelConfiguration = [[YMSBFMConfiguration alloc] initWithConfigurationFile:nil];
         
         _state = CBCentralManagerStatePoweredOn;
         [self.delegate centralManagerDidUpdateState:self];
@@ -47,7 +45,6 @@ NS_ASSUME_NONNULL_BEGIN
         _queue = queue;
         _options = options;
         _peripherals = [NSMutableDictionary new];
-        _modelConfiguration = [[YMSBFMConfiguration alloc] initWithConfigurationFile:nil];
         
         _state = CBCentralManagerStatePoweredOn;
         [self.delegate centralManagerDidUpdateState:self];
@@ -67,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options {
     // TODO: Stimulus generator should handle this
-    for (NSDictionary<id, id> *peripheral in _modelConfiguration.peripherals) {
+    /*for (NSDictionary<id, id> *peripheral in _modelConfiguration.peripherals) {
         Class YMSBFMPeripheral = NSClassFromString(peripheral[@"class_name"]);
         if (YMSBFMPeripheral) {
             id peripheral = [[YMSBFMPeripheral alloc] initWithCentral:self modelConfiguration:_modelConfiguration];
@@ -76,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [self.delegate centralManager:self didDiscoverPeripheral:peripheral advertisementData:@{} RSSI:@(-54)];
             }
         }
-    }
+    }*/
 }
 
 - (void)stopScan {
