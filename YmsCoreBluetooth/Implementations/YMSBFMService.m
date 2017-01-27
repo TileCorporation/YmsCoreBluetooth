@@ -16,24 +16,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMService ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBCharacteristicInterface>> *characteristicsByUUID;
-@property (nonatomic, strong, readonly) YMSBFMPeripheralConfiguration *modelConfiguration;
 @end
 
 @implementation YMSBFMService
 
-- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface modelConfiguration:(YMSBFMPeripheralConfiguration *)modelConfiguration {
+- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface {
     self = [super init];
     if (self) {
         _UUID = uuid;
         _peripheralInterface = peripheralInterface;
         _characteristicsByUUID = [NSMutableDictionary new];
-        _modelConfiguration = modelConfiguration;
     }
     return self;
 }
 
 - (void)addCharacteristicsWithUUIDs:(nullable NSArray<CBUUID *> *)uuids {
-    if (!uuids) {
+    /*if (!uuids) {
         // TODO: Handle nil uuids. Add all characteristics for this service.
     } else {
         for (CBUUID *uuid in uuids) {
@@ -47,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
                 _characteristicsByUUID[uuid.UUIDString] = characteristic;
             }
         }
-    }
+    }*/
 }
 
 - (nullable NSArray<id<YMSCBCharacteristicInterface>> *)characteristics {

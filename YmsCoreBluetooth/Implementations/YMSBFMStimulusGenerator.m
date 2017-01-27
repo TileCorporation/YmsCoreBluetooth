@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
         _events = [NSMutableArray new];
         
         [self genPeripherals];
-        [self dummyPopulateEvents];
+        //[self dummyPopulateEvents];
         
         // !!!:start simulation clock
         dispatch_source_set_timer(_timer, DISPATCH_TIME_NOW, YMSBFMStimulusGeneratorClockPeriod, 0);
@@ -124,7 +124,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     // 5. Add feasible events not already scheduled
     // TODO: addConnectionEvents, addDisconnectEvents, etc.
-    
+
     // 6. Reorder event list
     [_events threadSafeSortUsingComparator:^NSComparisonResult(YMSBFMStimulusEvent *obj1, YMSBFMStimulusEvent *obj2) {
         return [obj1.time compare:obj2.time];
@@ -133,6 +133,51 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)executeEvent:(YMSBFMStimulusEvent *)event {
     NSLog(@"executingEvent: %@", event);
+    
+    if (event.type == YMSBFMStimulusEvent_centralDidDiscoverPeripheral) {
+        [event.central centralManager:event.central didDiscoverPeripheral:event.peripheral advertisementData:@{} RSSI:event.RSSI];
+    }
+}
+
+- (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options {
+    for (YMSBFMPeripheral *peripheral in [_peripherals allValues]) {
+        if (peripheral.state == CBPeripheralStateDisconnected) {
+            // TODO: Get time interval from config
+            NSDate *time = [_clock dateByAddingTimeInterval:2];
+            YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_centralDidDiscoverPeripheral];
+            event.central = _central;
+            event.peripheral = peripheral;
+            int32_t temp = arc4random_uniform(54);
+            event.RSSI = @(-temp);
+            [_events push:event];
+        }
+    }
+    
+    for (YMSBFMPeripheral *peripheral in [_peripherals allValues]) {
+        if (peripheral.state == CBPeripheralStateDisconnected) {
+            // TODO: Get time interval from config
+            NSDate *time = [_clock dateByAddingTimeInterval:4];
+            YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_centralDidDiscoverPeripheral];
+            event.central = _central;
+            event.peripheral = peripheral;
+            int32_t temp = arc4random_uniform(54);
+            event.RSSI = @(-temp);
+            [_events push:event];
+        }
+    }
+    
+    for (YMSBFMPeripheral *peripheral in [_peripherals allValues]) {
+        if (peripheral.state == CBPeripheralStateDisconnected) {
+            // TODO: Get time interval from config
+            NSDate *time = [_clock dateByAddingTimeInterval:6];
+            YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_centralDidDiscoverPeripheral];
+            event.central = _central;
+            event.peripheral = peripheral;
+            int32_t temp = arc4random_uniform(54);
+            event.RSSI = @(-temp);
+            [_events push:event];
+        }
+    }
 }
 
 @end

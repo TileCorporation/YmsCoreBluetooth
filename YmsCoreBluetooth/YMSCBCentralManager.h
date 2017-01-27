@@ -34,6 +34,7 @@ extern NSString *const YMSCBVersion;
 @protocol YMSCBCentralManagerDelegate;
 @protocol YMSCBPeripheralInterface;
 @protocol YMSCBPeripheralDelegate;
+@protocol YMSBFMStimulusEventInterface;
 
 typedef void (^YMSCBDiscoverCallbackBlockType)(YMSCBPeripheral *yPeripheral, NSDictionary *advertisingData, NSNumber *RSSI);
 typedef BOOL (^YMSCBFilterCallbackBlockType)(NSString *name, NSDictionary *advertisingData, NSNumber *RSSI);

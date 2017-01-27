@@ -29,6 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol YMSCBPeripheralInterface;
 @protocol YMSCBServiceInterface;
 @protocol YMSCBCharacteristicInterface;
+@protocol YMSCBCentralManagerInterfaceDelegate;
+
+@protocol YMSCBCentralManagerInterface<YMSCBCentralManagerInterfaceDelegate>
+
+@end
 
 @interface YMSBFMStimulusEvent : NSObject
 
@@ -38,6 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) id<YMSCBPeripheralInterface> peripheral;
 @property (nonatomic, strong, nullable) id<YMSCBServiceInterface> service;
 @property (nonatomic, strong, nullable) id<YMSCBCharacteristicInterface> characteristic;
+@property (nonatomic, strong) NSNumber *RSSI;
 @property (nonatomic, strong, nullable) NSError *error;
 
 - (nullable instancetype)initWithTime:(NSDate *)time type:(YMSBFMStimulusEventType)type;
