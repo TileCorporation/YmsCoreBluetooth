@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@", _time];
+    return [NSString stringWithFormat:@"%@ - %lu", _time, (unsigned long)_type];
 }
 
 @end

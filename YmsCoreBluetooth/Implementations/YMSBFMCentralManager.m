@@ -64,18 +64,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options {
     [_stimulusGenerator scanForPeripheralsWithServices:serviceUUIDs options:options];
-    
-    // TODO: Stimulus generator should handle this
-    /*for (NSDictionary<id, id> *peripheral in _modelConfiguration.peripherals) {
-        Class YMSBFMPeripheral = NSClassFromString(peripheral[@"class_name"]);
-        if (YMSBFMPeripheral) {
-            id peripheral = [[YMSBFMPeripheral alloc] initWithCentral:self modelConfiguration:_modelConfiguration];
-            
-            if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
-                [self.delegate centralManager:self didDiscoverPeripheral:peripheral advertisementData:@{} RSSI:@(-54)];
-            }
-        }
-    }*/
 }
 
 - (void)stopScan {
@@ -84,24 +72,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)connectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface options:(nullable NSDictionary<NSString *, id> *)options {
     YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
-    
-    [peripheral setConnectionState:CBPeripheralStateConnected];
-    
-    if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
-        [self.delegate centralManager:self didConnectPeripheral:peripheralInterface];
-    }
+    [peripheral setConnectionState:CBPeripheralStateConnecting];
+    [_stimulusGenerator centralManager:self didConnectPeripheral:peripheralInterface];
 }
 
 - (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface {
     NSError *error = nil;
-    
     YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
-    
-    [peripheral setConnectionState:CBPeripheralStateDisconnected];
-    
-    if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
-        [self.delegate centralManager:self didDisconnectPeripheral:peripheralInterface error:error];
-    }
+    [peripheral setConnectionState:CBPeripheralStateDisconnecting];
+    [_stimulusGenerator centralManager:self didDisconnectPeripheral:peripheralInterface error:error];
 }
 
 // MARK: - YMSCBCentralManagerInterfaceDelegate Methods
@@ -109,6 +88,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDiscoverPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     if ([self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
         [self.delegate centralManager:self didDiscoverPeripheral:peripheralInterface advertisementData:advertisementData RSSI:RSSI];
+    }
+}
+
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface {
+    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
+    [peripheral setConnectionState:CBPeripheralStateConnected];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
+        [self.delegate centralManager:self didConnectPeripheral:peripheralInterface];
+    }
+}
+
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
+    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
+    [peripheral setConnectionState:CBPeripheralStateDisconnected];
+    
+    if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
+        [self.delegate centralManager:self didDisconnectPeripheral:peripheralInterface error:error];
     }
 }
 

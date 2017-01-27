@@ -9,6 +9,7 @@
 @import Foundation;
 @class CBUUID;
 @protocol YMSCBCentralManagerInterface;
+@protocol YMSCBPeripheralInterface;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central;
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options;
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface;
+- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
 @end
 
 NS_ASSUME_NONNULL_END
