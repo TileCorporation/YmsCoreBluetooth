@@ -67,7 +67,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)genPeripherals {
     __block NSMutableDictionary<NSString *, YMSBFMPeripheral *> *tempDict = [NSMutableDictionary new];
-    [_modelConfiguration.peripherals enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull uuidString, NSString * _Nonnull peripheralClassname, BOOL * _Nonnull stop) {
+    [_modelConfiguration.peripherals enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull uuidString, NSDictionary<NSString *, id> * _Nonnull peripheral, BOOL * _Nonnull stop) {
+        NSString *peripheralClassname = peripheral[@"type"];
         Class peripheralClass = NSClassFromString(peripheralClassname);
         if (peripheralClass) {
             NSDictionary<NSString *, id> *peripheralConfigDict = [_peripheralConfiguration peripheralWithName:peripheralClassname];
@@ -164,6 +165,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)addFeasibleEvents {
     [self addCentralDidDiscoverPeripheralEvents];
+    [self addCentralDidDisconnectPeripheralEvents];
 }
 
 - (void)addCentralDidDiscoverPeripheralEvents {
@@ -200,6 +202,37 @@ NS_ASSUME_NONNULL_BEGIN
             event.peripheral = peripheral;
             int32_t temp = arc4random_uniform(54);
             event.RSSI = @(-temp);
+            [_events push:event];
+        }
+    }
+}
+
+- (void)addCentralDidDisconnectPeripheralEvents {
+    NSMutableArray<YMSBFMPeripheral *> *centralDidDisconnectPeripheralEvents = [NSMutableArray new];
+    
+    // check to see if there are existing YMSBFMStimulusEvent_centralDidDiscoverPeripheral events
+    BOOL eventExists = NO;
+    for (YMSBFMPeripheral *peripheral in [_peripherals allValues]) {
+        for (YMSBFMStimulusEvent *event in _events) {
+            if (event.type == YMSBFMStimulusEvent_centralDidDisconnect && [peripheral isEqual:event.peripheral]) {
+                eventExists = YES;
+                break;
+            }
+        }
+        
+        if (!eventExists) {
+            [centralDidDisconnectPeripheralEvents addObject:peripheral];
+        }
+        
+        eventExists = NO;
+    }
+    
+    for (YMSBFMPeripheral *peripheral in centralDidDisconnectPeripheralEvents) {
+        if (peripheral.state == CBPeripheralStateConnecting || peripheral.state == CBPeripheralStateConnected) {
+            NSDate *time = [_clock dateByAddingTimeInterval:5];
+            YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_centralDidDisconnect];
+            event.central = _central;
+            event.peripheral = peripheral;
             [_events push:event];
         }
     }

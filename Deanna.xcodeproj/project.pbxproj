@@ -126,6 +126,12 @@
 		EA657D761E3AA86500216E2B /* YMSBFMModelConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D741E3AA86500216E2B /* YMSBFMModelConfiguration.m */; };
 		EA657D791E3AB2E100216E2B /* YMSBFMStimulusEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D781E3AB2E100216E2B /* YMSBFMStimulusEvent.m */; };
 		EA657D7A1E3AB2E100216E2B /* YMSBFMStimulusEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = EA657D781E3AB2E100216E2B /* YMSBFMStimulusEvent.m */; };
+		EA674CBC1E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CB71E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.m */; };
+		EA674CBD1E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CB71E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.m */; };
+		EA674CBE1E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CB91E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m */; };
+		EA674CBF1E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CB91E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m */; };
+		EA674CC01E3C0F1C00E95998 /* YMSBFMSyntheticValue.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CBB1E3C0F1C00E95998 /* YMSBFMSyntheticValue.m */; };
+		EA674CC11E3C0F1C00E95998 /* YMSBFMSyntheticValue.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CBB1E3C0F1C00E95998 /* YMSBFMSyntheticValue.m */; };
 		EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */; };
@@ -306,6 +312,12 @@
 		EA657D741E3AA86500216E2B /* YMSBFMModelConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMModelConfiguration.m; sourceTree = "<group>"; };
 		EA657D771E3AB2E100216E2B /* YMSBFMStimulusEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMStimulusEvent.h; sourceTree = "<group>"; };
 		EA657D781E3AB2E100216E2B /* YMSBFMStimulusEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMStimulusEvent.m; sourceTree = "<group>"; };
+		EA674CB61E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMSyntheticDeliverer.h; sourceTree = "<group>"; };
+		EA674CB71E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMSyntheticDeliverer.m; sourceTree = "<group>"; };
+		EA674CB81E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMSyntheticGenerator.h; sourceTree = "<group>"; };
+		EA674CB91E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMSyntheticGenerator.m; sourceTree = "<group>"; };
+		EA674CBA1E3C0F1C00E95998 /* YMSBFMSyntheticValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMSyntheticValue.h; sourceTree = "<group>"; };
+		EA674CBB1E3C0F1C00E95998 /* YMSBFMSyntheticValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMSyntheticValue.m; sourceTree = "<group>"; };
 		EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMCentralManager.h; sourceTree = "<group>"; };
 		EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMCentralManager.m; sourceTree = "<group>"; };
 		EA74AC111E3170B400E3878D /* YMSBFMPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMPeripheral.h; sourceTree = "<group>"; };
@@ -607,6 +619,7 @@
 		D9BAA86D1E25A57400952268 /* Implementations */ = {
 			isa = PBXGroup;
 			children = (
+				EA674CB51E3C0F1C00E95998 /* SyntheticValue */,
 				D97F4C491E3033560047006B /* YMSCBNativeInterfaces.h */,
 				EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */,
 				EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */,
@@ -708,6 +721,19 @@
 				D9F412F316DED7510094FEFA /* DEATemperatureViewCell.m */,
 			);
 			path = Sensors;
+			sourceTree = "<group>";
+		};
+		EA674CB51E3C0F1C00E95998 /* SyntheticValue */ = {
+			isa = PBXGroup;
+			children = (
+				EA674CBA1E3C0F1C00E95998 /* YMSBFMSyntheticValue.h */,
+				EA674CBB1E3C0F1C00E95998 /* YMSBFMSyntheticValue.m */,
+				EA674CB61E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.h */,
+				EA674CB71E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.m */,
+				EA674CB81E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.h */,
+				EA674CB91E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m */,
+			);
+			path = SyntheticValue;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -866,6 +892,7 @@
 				D90C0C3D16DD9133002D3FFD /* DEAHumidityService.m in Sources */,
 				EA74AC171E3170D800E3878D /* YMSBFMService.m in Sources */,
 				D933CECF16DDAFA700EDDAD6 /* YMS128.c in Sources */,
+				EA674CBC1E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.m in Sources */,
 				D933CED016DDAFA700EDDAD6 /* YMSCBCentralManager.m in Sources */,
 				D933CED116DDAFA700EDDAD6 /* YMSCBCharacteristic.m in Sources */,
 				EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */,
@@ -884,6 +911,7 @@
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
 				D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */,
 				D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */,
+				EA674CC01E3C0F1C00E95998 /* YMSBFMSyntheticValue.m in Sources */,
 				D907A76B16E0393300EA8D5B /* DEABarometerViewCell.m in Sources */,
 				EA657D591E38358500216E2B /* SensorTagTemperatureConfigBFMCharacteristic.m in Sources */,
 				D953245F1E38023600B763BB /* YMSBFMPeripheralConfiguration.m in Sources */,
@@ -905,6 +933,7 @@
 				D9AA81C91753E00700C2836D /* YMSCBDescriptor.m in Sources */,
 				D9D70095177782CB0066AB1B /* DEATheme.m in Sources */,
 				D9D70098177783DB0066AB1B /* DEADefaultTheme.m in Sources */,
+				EA674CBE1E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -947,6 +976,7 @@
 				D997ACCA175B257000C91B0D /* DEASimpleKeysService.m in Sources */,
 				D997ACCB175B257000C91B0D /* DEATemperatureService.m in Sources */,
 				D997ACDA175B288900C91B0D /* DEMPeripheralViewCell.m in Sources */,
+				EA674CC11E3C0F1C00E95998 /* YMSBFMSyntheticValue.m in Sources */,
 				EA657D4A1E38221200216E2B /* SensorTagBFMPeripheral.m in Sources */,
 				D997ACDB175B288900C91B0D /* DEMBaseViewCell.m in Sources */,
 				EA74AC181E3170D800E3878D /* YMSBFMService.m in Sources */,
@@ -959,8 +989,10 @@
 				D997ACE3175B331F00C91B0D /* DEMDeviceInfoViewCell.m in Sources */,
 				D997ACE6175B3D0D00C91B0D /* DEMSimpleKeysViewCell.m in Sources */,
 				D9211E20175BBEFB0081143F /* DEMTemperatureViewCell.m in Sources */,
+				EA674CBF1E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m in Sources */,
 				D9211E23175BC2870081143F /* DEMMagnetometerViewCell.m in Sources */,
 				EA657D661E38364100216E2B /* SensorTagAccelerometerConfigBFMCharacteristic.m in Sources */,
+				EA674CBD1E3C0F1C00E95998 /* YMSBFMSyntheticDeliverer.m in Sources */,
 				D9211E26175BCA860081143F /* DEMGyroscopeViewCell.m in Sources */,
 				D9211E29175BCF040081143F /* DEMHumidityViewCell.m in Sources */,
 				EA657D5E1E3835A100216E2B /* SensorTagTemperatureBFMService.m in Sources */,

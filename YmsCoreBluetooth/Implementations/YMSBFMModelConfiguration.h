@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMModelConfiguration : NSObject
 
-@property (nonatomic, readonly, nullable) NSDictionary<NSString *, NSString *> *peripherals;
+@property (nonatomic, readonly, nullable) NSDictionary<NSString *, NSDictionary<NSString *, id> *> *peripherals;
 
 - (nullable instancetype)initWithConfigurationFile:(nullable NSString *)filename;
 

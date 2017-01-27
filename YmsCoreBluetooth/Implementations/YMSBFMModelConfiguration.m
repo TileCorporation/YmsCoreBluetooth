@@ -62,16 +62,16 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (nullable NSDictionary<NSString *, NSString *> *)peripherals {
-    NSDictionary<NSString *, NSString *> *result = nil;
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)peripherals {
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
     
-    NSMutableDictionary *tempDict = [NSMutableDictionary new];
+    /*NSMutableDictionary *tempDict = [NSMutableDictionary new];
     
     for (NSString *key in _configuration[@"peripherals"]) {
         tempDict[key] = _configuration[@"peripherals"][key][@"type"];
-    }
+    }*/
     
-    result = [NSDictionary dictionaryWithDictionary:tempDict];
+    result = [NSDictionary dictionaryWithDictionary:_configuration[@"peripherals"]];
     return result;
 }
 

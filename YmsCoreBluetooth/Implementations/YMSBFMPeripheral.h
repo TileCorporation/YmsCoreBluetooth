@@ -9,6 +9,7 @@
 @import Foundation;
 #import "YMSCBPeripheral.h"
 @class YMSBFMConfiguration;
+@class YMSBFMSyntheticValue;
 @protocol YMSCBCentralManagerInterfaceDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -28,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *services;
 
 @property(nonatomic, weak, nullable) id<YMSCBCentralManagerInterface> central;
+
+@property(nonatomic, readonly) YMSBFMSyntheticValue *advertisingRSSI;
 
 - (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central identifier:(NSString *)identifier name:(NSString *)name;
 - (void)setConnectionState:(CBPeripheralState)state;
