@@ -10,6 +10,9 @@
 #import "YMSBFMModelConfiguration.h"
 #import "YMSBFMPeripheralConfiguration.h"
 #import "YMSBFMPeripheral.h"
+#import "NSMutableArray+fifoQueue.h"
+#import "YMSBFMStimulusEvent.h"
+#import "YMSCBCentralManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) YMSBFMModelConfiguration *modelConfiguration;
 @property (nonatomic, strong) YMSBFMPeripheralConfiguration *peripheralConfiguration;
 @property (nonatomic, strong) NSDictionary<NSString *, YMSBFMPeripheral *> *peripherals;
+@property (nonatomic, strong) NSMutableArray<YMSBFMStimulusEvent *> *events;
 @end
 
 @implementation YMSBFMStimulusGenerator
@@ -36,8 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
         _clock = [NSDate date];
         _modelConfiguration = [[YMSBFMModelConfiguration alloc] initWithConfigurationFile:nil];
         _peripheralConfiguration = [[YMSBFMPeripheralConfiguration alloc] initWithConfigurationFile:nil];
+        _events = [NSMutableArray new];
         
         [self genPeripherals];
+        [self dummyPopulateEvents];
         
         // !!!:start simulation clock
         dispatch_source_set_timer(_timer, DISPATCH_TIME_NOW, YMSBFMStimulusGeneratorClockPeriod, 0);
@@ -74,11 +80,59 @@ NS_ASSUME_NONNULL_BEGIN
     NSLog(@"peripherals: %@", _peripherals);
 }
 
+- (void)dummyPopulateEvents {
+    for (int i = 0; i < 10; i++) {
+        NSDate *time = [_clock dateByAddingTimeInterval:arc4random_uniform(5)];
+        YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_centralDidDiscoverPeripheral];
+        event.central = _central;
+        [_events push:event];
+    }
+    NSLog(@"events: %@", _events);
+    [_events threadSafeSortUsingComparator:^NSComparisonResult(YMSBFMStimulusEvent *obj1, YMSBFMStimulusEvent *obj2) {
+        return [obj1.time compare:obj2.time];
+    }];
+}
+
 - (void)clockTickHandler {
+    // 1. Execute events
+    // 1a. Remove event from event table
+    // TODO: Pop off all events that have the same time
+    while (true) {
+        YMSBFMStimulusEvent *event = [_events firstObject];
+        NSTimeInterval dt = [event.time timeIntervalSinceDate:_clock];
+        if (event && dt <= 0) {
+            // 1b. Execute event
+            [self executeEvent:event];
+            [_events pop];
+        } else {
+            break;
+        }
+    }
+    
+    // 2. Advance time
     //NSLog(@"clockTickHandler %@", _clock);
     NSTimeInterval dt = YMSBFMStimulusGeneratorClockPeriod/1.0e9;
     _clock = [_clock dateByAddingTimeInterval:dt];
     //NSLog(@"clockTickHandler after %@", _clock);
+    
+    // 3. Update state
+    // TODO: TBD
+    
+    // 4. Delete unfeasible events
+    // TODO: Filter through events queue and remove those that are invalid.
+    // e.g. a didReadRSSI when the peripheral is already disconnected.
+    
+    // 5. Add feasible events not already scheduled
+    // TODO: addConnectionEvents, addDisconnectEvents, etc.
+    
+    // 6. Reorder event list
+    [_events threadSafeSortUsingComparator:^NSComparisonResult(YMSBFMStimulusEvent *obj1, YMSBFMStimulusEvent *obj2) {
+        return [obj1.time compare:obj2.time];
+    }];
+}
+
+- (void)executeEvent:(YMSBFMStimulusEvent *)event {
+    NSLog(@"executingEvent: %@", event);
 }
 
 @end

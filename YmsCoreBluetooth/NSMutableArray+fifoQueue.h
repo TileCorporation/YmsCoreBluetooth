@@ -46,4 +46,6 @@
 
 - (void)threadSafeRemoveObjectsInArray:(NSArray *)array;
 
+- (void)threadSafeSortUsingComparator:(NSComparator)cmptr;
+
 @end

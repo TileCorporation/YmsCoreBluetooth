@@ -84,4 +84,12 @@
     });
 }
 
+- (void)threadSafeSortUsingComparator:(NSComparator)cmptr {
+    __weak typeof(self) this = self;
+    dispatch_barrier_async(self.queue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis sortUsingComparator:cmptr];
+    });
+}
+
 @end
