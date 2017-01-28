@@ -17,7 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) YMSBFMSyntheticGenerator *generator;
 @property (nonatomic, strong) YMSBFMSyntheticDeliverer *delivery;
 
-- (id)genValue;
+- (nullable instancetype)initWithJSON:(NSDictionary<NSString *, id> *)json;
+- (void)genValueAndTime:(void (^)(NSInteger value, NSInteger time))result;
 
 @end
 

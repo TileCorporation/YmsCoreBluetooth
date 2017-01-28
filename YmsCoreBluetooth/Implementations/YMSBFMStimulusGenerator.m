@@ -13,6 +13,7 @@
 #import "NSMutableArray+fifoQueue.h"
 #import "YMSBFMStimulusEvent.h"
 #import "YMSCBCentralManager.h"
+#import "YMSBFMSyntheticValue.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,9 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) dispatch_source_t timer;
 @property (nonatomic, strong) dispatch_queue_t timerQueue;
 @property (nonatomic, strong) NSDate *clock;
-@property (nonatomic, strong) YMSBFMModelConfiguration *modelConfiguration;
-@property (nonatomic, strong) YMSBFMPeripheralConfiguration *peripheralConfiguration;
-@property (nonatomic, strong) NSDictionary<NSString *, YMSBFMPeripheral *> *peripherals;
 @property (nonatomic, strong) NSMutableArray<YMSBFMStimulusEvent *> *events;
 @end
 
@@ -190,19 +188,17 @@ NS_ASSUME_NONNULL_BEGIN
     
     for (YMSBFMPeripheral *peripheral in centralDidDiscoverPeripheralEvents) {
         if (peripheral.state == CBPeripheralStateDisconnected) {
-            // TODO: Get time interval from config
-            int lowerBound = 1;
-            int upperBound = 3;
-            int rndValue = lowerBound + arc4random() % (upperBound - lowerBound);
-            NSTimeInterval timeInterval = rndValue;
-            //NSLog(@"timeInterval: %fd", timeInterval);
-            NSDate *time = [_clock dateByAddingTimeInterval:timeInterval];
-            YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_centralDidDiscoverPeripheral];
-            event.central = _central;
-            event.peripheral = peripheral;
-            int32_t temp = arc4random_uniform(54);
-            event.RSSI = @(-temp);
-            [_events push:event];
+            __weak typeof(self) this = self;
+            [peripheral.syntheticRSSI genValueAndTime:^(NSInteger value, NSInteger time) {
+                __strong typeof(self) strongThis = this;
+                
+                NSDate *dateTime = [_clock dateByAddingTimeInterval:time];
+                YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:dateTime type:YMSBFMStimulusEvent_centralDidDiscoverPeripheral];
+                event.central = _central;
+                event.peripheral = peripheral;
+                event.RSSI = @(value);
+                [strongThis.events push:event];
+            }];
         }
     }
 }

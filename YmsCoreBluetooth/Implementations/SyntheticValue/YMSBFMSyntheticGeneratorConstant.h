@@ -1,5 +1,5 @@
 //
-//  YMSBFMSyntheticGenerator.m
+//  YMSBFMSyntheticGeneratorConstant.h
 //  Deanna
 //
 //  Created by Paul Wong on 1/27/17.
@@ -10,7 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@implementation YMSBFMSyntheticGenerator
+@interface YMSBFMSyntheticGeneratorConstant : YMSBFMSyntheticGenerator
+
+- (nullable instancetype)initWithValue:(NSInteger)value;
 
 @end
 

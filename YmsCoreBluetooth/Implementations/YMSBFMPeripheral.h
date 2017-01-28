@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, weak, nullable) id<YMSCBCentralManagerInterface> central;
 
-@property(nonatomic, readonly) YMSBFMSyntheticValue *advertisingRSSI;
+@property(nonatomic, strong) YMSBFMSyntheticValue *syntheticRSSI;
 
 - (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central identifier:(NSString *)identifier name:(NSString *)name;
 - (void)setConnectionState:(CBPeripheralState)state;
