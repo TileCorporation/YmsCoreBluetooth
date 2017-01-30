@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) YMSBFMSyntheticGeneratorType type;
 
-- (NSInteger)genValue;
+- (nullable NSNumber *)genValue:(NSError **)error;
 
 @end
 

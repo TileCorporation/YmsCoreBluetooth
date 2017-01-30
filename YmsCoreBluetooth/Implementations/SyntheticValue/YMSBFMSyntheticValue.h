@@ -15,10 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YMSBFMSyntheticValue : NSObject
 
 @property (nonatomic, strong) YMSBFMSyntheticGenerator *generator;
-@property (nonatomic, strong) YMSBFMSyntheticDeliverer *delivery;
+@property (nonatomic, strong) YMSBFMSyntheticDeliverer *deliverer;
 
 - (nullable instancetype)initWithJSON:(NSDictionary<NSString *, id> *)json;
-- (void)genValueAndTime:(void (^)(NSInteger value, NSInteger time))result;
+- (void)genValueAndTime:(void (^)(NSNumber *value, NSTimeInterval time, NSError *error))result;
 
 @end
 

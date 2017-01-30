@@ -12,13 +12,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMSyntheticDelivererConstant ()
 
-@property (nonatomic) NSUInteger deliveryTime;
+@property (nonatomic) NSTimeInterval deliveryTime;
 
 @end
 
 @implementation YMSBFMSyntheticDelivererConstant
 
-- (nullable instancetype)initWithDeliveryTime:(NSUInteger)deliveryTime {
+- (nullable instancetype)initWithDeliveryTime:(NSTimeInterval)deliveryTime {
     self = [super init];
     if (self) {
         _deliveryTime = deliveryTime;
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (NSUInteger)genTime {
+- (NSTimeInterval)genTime:(NSError **)error {
     return _deliveryTime;
 }
 

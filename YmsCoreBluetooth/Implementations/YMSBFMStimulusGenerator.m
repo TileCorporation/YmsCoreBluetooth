@@ -189,14 +189,21 @@ NS_ASSUME_NONNULL_BEGIN
     for (YMSBFMPeripheral *peripheral in centralDidDiscoverPeripheralEvents) {
         if (peripheral.state == CBPeripheralStateDisconnected) {
             __weak typeof(self) this = self;
-            [peripheral.syntheticRSSI genValueAndTime:^(NSInteger value, NSInteger time) {
+            [peripheral.syntheticRSSI genValueAndTime:^(NSNumber *value, NSTimeInterval time, NSError *error) {
                 __strong typeof(self) strongThis = this;
+                
+                if (error) {
+                    NSAssert(NO, @"ERROR: Invalid synthetic value generation: %@", error);
+                    return;
+                }
                 
                 NSDate *dateTime = [_clock dateByAddingTimeInterval:time];
                 YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:dateTime type:YMSBFMStimulusEvent_centralDidDiscoverPeripheral];
                 event.central = _central;
                 event.peripheral = peripheral;
-                event.RSSI = @(value);
+                NSInteger rssiInt = 0;
+                [value getValue:&rssiInt];
+                event.RSSI = @(rssiInt);
                 [strongThis.events push:event];
             }];
         }

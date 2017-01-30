@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) YMSBFMSyntheticDelivererType type;
 
-- (NSUInteger)genTime;
+- (NSTimeInterval)genTime:(NSError **)error;
 
 @end
 

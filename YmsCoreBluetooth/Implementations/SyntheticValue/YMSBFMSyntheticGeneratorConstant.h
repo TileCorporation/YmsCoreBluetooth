@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMSyntheticGeneratorConstant : YMSBFMSyntheticGenerator
 
-- (nullable instancetype)initWithValue:(NSInteger)value;
+- (nullable instancetype)initWithValue:(NSNumber *)value;
 
 @end
 

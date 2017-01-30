@@ -12,6 +12,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation YMSBFMSyntheticGenerator
 
+- (nullable NSNumber *)genValue:(NSError * _Nullable __autoreleasing *)error {
+    return nil;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

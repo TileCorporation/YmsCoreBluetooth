@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMSyntheticDelivererConstant : YMSBFMSyntheticDeliverer
 
-- (nullable instancetype)initWithDeliveryTime:(NSUInteger)deliveryTime;
+- (nullable instancetype)initWithDeliveryTime:(NSTimeInterval)deliveryTime;
 
 @end
 

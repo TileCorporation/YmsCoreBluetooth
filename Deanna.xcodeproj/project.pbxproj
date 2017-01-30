@@ -138,6 +138,8 @@
 		EA674CC91E3C12E100E95998 /* YMSBFMSyntheticDelivererOneShot.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CC71E3C12E100E95998 /* YMSBFMSyntheticDelivererOneShot.m */; };
 		EA674CCC1E3C2BFA00E95998 /* YMSBFMSyntheticDelivererConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CCB1E3C2BFA00E95998 /* YMSBFMSyntheticDelivererConstant.m */; };
 		EA674CCD1E3C2BFA00E95998 /* YMSBFMSyntheticDelivererConstant.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CCB1E3C2BFA00E95998 /* YMSBFMSyntheticDelivererConstant.m */; };
+		EA674CD01E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CCF1E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.m */; };
+		EA674CD11E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = EA674CCF1E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.m */; };
 		EA74AC0F1E31709900E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC101E3170A000E3878D /* YMSBFMCentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */; };
 		EA74AC131E3170B400E3878D /* YMSBFMPeripheral.m in Sources */ = {isa = PBXBuildFile; fileRef = EA74AC121E3170B400E3878D /* YMSBFMPeripheral.m */; };
@@ -330,6 +332,8 @@
 		EA674CC71E3C12E100E95998 /* YMSBFMSyntheticDelivererOneShot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMSyntheticDelivererOneShot.m; sourceTree = "<group>"; };
 		EA674CCA1E3C2BFA00E95998 /* YMSBFMSyntheticDelivererConstant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMSyntheticDelivererConstant.h; sourceTree = "<group>"; };
 		EA674CCB1E3C2BFA00E95998 /* YMSBFMSyntheticDelivererConstant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMSyntheticDelivererConstant.m; sourceTree = "<group>"; };
+		EA674CCE1E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMSyntheticValueUtils.h; sourceTree = "<group>"; };
+		EA674CCF1E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMSyntheticValueUtils.m; sourceTree = "<group>"; };
 		EA74AC0D1E31709900E3878D /* YMSBFMCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMCentralManager.h; sourceTree = "<group>"; };
 		EA74AC0E1E31709900E3878D /* YMSBFMCentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSBFMCentralManager.m; sourceTree = "<group>"; };
 		EA74AC111E3170B400E3878D /* YMSBFMPeripheral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSBFMPeripheral.h; sourceTree = "<group>"; };
@@ -750,6 +754,8 @@
 				EA674CB91E3C0F1C00E95998 /* YMSBFMSyntheticGenerator.m */,
 				EA674CC21E3C108A00E95998 /* YMSBFMSyntheticGeneratorConstant.h */,
 				EA674CC31E3C108A00E95998 /* YMSBFMSyntheticGeneratorConstant.m */,
+				EA674CCE1E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.h */,
+				EA674CCF1E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.m */,
 			);
 			path = SyntheticValue;
 			sourceTree = "<group>";
@@ -897,6 +903,7 @@
 				D9718B52167F9F9F0001E42C /* main.m in Sources */,
 				D9718B56167F9F9F0001E42C /* DEAAppDelegate.m in Sources */,
 				D91170531681251900E2D19A /* DEATemperatureService.m in Sources */,
+				EA674CD01E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.m in Sources */,
 				D91170561681461300E2D19A /* DEAAccelerometerService.m in Sources */,
 				D9D8316D168449FE00F51E42 /* DEASimpleKeysService.m in Sources */,
 				EA657D611E38363400216E2B /* SensorTagAccelerometerBFMService.m in Sources */,
@@ -989,6 +996,7 @@
 				EA657D761E3AA86500216E2B /* YMSBFMModelConfiguration.m in Sources */,
 				D997ACC4175B257000C91B0D /* DEAAccelerometerService.m in Sources */,
 				EA674CCD1E3C2BFA00E95998 /* YMSBFMSyntheticDelivererConstant.m in Sources */,
+				EA674CD11E3FC79D00E95998 /* YMSBFMSyntheticValueUtils.m in Sources */,
 				D997ACC5175B257000C91B0D /* DEABarometerService.m in Sources */,
 				D997ACC6175B257000C91B0D /* DEADeviceInfoService.m in Sources */,
 				D95324601E38023600B763BB /* YMSBFMPeripheralConfiguration.m in Sources */,

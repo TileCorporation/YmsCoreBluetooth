@@ -7,6 +7,7 @@
 //
 
 #import "YMSBFMSyntheticGeneratorConstant.h"
+#import "YMSBFMSyntheticValueUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,13 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
     YMSBFMSyntheticGeneratorType _type;
 }
 
-@property (nonatomic) NSInteger value;
+@property (nonatomic, strong, nullable) NSNumber *value;
 
 @end
 
 @implementation YMSBFMSyntheticGeneratorConstant
 
-- (nullable instancetype)initWithValue:(NSInteger)value {
+- (nullable instancetype)initWithValue:(NSNumber *)value {
     self = [super init];
     if (self) {
         _value = value;
@@ -29,7 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (NSInteger)genValue {
+- (nullable NSNumber *)genValue:(NSError * _Nullable __autoreleasing *)error {
+    if (!_value) {
+        *error = [YMSBFMSyntheticValueUtils errorForErrorType:YMSBFMSyntheticValueErrorInvalidValue];
+    }
+    
     return _value;
 }
 

@@ -8,6 +8,14 @@
 
 #import "YMSBFMSyntheticDeliverer.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation YMSBFMSyntheticDeliverer
 
+- (NSTimeInterval)genTime:(NSError * _Nullable __autoreleasing *)error {
+    return 0;
+}
+
 @end
+
+NS_ASSUME_NONNULL_END
