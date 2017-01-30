@@ -31,10 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol YMSCBCharacteristicInterface;
 @protocol YMSCBCentralManagerInterfaceDelegate;
 
-@protocol YMSCBCentralManagerInterface<YMSCBCentralManagerInterfaceDelegate>
-
-@end
-
 @interface YMSBFMStimulusEvent : NSObject
 
 @property (nonatomic, strong) NSDate *time;

@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface YMSBFMCentralManager : NSObject<YMSCBCentralManagerInterface, YMSCBCentralManagerInterfaceDelegate>
+@interface YMSBFMCentralManager : NSObject<YMSCBCentralManagerInterface>
 
 @property(assign, nonatomic, nullable) id<YMSCBCentralManagerInterfaceDelegate> delegate;
 

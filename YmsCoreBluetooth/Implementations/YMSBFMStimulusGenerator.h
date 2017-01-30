@@ -26,9 +26,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)genPeripherals;
 
+// MARK: - YMSCBCentralManagerInterface Methods
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options;
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface;
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
+- (void)stopScan;
+- (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)stopScan {
-    
+    [_stimulusGenerator stopScan];
 }
 
 - (void)connectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface options:(nullable NSDictionary<NSString *, id> *)options {
@@ -77,10 +77,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface {
-    NSError *error = nil;
     YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
     [peripheral setConnectionState:CBPeripheralStateDisconnecting];
-    [_stimulusGenerator centralManager:self didDisconnectPeripheral:peripheralInterface error:error];
+    [_stimulusGenerator cancelPeripheralConnection:peripheralInterface];
 }
 
 // MARK: - YMSCBCentralManagerInterfaceDelegate Methods

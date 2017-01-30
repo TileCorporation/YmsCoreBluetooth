@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) dispatch_queue_t timerQueue;
 @property (nonatomic, strong) NSDate *clock;
 @property (nonatomic, strong) NSMutableArray<YMSBFMStimulusEvent *> *events;
+@property (nonatomic) BOOL isScanning;
 @end
 
 @implementation YMSBFMStimulusGenerator
@@ -137,12 +138,14 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)executeEvent:(YMSBFMStimulusEvent *)event {
     NSLog(@"executingEvent: %@", event);
     
+    id<YMSCBCentralManagerInterfaceDelegate> central = (id<YMSCBCentralManagerInterfaceDelegate>)event.central;
+    
     if (event.type == YMSBFMStimulusEvent_centralDidDiscoverPeripheral) {
-        [event.central centralManager:event.central didDiscoverPeripheral:event.peripheral advertisementData:@{} RSSI:event.RSSI];
+        [central centralManager:event.central didDiscoverPeripheral:event.peripheral advertisementData:@{} RSSI:event.RSSI];
     } else if (event.type == YMSBFMStimulusEvent_centralDidConnect) {
-        [event.central centralManager:event.central didConnectPeripheral:event.peripheral];
+        [central centralManager:event.central didConnectPeripheral:event.peripheral];
     } else if (event.type == YMSBFMStimulusEvent_centralDidDisconnect) {
-        [event.central centralManager:event.central didDisconnectPeripheral:event.peripheral error:event.error];
+        [central centralManager:event.central didDisconnectPeripheral:event.peripheral error:event.error];
     }
 }
 
@@ -167,6 +170,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)addCentralDidDiscoverPeripheralEvents {
+    if (!_isScanning) {
+        return;
+    }
+    
     NSMutableArray<YMSBFMPeripheral *> *centralDidDiscoverPeripheralEvents = [NSMutableArray new];
     
     // check to see if there are existing YMSBFMStimulusEvent_centralDidDiscoverPeripheral events
@@ -248,7 +255,9 @@ NS_ASSUME_NONNULL_BEGIN
 // MARK: - YMSCBCentralManagerInterfaceDelegate Methods
 
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options {
-
+    _isScanning = YES;
+    // TODO: Read options for duplicate filtering
+    // TODO: Also filter for serviceUUIDs filtering
 }
 
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface {
@@ -265,6 +274,16 @@ NS_ASSUME_NONNULL_BEGIN
     event.central = _central;
     event.peripheral = peripheralInterface;
     [_events push:event];
+}
+
+- (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface {
+    NSError *error = nil;
+    [self centralManager:_central didDisconnectPeripheral:peripheralInterface error:error];
+}
+
+- (void)stopScan {
+    _isScanning = NO;
+    // TODO: Clear out any remaining scanning/discovery events in the events table
 }
 
 @end
