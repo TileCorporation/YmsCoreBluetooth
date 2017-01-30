@@ -18,6 +18,9 @@ NSString *const kYMSBFMSyntheticValueInvalidRangeRecoverySuggestion = @"Check mo
 NSString *const kYMSBFMSyntheticValueInvalidStepDescription = @"Invalid step.";
 NSString *const kYMSBFMSyntheticValueInvalidStepFailureReason = @"Invalid step was generated.";
 NSString *const kYMSBFMSyntheticValueInvalidStepRecoverySuggestion = @"Check model.json configuration.";
+NSString *const kYMSBFMSyntheticValueInvalidLoopRepeatDescription = @"Invalid loop repeat.";
+NSString *const kYMSBFMSyntheticValueInvalidLoopRepeatFailureReason = @"repeat was set to false. There are no more values to iterate through.";
+NSString *const kYMSBFMSyntheticValueInvalidLoopRepeatRecoverySuggestion = @"Check the number of iterations or set repeat to true.";
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -49,6 +52,14 @@ NS_ASSUME_NONNULL_BEGIN
                          NSLocalizedDescriptionKey: NSLocalizedString(kYMSBFMSyntheticValueInvalidStepDescription, nil),
                          NSLocalizedFailureReasonErrorKey: NSLocalizedString(kYMSBFMSyntheticValueInvalidStepFailureReason, nil),
                          NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(kYMSBFMSyntheticValueInvalidStepRecoverySuggestion, nil)
+                         };
+            error = [NSError errorWithDomain:kYMSBFMSyntheticValueErrorDomain code:errorType userInfo:userInfo];
+            break;
+        case YMSBFMSyntheticValueErrorInvalidLoopRepeat:
+            userInfo = @{
+                         NSLocalizedDescriptionKey: NSLocalizedString(kYMSBFMSyntheticValueInvalidLoopRepeatDescription, nil),
+                         NSLocalizedFailureReasonErrorKey: NSLocalizedString(kYMSBFMSyntheticValueInvalidLoopRepeatFailureReason, nil),
+                         NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(kYMSBFMSyntheticValueInvalidLoopRepeatRecoverySuggestion, nil)
                          };
             error = [NSError errorWithDomain:kYMSBFMSyntheticValueErrorDomain code:errorType userInfo:userInfo];
             break;

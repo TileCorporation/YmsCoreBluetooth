@@ -38,6 +38,10 @@ NS_ASSUME_NONNULL_BEGIN
     return _value;
 }
 
+- (BOOL)hasNext {
+    return YES;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMSyntheticDelivererOneShot : YMSBFMSyntheticDeliverer
 
+- (nullable instancetype)initWithDeliveryTime:(NSTimeInterval)deliveryTime;
+
 @end
 
 NS_ASSUME_NONNULL_END

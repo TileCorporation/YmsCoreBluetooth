@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YMSBFMSyntheticDeliverer : NSObject
 
 @property (nonatomic, readonly) YMSBFMSyntheticDelivererType type;
+@property (nonatomic, readonly) BOOL hasNext;
 
 - (NSTimeInterval)genTime:(NSError **)error;
 

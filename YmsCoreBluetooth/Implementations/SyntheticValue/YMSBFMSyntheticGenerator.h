@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YMSBFMSyntheticGenerator : NSObject
 
 @property (nonatomic, readonly) YMSBFMSyntheticGeneratorType type;
+@property (nonatomic, readonly) BOOL hasNext;
 
 - (nullable NSNumber *)genValue:(NSError **)error;
 

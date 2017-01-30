@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
+- (BOOL)hasNext {
+    return NO;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

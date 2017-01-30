@@ -20,11 +20,15 @@ extern NSString *const kYMSBFMSyntheticValueInvalidRangeRecoverySuggestion;
 extern NSString *const kYMSBFMSyntheticValueInvalidStepDescription;
 extern NSString *const kYMSBFMSyntheticValueInvalidStepFailureReason;
 extern NSString *const kYMSBFMSyntheticValueInvalidStepRecoverySuggestion;
+extern NSString *const kYMSBFMSyntheticValueInvalidLoopRepeatDescription;
+extern NSString *const kYMSBFMSyntheticValueInvalidLoopRepeatFailureReason;
+extern NSString *const kYMSBFMSyntheticValueInvalidLoopRepeatRecoverySuggestion;
 
 typedef NS_ENUM(NSInteger, YMSBFMSyntheticValueErrorType) {
     YMSBFMSyntheticValueErrorInvalidValue,
     YMSBFMSyntheticValueErrorInvalidRange,
-    YMSBFMSyntheticValueErrorInvalidStep
+    YMSBFMSyntheticValueErrorInvalidStep,
+    YMSBFMSyntheticValueErrorInvalidLoopRepeat
 };
 
 @interface YMSBFMSyntheticValueUtils : NSObject

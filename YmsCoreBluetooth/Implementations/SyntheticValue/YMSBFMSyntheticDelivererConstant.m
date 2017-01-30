@@ -26,8 +26,12 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (NSTimeInterval)genTime:(NSError **)error {
+- (NSTimeInterval)genTime:(NSError * _Nullable __autoreleasing *)error {
     return _deliveryTime;
+}
+
+- (BOOL)hasNext {
+    return YES;
 }
 
 @end
