@@ -7,6 +7,7 @@
 //
 
 @import Foundation;
+@import CoreBluetooth;
 @class CBUUID;
 @class YMSBFMPeripheral;
 @class YMSBFMModelConfiguration;
@@ -39,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface peripheral:(id<YMSCBPeripheralInterface>)peripheral;
 - (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface;
 - (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface;
+- (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface type:(CBCharacteristicWriteType)type;
 
 @end
 

@@ -73,15 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface type:(CBCharacteristicWriteType)type {
-    // TODO: Apply write to stimulus generator
-    NSError *error = nil;
-    YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)characteristicInterface;
-    [characteristic writeValue:data];
-    
-    // TODO: Get write response from stimulus generator. How to make more realistic like adding a delay?
-    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
-        [self.delegate peripheral:self didWriteValueForCharacteristic:characteristicInterface error:error];
-    }
+    [_stimulusGenerator writeValue:data forCharacteristic:characteristicInterface type:type];
 }
 
 - (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface {
@@ -136,6 +128,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
     if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
         [self.delegate peripheral:self didUpdateValueForCharacteristic:characteristicInterface error:error];
+    }
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didWriteValueForCharacteristic:characteristicInterface error:error];
     }
 }
 

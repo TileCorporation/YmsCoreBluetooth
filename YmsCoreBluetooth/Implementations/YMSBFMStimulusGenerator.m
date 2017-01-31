@@ -161,6 +161,8 @@ NS_ASSUME_NONNULL_BEGIN
         [peripheral peripheral:event.peripheral didDiscoverCharacteristicsForService:event.service error:event.error];
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidUpdateValue) {
         [peripheral peripheral:event.peripheral didUpdateValueForCharacteristic:event.characteristic error:event.error];
+    } else if (event.type == YMSBFMStimulusEvent_peripheralDidWriteValue) {
+        [peripheral peripheral:event.peripheral didWriteValueForCharacteristic:event.characteristic error:event.error];
     }
 }
 
@@ -418,7 +420,19 @@ NS_ASSUME_NONNULL_BEGIN
     // TODO: TBD
 }
 
-
+- (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface type:(CBCharacteristicWriteType)type {
+    YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)characteristicInterface;
+    [characteristic.syntheticValue genValueAndTime:^(NSNumber * _Nonnull value, NSTimeInterval time, NSError * _Nonnull error) {
+        // TODO: handle retain cycle?
+        [characteristic writeValue:data];
+        
+        NSDate *futureTime = [_clock dateByAddingTimeInterval:time];
+        YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:futureTime type:YMSBFMStimulusEvent_peripheralDidWriteValue];
+        event.peripheral = characteristicInterface.service.peripheralInterface;
+        event.characteristic = characteristicInterface;
+        [_events push:event];
+    }];
+}
 
 @end
 
