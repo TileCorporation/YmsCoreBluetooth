@@ -25,11 +25,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly) BOOL isNotifying;
 
 @property(nonatomic, strong) YMSBFMSyntheticValue *syntheticValue;
+
+// TODO: remove this property and just pass it in the didUpdateValue method
 @property(nonatomic, strong) NSNumber *behavioralValue;
 
 - (nullable instancetype)initWithCBUUID:(CBUUID *)uuid serviceInterface:(id<YMSCBServiceInterface>)serviceInterface stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator;
 - (void)setIsNotifying:(BOOL)isNotifying;
 - (void)writeValue:(NSData *)value;
+
+- (void)didUpdateValueWithPeripheral:(id<YMSCBPeripheralInterface>)peripheral error:(NSError *)error;
+- (void)didWriteValueWithPeripheral:(id<YMSCBPeripheralInterface>)peripheral error:(NSError *)error;
 
 @end
 

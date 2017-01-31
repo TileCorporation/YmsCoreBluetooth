@@ -160,9 +160,12 @@ NS_ASSUME_NONNULL_BEGIN
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidDiscoverCharacteristics) {
         [peripheral peripheral:event.peripheral didDiscoverCharacteristicsForService:event.service error:event.error];
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidUpdateValue) {
-        [peripheral peripheral:event.peripheral didUpdateValueForCharacteristic:event.characteristic error:event.error];
+        YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)event.characteristic;
+        [characteristic didUpdateValueWithPeripheral:event.peripheral error:event.error];
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidWriteValue) {
         [peripheral peripheral:event.peripheral didWriteValueForCharacteristic:event.characteristic error:event.error];
+        YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)event.characteristic;
+        [characteristic didWriteValueWithPeripheral:event.peripheral error:event.error];
     }
 }
 

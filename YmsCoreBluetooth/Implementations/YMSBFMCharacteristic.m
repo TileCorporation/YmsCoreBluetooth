@@ -50,6 +50,15 @@ NS_ASSUME_NONNULL_BEGIN
     _value = value;
 }
 
+- (void)didUpdateValueWithPeripheral:(id<YMSCBPeripheralInterface>)peripheral error:(NSError *)error {
+    // TODO: pass the value in this method instead of using self.behavioralValue
+    [self.service.peripheralInterface.delegate peripheral:peripheral didUpdateValueForCharacteristic:self error:error];
+}
+
+- (void)didWriteValueWithPeripheral:(id<YMSCBPeripheralInterface>)peripheral error:(NSError *)error {
+    [self.service.peripheralInterface.delegate peripheral:peripheral didWriteValueForCharacteristic:self error:error];
+}
+
 @end
 
 NS_ASSUME_NONNULL_END
