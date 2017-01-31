@@ -9,6 +9,7 @@
 @import Foundation;
 #import "YMSCBService.h"
 @class YMSBFMConfiguration;
+@class YMSBFMStimulusGenerator;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,8 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(retain, readonly, nullable) NSArray<id<YMSCBServiceInterface>> *includedServices;
 @property(retain, readonly, nullable) NSArray<id<YMSCBCharacteristicInterface>> *characteristics;
 
-- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface;
-- (void)addCharacteristicsWithUUIDs:(nullable NSArray<CBUUID *> *)uuids;
+- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator;
+
+- (void)addCharacteristic:(id<YMSCBCharacteristicInterface>)characteristic;
 
 @end
 

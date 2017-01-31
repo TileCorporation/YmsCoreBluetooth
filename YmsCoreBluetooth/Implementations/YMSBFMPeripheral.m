@@ -11,19 +11,22 @@
 #import "YMSBFMService.h"
 #import "YMSCBService.h"
 #import "YMSBFMCharacteristic.h"
+#import "YMSBFMStimulusGenerator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMPeripheral ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBServiceInterface>> *servicesByUUID;
+@property (nonatomic, strong) YMSBFMStimulusGenerator *stimulusGenerator;
 @end
 
 @implementation YMSBFMPeripheral
 
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central identifier:(NSString *)identifier name:(NSString *)name {
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator identifier:(NSString *)identifier name:(NSString *)name {
     self = [super init];
     if (self) {
         _central = central;
+        _stimulusGenerator = stimulusGenerator;
         _servicesByUUID = [NSMutableDictionary new];
         _identifier = [[NSUUID alloc] initWithUUIDString:identifier];
         _name = name;
@@ -51,21 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!serviceUUIDs) {
         // TODO: Handle case when serviceUUIDs is nil
     } else {
-        // TODO: Let stimulus generator handle this
-        /*NSDictionary<NSString *, NSDictionary<NSString *, id> *> *services = [_modelConfiguration servicesForPeripheral:NSStringFromClass(self.class)];
-        for (CBUUID *serviceUUID in serviceUUIDs) {
-            NSDictionary<NSString *, id> *service = services[serviceUUID.UUIDString];
-            
-            Class YMSBFMService = NSClassFromString(service[@"class_name"]);
-            if (YMSBFMService) {
-                id service = [[YMSBFMService alloc] initWithCBUUID:serviceUUID peripheralInterface:self];
-                _servicesByUUID[serviceUUID.UUIDString] = service;
-            }
-        }*/
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
-        [self.delegate peripheral:self didDiscoverServices:didDiscoverServices];
+        [_stimulusGenerator discoverServices:serviceUUIDs peripheral:self];
     }
 }
 
@@ -74,13 +63,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface {
-    NSError *error = nil;
-    
-    YMSBFMService *service = (YMSBFMService *)serviceInterface;
-    [service addCharacteristicsWithUUIDs:characteristicUUIDs];
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
-        [self.delegate peripheral:self didDiscoverCharacteristicsForService:serviceInterface error:error];
+    if (!characteristicUUIDs) {
+        // TODO: Handle nil uuids. Add all characteristics for this service.
+    } else {
+        [_stimulusGenerator discoverCharacteristics:characteristicUUIDs forService:serviceInterface peripheral:self];
     }
 }
 
@@ -134,6 +120,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setConnectionState:(CBPeripheralState)state {
     _state = state;
+}
+
+- (void)addService:(id<YMSCBServiceInterface>)service {
+    _servicesByUUID[service.UUID.UUIDString] = service;
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
+        [self.delegate peripheral:peripheralInterface didDiscoverServices:error];
+    }
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverCharacteristicsForService:(id<YMSCBServiceInterface>)serviceInterface error:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
+        [self.delegate peripheral:peripheralInterface didDiscoverCharacteristicsForService:serviceInterface error:error];
+    }
 }
 
 @end

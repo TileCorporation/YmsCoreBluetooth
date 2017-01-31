@@ -10,6 +10,7 @@
 #import "YMSCBPeripheral.h"
 @class YMSBFMConfiguration;
 @class YMSBFMSyntheticValue;
+@class YMSBFMStimulusGenerator;
 @protocol YMSCBCentralManagerInterfaceDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -32,8 +33,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, strong) YMSBFMSyntheticValue *syntheticRSSI;
 
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central identifier:(NSString *)identifier name:(NSString *)name;
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator identifier:(NSString *)identifier name:(NSString *)name;
 - (void)setConnectionState:(CBPeripheralState)state;
+- (void)addService:(id<YMSCBServiceInterface>)service;
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error;
 
 @end
 

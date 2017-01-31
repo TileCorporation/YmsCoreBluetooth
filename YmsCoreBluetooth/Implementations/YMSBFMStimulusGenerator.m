@@ -14,6 +14,8 @@
 #import "YMSBFMStimulusEvent.h"
 #import "YMSCBCentralManager.h"
 #import "YMSBFMSyntheticValue.h"
+#import "YMSBFMService.h"
+#import "YMSBFMCharacteristic.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -72,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (peripheralClass) {
             NSDictionary<NSString *, id> *peripheralConfigDict = [_peripheralConfiguration peripheralWithName:peripheralClassname];
             NSString *name = peripheralConfigDict[@"name"];
-            YMSBFMPeripheral *peripheral = [[peripheralClass alloc] initWithCentral:_central identifier:uuidString name:name];
+            YMSBFMPeripheral *peripheral = [[peripheralClass alloc] initWithCentral:_central stimulusGenerator:self identifier:uuidString name:name];
             tempDict[uuidString] = peripheral;
         }
     }];
@@ -139,6 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSLog(@"executingEvent: %@", event);
     
     id<YMSCBCentralManagerInterfaceDelegate> central = (id<YMSCBCentralManagerInterfaceDelegate>)event.central;
+    id<YMSCBPeripheralInterfaceDelegate> peripheral = (id<YMSCBPeripheralInterfaceDelegate>)event.peripheral;
     
     if (event.type == YMSBFMStimulusEvent_centralDidDiscoverPeripheral) {
         [central centralManager:event.central didDiscoverPeripheral:event.peripheral advertisementData:@{} RSSI:event.RSSI];
@@ -146,6 +149,10 @@ NS_ASSUME_NONNULL_BEGIN
         [central centralManager:event.central didConnectPeripheral:event.peripheral];
     } else if (event.type == YMSBFMStimulusEvent_centralDidDisconnect) {
         [central centralManager:event.central didDisconnectPeripheral:event.peripheral error:event.error];
+    } else if (event.type == YMSBFMStimulusEvent_peripheralDidDiscoverServices) {
+        [peripheral peripheral:event.peripheral didDiscoverServices:event.error];
+    } else if (event.type == YMSBFMStimulusEvent_peripheralDidDiscoverCharacteristics) {
+        [peripheral peripheral:event.peripheral didDiscoverCharacteristicsForService:event.service error:event.error];
     }
 }
 
@@ -243,7 +250,8 @@ NS_ASSUME_NONNULL_BEGIN
     
     for (YMSBFMPeripheral *peripheral in centralDidDisconnectPeripheralEvents) {
         if (peripheral.state == CBPeripheralStateConnecting || peripheral.state == CBPeripheralStateConnected) {
-            NSDate *time = [_clock dateByAddingTimeInterval:5];
+            NSNumber *connectionDuration = _modelConfiguration.peripherals[peripheral.identifier.UUIDString][@"connection_duration"];
+            NSDate *time = [_clock dateByAddingTimeInterval:connectionDuration.doubleValue];
             YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_centralDidDisconnect];
             event.central = _central;
             event.peripheral = peripheral;
@@ -284,6 +292,47 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stopScan {
     _isScanning = NO;
     // TODO: Clear out any remaining scanning/discovery events in the events table
+}
+
+- (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs peripheral:(id<YMSCBPeripheralInterface>)peripheral {
+    // TODO: Create peripherals when event gets executed
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *services = [_peripheralConfiguration servicesForPeripheral:NSStringFromClass(peripheral.class)];
+    for (CBUUID *serviceUUID in serviceUUIDs) {
+        NSDictionary<NSString *, id> *service = services[serviceUUID.UUIDString];
+     
+        Class YMSBFMService = NSClassFromString(service[@"class_name"]);
+        if (YMSBFMService) {
+            id service = [[YMSBFMService alloc] initWithCBUUID:serviceUUID peripheralInterface:peripheral stimulusGenerator:self];
+            [((YMSBFMPeripheral *)peripheral) addService:service];
+        }
+    }
+    
+    NSDate *time = [_clock dateByAddingTimeInterval:1];
+    YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_peripheralDidDiscoverServices];
+    event.central = _central;
+    event.peripheral = peripheral;
+    [_events push:event];
+}
+
+- (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface peripheral:(id<YMSCBPeripheralInterface>)peripheral {
+    for (CBUUID *uuid in characteristicUUIDs) {
+        NSDictionary<NSString *, NSDictionary<NSString *, id> *> *characteristics = [_peripheralConfiguration characteristicsForServiceUUID:serviceInterface.UUID.UUIDString peripheral:NSStringFromClass(peripheral.class)];
+        
+        // TODO: Make sure the uuid exists and if not create an error
+        NSDictionary<NSString *, id> *characteristic = characteristics[uuid.UUIDString];
+        Class YMSBFMCharacteristic = NSClassFromString(characteristic[@"class_name"]);
+        if (YMSBFMCharacteristic) {
+            id characteristic = [[YMSBFMCharacteristic alloc] initWithCBUUID:uuid serviceInterface:serviceInterface];
+            [((YMSBFMService *)serviceInterface) addCharacteristic:characteristic];
+        }
+    }
+    
+    NSDate *time = [_clock dateByAddingTimeInterval:1];
+    YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_peripheralDidDiscoverCharacteristics];
+    event.central = _central;
+    event.peripheral = peripheral;
+    event.service = serviceInterface;
+    [_events push:event];
 }
 
 @end

@@ -13,6 +13,7 @@
 @class YMSBFMPeripheralConfiguration;
 @protocol YMSCBCentralManagerInterface;
 @protocol YMSCBPeripheralInterface;
+@protocol YMSCBServiceInterface;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
 - (void)stopScan;
 - (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface;
+
+- (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs peripheral:(id<YMSCBPeripheralInterface>)peripheral;
+- (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface peripheral:(id<YMSCBPeripheralInterface>)peripheral;
 
 @end
 
