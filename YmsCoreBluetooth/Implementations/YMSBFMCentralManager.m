@@ -71,14 +71,12 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)connectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface options:(nullable NSDictionary<NSString *, id> *)options {
-    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
-    [peripheral setConnectionState:CBPeripheralStateConnecting];
-    [_stimulusGenerator centralManager:self didConnectPeripheral:peripheralInterface];
+    // TODO: Support real connection lifecycle
+    [_stimulusGenerator connectPeripheral:peripheralInterface options:options];
 }
 
 - (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface {
-    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
-    [peripheral setConnectionState:CBPeripheralStateDisconnecting];
+    // TODO: Support real connection lifecycle
     [_stimulusGenerator cancelPeripheralConnection:peripheralInterface];
 }
 
@@ -91,18 +89,12 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface {
-    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
-    [peripheral setConnectionState:CBPeripheralStateConnected];
-    
     if ([self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
         [self.delegate centralManager:self didConnectPeripheral:peripheralInterface];
     }
 }
 
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
-    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
-    [peripheral setConnectionState:CBPeripheralStateDisconnected];
-    
     if ([self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
         [self.delegate centralManager:self didDisconnectPeripheral:peripheralInterface error:error];
     }

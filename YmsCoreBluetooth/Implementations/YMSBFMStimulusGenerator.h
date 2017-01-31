@@ -14,6 +14,7 @@
 @protocol YMSCBCentralManagerInterface;
 @protocol YMSCBPeripheralInterface;
 @protocol YMSCBServiceInterface;
+@protocol YMSCBCharacteristicInterface;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,13 +30,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 // MARK: - YMSCBCentralManagerInterface Methods
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options;
-- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface;
+- (void)connectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface options:(nullable NSDictionary<NSString *, id> *)options;
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error;
 - (void)stopScan;
 - (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface;
 
 - (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs peripheral:(id<YMSCBPeripheralInterface>)peripheral;
 - (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface peripheral:(id<YMSCBPeripheralInterface>)peripheral;
+- (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface;
+- (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface;
 
 @end
 

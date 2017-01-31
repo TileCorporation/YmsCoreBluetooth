@@ -8,6 +8,8 @@
 
 @import Foundation;
 #import "YMSCBCharacteristic.h"
+@class YMSBFMSyntheticValue;
+@class YMSBFMStimulusGenerator;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,7 +24,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly) BOOL isBroadcasted;
 @property(readonly) BOOL isNotifying;
 
-- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid serviceInterface:(id<YMSCBServiceInterface>)serviceInterface;
+@property(nonatomic, strong) YMSBFMSyntheticValue *syntheticValue;
+@property(nonatomic, strong) NSNumber *behavioralValue;
+
+- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid serviceInterface:(id<YMSCBServiceInterface>)serviceInterface stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator;
 - (void)setIsNotifying:(BOOL)isNotifying;
 - (void)writeValue:(NSData *)value;
 

@@ -64,14 +64,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)peripherals {
     NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
-    
-    /*NSMutableDictionary *tempDict = [NSMutableDictionary new];
-    
-    for (NSString *key in _configuration[@"peripherals"]) {
-        tempDict[key] = _configuration[@"peripherals"][key][@"type"];
-    }*/
-    
     result = [NSDictionary dictionaryWithDictionary:_configuration[@"peripherals"]];
+    return result;
+}
+
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheralIdentifier:(NSString *)identifier {
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *peripherals = [self peripherals];
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
+    result = peripherals[identifier][@"services"];
+    return result;
+}
+
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicForService:(NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)service withCharacteristicUUID:(NSString *)uuid {
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
+    result = service[uuid];
     return result;
 }
 

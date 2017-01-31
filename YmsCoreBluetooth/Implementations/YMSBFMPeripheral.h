@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addService:(id<YMSCBServiceInterface>)service;
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error;
 
 @end
 

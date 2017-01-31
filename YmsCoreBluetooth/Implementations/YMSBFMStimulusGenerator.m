@@ -16,6 +16,8 @@
 #import "YMSBFMSyntheticValue.h"
 #import "YMSBFMService.h"
 #import "YMSBFMCharacteristic.h"
+#import "YMSCBCharacteristic.h"
+#import "YMSCBService.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -146,13 +148,19 @@ NS_ASSUME_NONNULL_BEGIN
     if (event.type == YMSBFMStimulusEvent_centralDidDiscoverPeripheral) {
         [central centralManager:event.central didDiscoverPeripheral:event.peripheral advertisementData:@{} RSSI:event.RSSI];
     } else if (event.type == YMSBFMStimulusEvent_centralDidConnect) {
+        YMSBFMPeripheral *bfmPeripheral = (YMSBFMPeripheral *)event.peripheral;
+        [bfmPeripheral setConnectionState:CBPeripheralStateConnected];
         [central centralManager:event.central didConnectPeripheral:event.peripheral];
     } else if (event.type == YMSBFMStimulusEvent_centralDidDisconnect) {
+        YMSBFMPeripheral *bfmPeripheral = (YMSBFMPeripheral *)event.peripheral;
+        [bfmPeripheral setConnectionState:CBPeripheralStateDisconnected];
         [central centralManager:event.central didDisconnectPeripheral:event.peripheral error:event.error];
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidDiscoverServices) {
         [peripheral peripheral:event.peripheral didDiscoverServices:event.error];
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidDiscoverCharacteristics) {
         [peripheral peripheral:event.peripheral didDiscoverCharacteristicsForService:event.service error:event.error];
+    } else if (event.type == YMSBFMStimulusEvent_peripheralDidUpdateValue) {
+        [peripheral peripheral:event.peripheral didUpdateValueForCharacteristic:event.characteristic error:event.error];
     }
 }
 
@@ -174,6 +182,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addFeasibleEvents {
     [self addCentralDidDiscoverPeripheralEvents];
     [self addCentralDidDisconnectPeripheralEvents];
+    [self addNotifyingCharacteristicEvents];
 }
 
 - (void)addCentralDidDiscoverPeripheralEvents {
@@ -208,7 +217,6 @@ NS_ASSUME_NONNULL_BEGIN
                 [peripheral.syntheticRSSI genValueAndTime:^(NSNumber *value, NSTimeInterval time, NSError *error) {
                     __strong typeof(self) strongThis = this;
                     
-                    NSLog(@"peripheral: %@, value: %@, time: %f", peripheral.identifier, value, time);
                     if (error) {
                         NSAssert(NO, @"ERROR: Invalid synthetic value generation: %@", error);
                         return;
@@ -260,6 +268,51 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
+- (void)addNotifyingCharacteristicEvents {
+    // TODO: Think about what happens on disconnect, do we need to delete those events in deleteFeasibleEvents?
+    NSMutableArray<YMSBFMPeripheral *> *connectedPeripherals = [NSMutableArray new];
+    for (YMSBFMPeripheral *peripheral in [_peripherals allValues]) {
+        if (peripheral.state == CBPeripheralStateConnected) {
+            [connectedPeripherals addObject:peripheral];
+        }
+    }
+    
+    for (YMSBFMPeripheral *peripheral in connectedPeripherals) {
+        for (YMSBFMService *service in peripheral.services) {
+            for (YMSBFMCharacteristic *characteristic in service.characteristics) {
+                if (characteristic.isNotifying) {
+                    BOOL eventExists = NO;
+                    for (YMSBFMStimulusEvent *event in _events) {
+                        if (event.type == YMSBFMStimulusEvent_peripheralDidUpdateValue && [characteristic isEqual:event.characteristic]) {
+                            eventExists = YES;
+                            break;
+                        }
+                    }
+                    
+                    if (!eventExists) {
+                        [characteristic.syntheticValue genValueAndTime:^(NSNumber * _Nonnull value, NSTimeInterval time, NSError * _Nonnull error) {
+                            if (error) {
+                                NSAssert(NO, @"ERROR: Invalid synthetic value generation for addNotifyingCharacteristicEvents: %@", error);
+                                return;
+                            } else {
+                                characteristic.behavioralValue = value;
+                                
+                                NSDate *futureTime = [_clock dateByAddingTimeInterval:time];
+                                YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:futureTime type:YMSBFMStimulusEvent_peripheralDidUpdateValue];
+                                event.central = _central;
+                                event.peripheral = characteristic.service.peripheralInterface;
+                                event.service = characteristic.service;
+                                event.characteristic = characteristic;
+                                [_events push:event];
+                            }
+                        }];
+                    }
+                }
+            }
+        }
+    }
+}
+
 // MARK: - YMSCBCentralManagerInterfaceDelegate Methods
 
 - (void)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary<NSString *, id> *)options {
@@ -268,7 +321,10 @@ NS_ASSUME_NONNULL_BEGIN
     // TODO: Also filter for serviceUUIDs filtering
 }
 
-- (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface {
+- (void)connectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface options:(nullable NSDictionary<NSString *, id> *)options {
+    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
+    [peripheral setConnectionState:CBPeripheralStateConnecting];
+    
     NSDate *time = [_clock dateByAddingTimeInterval:1];
     YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:time type:YMSBFMStimulusEvent_centralDidConnect];
     event.central = _central;
@@ -285,6 +341,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface {
+    YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
+    [peripheral setConnectionState:CBPeripheralStateDisconnecting];
+    
     NSError *error = nil;
     [self centralManager:_central didDisconnectPeripheral:peripheralInterface error:error];
 }
@@ -322,7 +381,7 @@ NS_ASSUME_NONNULL_BEGIN
         NSDictionary<NSString *, id> *characteristic = characteristics[uuid.UUIDString];
         Class YMSBFMCharacteristic = NSClassFromString(characteristic[@"class_name"]);
         if (YMSBFMCharacteristic) {
-            id characteristic = [[YMSBFMCharacteristic alloc] initWithCBUUID:uuid serviceInterface:serviceInterface];
+            id characteristic = [[YMSBFMCharacteristic alloc] initWithCBUUID:uuid serviceInterface:serviceInterface stimulusGenerator:self];
             [((YMSBFMService *)serviceInterface) addCharacteristic:characteristic];
         }
     }
@@ -334,6 +393,32 @@ NS_ASSUME_NONNULL_BEGIN
     event.service = serviceInterface;
     [_events push:event];
 }
+
+- (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface {
+    YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)characteristicInterface;
+    [characteristic.syntheticValue genValueAndTime:^(NSNumber * _Nonnull value, NSTimeInterval time, NSError * _Nonnull error) {
+        if (error) {
+            NSAssert(NO, @"ERROR: Invalid synthetic value generation for readValueForCharacteristic: %@", error);
+            return;
+        } else {
+            characteristic.behavioralValue = value;
+            
+            NSDate *futureTime = [_clock dateByAddingTimeInterval:time];
+            YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:futureTime type:YMSBFMStimulusEvent_peripheralDidUpdateValue];
+            event.central = _central;
+            event.peripheral = characteristicInterface.service.peripheralInterface;
+            event.service = characteristicInterface.service;
+            event.characteristic = characteristicInterface;
+            [_events push:event];
+        }
+    }];
+}
+
+- (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface {
+    // TODO: TBD
+}
+
+
 
 @end
 

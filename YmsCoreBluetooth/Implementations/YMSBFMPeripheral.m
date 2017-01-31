@@ -49,8 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs {
-    NSError *didDiscoverServices = nil;
-    
     if (!serviceUUIDs) {
         // TODO: Handle case when serviceUUIDs is nil
     } else {
@@ -71,10 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface {
-    NSError *error = nil;
-    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
-        [self.delegate peripheral:self didUpdateValueForCharacteristic:characteristicInterface error:error];
-    }
+    [_stimulusGenerator readValueForCharacteristic:characteristicInterface];
 }
 
 - (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface type:(CBCharacteristicWriteType)type {
@@ -135,6 +130,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverCharacteristicsForService:(id<YMSCBServiceInterface>)serviceInterface error:(nullable NSError *)error {
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
         [self.delegate peripheral:peripheralInterface didDiscoverCharacteristicsForService:serviceInterface error:error];
+    }
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didUpdateValueForCharacteristic:characteristicInterface error:error];
     }
 }
 
