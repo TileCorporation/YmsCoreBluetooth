@@ -190,6 +190,16 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
  @param options CBCentralManager options
  @return instance of YMSCBCentralManager
  */
+
+/**
+ Constructor for YMSCBCentralManager
+
+ @param delegate Delegate of this class instance.
+ @param queue The dispatch queue for BLE central role events.
+ @param options CBCentralManager options
+ @param logger logger object
+ @return instance of YMSCBCentralManager
+ */
 - (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
                                     queue:(nullable dispatch_queue_t)queue
                                   options:(nullable NSDictionary<NSString *, id> *)options
@@ -202,7 +212,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
 
 /**
  Factory method for creating new instances that inherit from YMSCBPeripheral
- 
 
  @param peripheralInterface object which conforms to YMSCBPeripheralInterface
  @return instance of YMSCBPeripheral
@@ -215,7 +224,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
 
 /**
  Find YMSCBPeripheral instance matching peripheral
- @param peripheral peripheral corresponding with YMSCBPeripheral
+ @param yPeripheral peripheral corresponding with YMSCBPeripheral
  @return instance of YMSCBPeripheral
  */
 - (nullable YMSCBPeripheral *)findPeripheral:(nonnull YMSCBPeripheral *)yPeripheral;
@@ -290,7 +299,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
  applications, which will need to be connected locally
  via connectPeripheral:options: before they can be used.
 
- @param serviceUUIDS A list of NSUUID services
+ @param serviceUUIDs A list of NSUUID services
  @return A list of CBPeripheral objects.
  */
 - (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDs;

@@ -508,12 +508,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  CBPeripheralDelegate implementation. Not yet supported.
- 
- @param peripheral The peripheral providing this information.
- @param descriptor The characteristic descriptor whose value has been retrieved.
+
+ @param peripheralInterface The peripheral providing this information.
+ @param descriptorInterface The characteristic descriptor whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForDescriptor:(id<YMSCBDescriptorInterface>)descriptorInterface error:(nullable NSError *)error {
     
 }

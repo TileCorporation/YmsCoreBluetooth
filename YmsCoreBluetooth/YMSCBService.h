@@ -177,8 +177,6 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 /** @name Synchronize found CBCharacteristic instances with corresponding their YMSCBCharacter instance */
 /**
  Synchronize found CBCharacteristics with corresponding YMSCBCharacteristic containers.
- 
- @param foundCharacteristics array of CBCharacteristics
  */
 - (void)syncCharacteristics;
 
