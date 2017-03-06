@@ -32,7 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSTimeInterval)genTime:(NSError * _Nullable __autoreleasing *)error {
     if (_didDeliver) {
-        *error = [YMSBFMSyntheticValueUtils errorForErrorType:YMSBFMSyntheticValueErrorInvalidValue];
+        if (error != NULL) {
+            *error = [YMSBFMSyntheticValueUtils errorForErrorType:YMSBFMSyntheticValueErrorInvalidValue];
+        }
+        
     } else {
         _didDeliver = YES;
     }

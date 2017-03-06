@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
-- (NSDictionary<NSString *, id> *)peripheralWithName:(NSString *)className {
+- (nullable NSDictionary<NSString *, id> *)peripheralWithName:(NSString *)className {
     NSDictionary<NSString *, id> *result = nil;
     
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"class_name == %@", className];
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
-- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheral:(NSString *)className {
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheral:(NSString *)className {
     NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
 
     NSDictionary<NSString *, id> *peripheral = [self peripheralWithName:className];
@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
-- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicsForServiceUUID:(NSString *)serviceUUID peripheral:(NSString *)peripheralClassName {
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicsForServiceUUID:(NSString *)serviceUUID peripheral:(NSString *)peripheralClassName {
     NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
     
     NSDictionary<NSString *, NSDictionary<NSString *, id> *> *services = [self servicesForPeripheral:peripheralClassName];

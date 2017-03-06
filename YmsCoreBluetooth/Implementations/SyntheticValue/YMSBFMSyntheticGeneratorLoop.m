@@ -63,7 +63,9 @@ NS_ASSUME_NONNULL_BEGIN
             }
         } else {
             if (_currentValue > _stop) {
-                *error = [YMSBFMSyntheticValueUtils errorForErrorType:YMSBFMSyntheticValueErrorInvalidLoopRepeat];
+                if (error != NULL) {
+                    *error = [YMSBFMSyntheticValueUtils errorForErrorType:YMSBFMSyntheticValueErrorInvalidLoopRepeat];
+                }
             } else {
                 if (newValue <= _stop) {
                     _currentValue = newValue;

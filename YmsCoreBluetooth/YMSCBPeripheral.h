@@ -250,20 +250,22 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 
 /**
- Constructor.
+ Constructor for YMSCBPeripheral
+
  
  This method must be called via super in any subclass implementation.
  
  The implementation of this method in a subclass will populate serviceDict with (`key`, `value`) pairs of
- (NSString, YMSCBService) instances, where `key` is typically a "human-readable" string to easily 
+ (NSString, YMSCBService) instances, where `key` is typically a "human-readable" string to easily
  reference a YMSCBService.
  
 
- @param peripheral Pointer to CBPeripheral
+ @param yPeripheral Pointer to object which conforms to YMSCBPeripheralInterface
  @param owner Pointer to YMSCBCentralManager
  @param hi Top 64 bits of 128-bit base address value
  @param lo Bottom 64 bits of 128-bit base address value
  @return instance of this class
+
  */
 - (nullable instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>) yPeripheral
                                     central:(YMSCBCentralManager *)owner
