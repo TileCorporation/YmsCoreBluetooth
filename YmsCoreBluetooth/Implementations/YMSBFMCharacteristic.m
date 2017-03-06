@@ -7,7 +7,6 @@
 //
 
 #import "YMSBFMCharacteristic.h"
-#import "TISensorTag.h"
 #import "YMSCBService.h"
 #import "YMSCBPeripheral.h"
 #import "YMSCBUtils.h"
