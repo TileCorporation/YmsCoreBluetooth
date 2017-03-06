@@ -7,6 +7,7 @@
 //
 
 #import "SensorTagBFMPeripheral.h"
+#import "YMSBFMCharacteristic.h"
 
 @implementation SensorTagBFMPeripheral
 

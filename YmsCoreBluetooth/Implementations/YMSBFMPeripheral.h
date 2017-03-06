@@ -9,6 +9,8 @@
 @import Foundation;
 #import "YMSCBPeripheral.h"
 @class YMSBFMConfiguration;
+@class YMSBFMSyntheticValue;
+@class YMSBFMStimulusGenerator;
 @protocol YMSCBCentralManagerInterfaceDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -29,8 +31,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic, weak, nullable) id<YMSCBCentralManagerInterface> central;
 
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central modelConfiguration:(YMSBFMConfiguration *)modelConfiguration;
+@property(nonatomic, strong) YMSBFMSyntheticValue *syntheticRSSI;
+
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator identifier:(NSString *)identifier name:(NSString *)name;
 - (void)setConnectionState:(CBPeripheralState)state;
+- (void)addService:(id<YMSCBServiceInterface>)service;
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error;
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error;
 
 @end
 

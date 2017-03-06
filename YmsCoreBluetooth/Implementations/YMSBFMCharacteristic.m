@@ -11,21 +11,32 @@
 #import "YMSCBService.h"
 #import "YMSCBPeripheral.h"
 #import "YMSCBUtils.h"
+#import "YMSBFMStimulusGenerator.h"
+#import "YMSBFMModelConfiguration.h"
+#import "YMSCBService.h"
+#import "YMSCBPeripheral.h"
+#import "YMSBFMSyntheticValue.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMCharacteristic ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBDescriptorInterface>> *descriptorsByUUID;
+@property (nonatomic, strong) YMSBFMStimulusGenerator *stimulusGenerator;
 @end
 
 @implementation YMSBFMCharacteristic
 
-- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid serviceInterface:(id<YMSCBServiceInterface>)serviceInterface {
+- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid serviceInterface:(id<YMSCBServiceInterface>)serviceInterface stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator {
     self = [super init];
     if (self) {
         _UUID = uuid;
         _service = serviceInterface;
+        _stimulusGenerator = stimulusGenerator;
         _descriptorsByUUID = [NSMutableDictionary new];
+        
+        NSDictionary<NSString *, NSDictionary<NSString *, id> *> *servicesJSON = [_stimulusGenerator.modelConfiguration servicesForPeripheralIdentifier:_service.peripheralInterface.identifier.UUIDString];
+        NSDictionary<NSString *, NSDictionary<NSString *, id> *> *characteristicJSON = [_stimulusGenerator.modelConfiguration characteristicForService:servicesJSON[_service.UUID.UUIDString] withCharacteristicUUID:_UUID.UUIDString];
+        _syntheticValue = [[YMSBFMSyntheticValue alloc] initWithJSON:characteristicJSON];
     }
     return self;
 }
@@ -37,6 +48,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)writeValue:(NSData *)value {
     // TODO: Support/Reconcile with BFMPeripheral on who talks to the stimulus generator
     _value = value;
+}
+
+- (void)didUpdateValueWithPeripheral:(id<YMSCBPeripheralInterface>)peripheral error:(NSError *)error {
+    // TODO: pass the value in this method instead of using self.behavioralValue
+    [self.service.peripheralInterface.delegate peripheral:peripheral didUpdateValueForCharacteristic:self error:error];
+}
+
+- (void)didWriteValueWithPeripheral:(id<YMSCBPeripheralInterface>)peripheral error:(NSError *)error {
+    [self.service.peripheralInterface.delegate peripheral:peripheral didWriteValueForCharacteristic:self error:error];
 }
 
 @end

@@ -11,26 +11,25 @@
 #import "YMSBFMService.h"
 #import "YMSCBService.h"
 #import "YMSBFMCharacteristic.h"
-#import "YMSBFMConfiguration.h"
+#import "YMSBFMStimulusGenerator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMPeripheral ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBServiceInterface>> *servicesByUUID;
-@property (nonatomic, strong) YMSBFMConfiguration *modelConfiguration;
+@property (nonatomic, strong) YMSBFMStimulusGenerator *stimulusGenerator;
 @end
 
 @implementation YMSBFMPeripheral
 
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central modelConfiguration:(YMSBFMConfiguration *)modelConfiguration {
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator identifier:(NSString *)identifier name:(NSString *)name {
     self = [super init];
     if (self) {
         _central = central;
+        _stimulusGenerator = stimulusGenerator;
         _servicesByUUID = [NSMutableDictionary new];
-        // TODO: Get ID from the stimulus generator
-        _identifier = [[NSUUID alloc] initWithUUIDString:@"D54414EB-2229-43C5-91C8-748F37F200E1"];
-        _modelConfiguration = modelConfiguration;
-        _name = [_modelConfiguration peripheralWithName:NSStringFromClass(self.class)][@"name"];
+        _identifier = [[NSUUID alloc] initWithUUIDString:identifier];
+        _name = name;
     }
     return self;
 }
@@ -50,25 +49,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs {
-    NSError *didDiscoverServices = nil;
-    
     if (!serviceUUIDs) {
         // TODO: Handle case when serviceUUIDs is nil
     } else {
-        NSDictionary<NSString *, NSDictionary<NSString *, id> *> *services = [_modelConfiguration servicesForPeripheral:NSStringFromClass(self.class)];
-        for (CBUUID *serviceUUID in serviceUUIDs) {
-            NSDictionary<NSString *, id> *service = services[serviceUUID.UUIDString];
-            
-            Class YMSBFMService = NSClassFromString(service[@"class_name"]);
-            if (YMSBFMService) {
-                id service = [[YMSBFMService alloc] initWithCBUUID:serviceUUID peripheralInterface:self modelConfiguration:_modelConfiguration];
-                _servicesByUUID[serviceUUID.UUIDString] = service;
-            }
-        }
-    }
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
-        [self.delegate peripheral:self didDiscoverServices:didDiscoverServices];
+        [_stimulusGenerator discoverServices:serviceUUIDs peripheral:self];
     }
 }
 
@@ -77,33 +61,19 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface {
-    NSError *error = nil;
-    
-    YMSBFMService *service = (YMSBFMService *)serviceInterface;
-    [service addCharacteristicsWithUUIDs:characteristicUUIDs];
-    
-    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
-        [self.delegate peripheral:self didDiscoverCharacteristicsForService:serviceInterface error:error];
+    if (!characteristicUUIDs) {
+        // TODO: Handle nil uuids. Add all characteristics for this service.
+    } else {
+        [_stimulusGenerator discoverCharacteristics:characteristicUUIDs forService:serviceInterface peripheral:self];
     }
 }
 
 - (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface {
-    NSError *error = nil;
-    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
-        [self.delegate peripheral:self didUpdateValueForCharacteristic:characteristicInterface error:error];
-    }
+    [_stimulusGenerator readValueForCharacteristic:characteristicInterface];
 }
 
 - (void)writeValue:(NSData *)data forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface type:(CBCharacteristicWriteType)type {
-    // TODO: Apply write to stimulus generator
-    NSError *error = nil;
-    YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)characteristicInterface;
-    [characteristic writeValue:data];
-    
-    // TODO: Get write response from stimulus generator. How to make more realistic like adding a delay?
-    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
-        [self.delegate peripheral:self didWriteValueForCharacteristic:characteristicInterface error:error];
-    }
+    [_stimulusGenerator writeValue:data forCharacteristic:characteristicInterface type:type];
 }
 
 - (void)setNotifyValue:(BOOL)enabled forCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface {
@@ -137,6 +107,34 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setConnectionState:(CBPeripheralState)state {
     _state = state;
+}
+
+- (void)addService:(id<YMSCBServiceInterface>)service {
+    _servicesByUUID[service.UUID.UUIDString] = service;
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {
+        [self.delegate peripheral:peripheralInterface didDiscoverServices:error];
+    }
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverCharacteristicsForService:(id<YMSCBServiceInterface>)serviceInterface error:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
+        [self.delegate peripheral:peripheralInterface didDiscoverCharacteristicsForService:serviceInterface error:error];
+    }
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheral:didUpdateValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didUpdateValueForCharacteristic:characteristicInterface error:error];
+    }
+}
+
+- (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    if ([self.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
+        [self.delegate peripheral:self didWriteValueForCharacteristic:characteristicInterface error:error];
+    }
 }
 
 @end

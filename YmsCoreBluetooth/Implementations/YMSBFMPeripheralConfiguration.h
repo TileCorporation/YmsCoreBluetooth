@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface YMSBFMConfiguration : NSObject
+@interface YMSBFMPeripheralConfiguration : NSObject
 
 @property (nonatomic, readonly) NSArray<NSDictionary<id, id> *> *peripherals;
 

@@ -9,51 +9,38 @@
 #import "YMSBFMService.h"
 #import "YMSCBCharacteristic.h"
 #import "YMSBFMCharacteristic.h"
-#import "YMSBFMConfiguration.h"
+#import "YMSBFMPeripheralConfiguration.h"
 #import "YMSCBPeripheral.h"
+#import "YMSBFMStimulusGenerator.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSBFMService ()
 @property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBCharacteristicInterface>> *characteristicsByUUID;
-@property (nonatomic, strong, readonly) YMSBFMConfiguration *modelConfiguration;
+@property (nonatomic, strong) YMSBFMStimulusGenerator *stimulusGenerator;
 @end
 
 @implementation YMSBFMService
 
-- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface modelConfiguration:(YMSBFMConfiguration *)modelConfiguration {
+- (nullable instancetype)initWithCBUUID:(CBUUID *)uuid peripheralInterface:(id<YMSCBPeripheralInterface>)peripheralInterface stimulusGenerator:(YMSBFMStimulusGenerator *)stimulusGenerator {
     self = [super init];
     if (self) {
         _UUID = uuid;
         _peripheralInterface = peripheralInterface;
+        _stimulusGenerator = stimulusGenerator;
         _characteristicsByUUID = [NSMutableDictionary new];
-        _modelConfiguration = modelConfiguration;
     }
     return self;
-}
-
-- (void)addCharacteristicsWithUUIDs:(nullable NSArray<CBUUID *> *)uuids {
-    if (!uuids) {
-        // TODO: Handle nil uuids. Add all characteristics for this service.
-    } else {
-        for (CBUUID *uuid in uuids) {
-            NSDictionary<NSString *, NSDictionary<NSString *, id> *> *characteristics = [_modelConfiguration characteristicsForServiceUUID:_UUID.UUIDString peripheral:NSStringFromClass([_peripheralInterface class])];
-            
-            // TODO: Make sure the uuid exists and if not create an error
-            NSDictionary<NSString *, id> *characteristic = characteristics[uuid.UUIDString];
-            Class YMSBFMCharacteristic = NSClassFromString(characteristic[@"class_name"]);
-            if (YMSBFMCharacteristic) {
-                id characteristic = [[YMSBFMCharacteristic alloc] initWithCBUUID:uuid serviceInterface:self];
-                _characteristicsByUUID[uuid.UUIDString] = characteristic;
-            }
-        }
-    }
 }
 
 - (nullable NSArray<id<YMSCBCharacteristicInterface>> *)characteristics {
     NSArray<id<YMSCBCharacteristicInterface>> *result = nil;
     result = _characteristicsByUUID.allValues;
     return result;
+}
+
+- (void)addCharacteristic:(id<YMSCBCharacteristicInterface>)characteristic {
+    _characteristicsByUUID[characteristic.UUID.UUIDString] = characteristic;
 }
 
 @end

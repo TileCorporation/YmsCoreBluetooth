@@ -78,9 +78,18 @@
 - (void)threadSafeRemoveObjectsInArray:(NSArray *)array {
     
     __weak typeof(self) this = self;
-    dispatch_barrier_async(self.queue, ^{
+    dispatch_barrier_sync(self.queue, ^{
         __strong typeof(this) strongThis = this;
         [strongThis removeObjectsInArray:array];
+    });
+}
+
+- (void)threadSafeSortUsingComparator:(NSComparator)cmptr {
+    
+    __weak typeof(self) this = self;
+    dispatch_barrier_sync(self.queue, ^{
+        __strong typeof(this) strongThis = this;
+        [strongThis sortUsingComparator:cmptr];
     });
 }
 

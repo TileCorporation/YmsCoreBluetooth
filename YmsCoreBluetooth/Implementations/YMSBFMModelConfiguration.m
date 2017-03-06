@@ -1,25 +1,25 @@
 //
-//  YMSBFMConfiguration.m
+//  YMSBFMModelConfiguration.m
 //  Deanna
 //
-//  Created by Charles Choi on 1/24/17.
+//  Created by Paul Wong on 1/26/17.
 //  Copyright © 2017 Yummy Melon Software. All rights reserved.
 //
 
-#import "YMSBFMConfiguration.h"
+#import "YMSBFMModelConfiguration.h"
 
-NSString *const kYMSBFMConfigDefaultFilename = @"bfm.json";
+NSString *const kYMSBFMModelConfigDefaultFilename = @"model.json";
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface YMSBFMConfiguration ()
+@interface YMSBFMModelConfiguration ()
 
 @property (nonatomic, strong) NSFileManager *fileManager;
-@property (nonatomic, strong) NSDictionary<NSString *, NSArray<NSDictionary<NSString *, id> *> *> *configuration;
+@property (nonatomic, strong) NSDictionary<NSString *, NSDictionary<NSString *, id> *> *configuration;
 
 @end
 
-@implementation YMSBFMConfiguration
+@implementation YMSBFMModelConfiguration
 
 - (nullable instancetype)initWithConfigurationFile:(nullable NSString *)filename {
     self = [super init];
@@ -36,13 +36,13 @@ NS_ASSUME_NONNULL_BEGIN
             documentURL = a[0];
             NSLog(@"Documents Folder: %@", documentURL);
         }
-
+        
         NSURL *configFileURL = nil;
         
         if (filename) {
             configFileURL = [documentURL URLByAppendingPathComponent:filename];
         } else {
-            configFileURL = [documentURL URLByAppendingPathComponent:kYMSBFMConfigDefaultFilename];
+            configFileURL = [documentURL URLByAppendingPathComponent:kYMSBFMModelConfigDefaultFilename];
         }
         
         if ([_fileManager fileExistsAtPath:configFileURL.path]) {
@@ -56,52 +56,28 @@ NS_ASSUME_NONNULL_BEGIN
         } else {
             NSAssert(NO, @"ERROR: Configuration file %@ does not exist.", configFileURL);
         }
-            
+        
         
     }
     return self;
 }
 
-- (NSArray<NSDictionary<id, id> *> *)peripherals {
-    NSArray<NSDictionary<id, id> *> *result = nil;
-    
-    result = _configuration[@"peripherals"];
-    
-    return result;
-}
-
-- (NSDictionary<NSString *, id> *)peripheralWithName:(NSString *)className {
-    NSDictionary<NSString *, id> *result = nil;
-    
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"class_name == %@", className];
-    NSArray<NSDictionary<id, id> *> *filteredPeripherals = [self.peripherals filteredArrayUsingPredicate:predicate];
-    
-    if (filteredPeripherals.firstObject) {
-        result = filteredPeripherals.firstObject;
-    }
-    
-    return result;
-}
-
-- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheral:(NSString *)className {
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)peripherals {
     NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
-
-    NSDictionary<NSString *, id> *peripheral = [self peripheralWithName:className];
-    
-    if (peripheral) {
-        result = peripheral[@"services"];
-    }
-    
+    result = [NSDictionary dictionaryWithDictionary:_configuration[@"peripherals"]];
     return result;
 }
 
-- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicsForServiceUUID:(NSString *)serviceUUID peripheral:(NSString *)peripheralClassName {
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheralIdentifier:(NSString *)identifier {
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *peripherals = [self peripherals];
     NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
-    
-    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *services = [self servicesForPeripheral:peripheralClassName];
-    NSDictionary *service = services[serviceUUID];
-    result = service[@"characteristics"];
-    
+    result = peripherals[identifier][@"services"];
+    return result;
+}
+
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicForService:(NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)service withCharacteristicUUID:(NSString *)uuid {
+    NSDictionary<NSString *, NSDictionary<NSString *, id> *> *result = nil;
+    result = service[uuid];
     return result;
 }
 
