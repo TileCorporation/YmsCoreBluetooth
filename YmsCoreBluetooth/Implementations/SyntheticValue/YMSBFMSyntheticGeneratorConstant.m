@@ -32,7 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSNumber *)genValue:(NSError * _Nullable __autoreleasing *)error {
     if (!_value) {
-        *error = [YMSBFMSyntheticValueUtils errorForErrorType:YMSBFMSyntheticValueErrorInvalidValue];
+        if (error != NULL) {
+            *error = [YMSBFMSyntheticValueUtils errorForErrorType:YMSBFMSyntheticValueErrorInvalidValue];
+        }
     }
     
     return _value;

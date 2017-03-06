@@ -16,11 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable instancetype)initWithConfigurationFile:(nullable NSString *)filename;
 
-- (NSDictionary<NSString *, id> *)peripheralWithName:(NSString *)className;
+- (nullable NSDictionary<NSString *, id> *)peripheralWithName:(NSString *)className;
 
-- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheral:(NSString *)className;
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheral:(NSString *)className;
 
-- (NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicsForServiceUUID:(NSString *)serviceUUID peripheral:(NSString *)peripheralClassName;
+- (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicsForServiceUUID:(NSString *)serviceUUID peripheral:(NSString *)peripheralClassName;
 
 
 @end
