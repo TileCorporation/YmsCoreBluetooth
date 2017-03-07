@@ -112,7 +112,7 @@
                         
                         for (NSString *key in chDict) {
                             YMSCBCharacteristic *ct = chDict[key];
-                            NSLog(@"%@ %@ %@", ct, ct.characteristicInterface, ct.uuid);
+                            NSLog(@"%@ %@ %@", ct, ct.characteristicInterface, ct.UUID);
                             
                             [ct discoverDescriptorsWithBlock:^(NSArray *yDescriptors, NSError *error) {
                                 if (error) {

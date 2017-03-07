@@ -44,7 +44,7 @@
         yms_u128_t pbase = self.base;
         
         if (![oName isEqualToString:@"simplekeys"]) {
-            self.uuid = [YMSCBUtils createCBUUID:&pbase withIntBLEOffset:serviceOffset];
+            self.UUID = [YMSCBUtils createCBUUID:&pbase withIntBLEOffset:serviceOffset];
         }
     }
     return self;

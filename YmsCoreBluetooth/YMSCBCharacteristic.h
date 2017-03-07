@@ -67,9 +67,8 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
 /// Human-friendly name for this BLE characteristic.
 @property (atomic, strong) NSString *name;
 
-// TODO: change name to UUID
 /// Characterisic CBUUID.
-@property (atomic, strong) CBUUID *uuid;
+@property (atomic, strong) CBUUID *UUID;
 
 /// Pointer to actual CBCharacterisic.
 @property (atomic, strong, nullable) id<YMSCBCharacteristicInterface> characteristicInterface;
