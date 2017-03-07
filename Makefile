@@ -49,7 +49,7 @@ html: cleanBackup
 	YmsCoreBluetooth
 
 publish:
-	rsync -avz --delete YmsCoreBluetooth/ ${PUBLISH_TARGET}/
+	rsync -rvz --delete YmsCoreBluetooth/ ${PUBLISH_TARGET}/
 
 cleanBackup:
 	find . -name '*~' -delete
