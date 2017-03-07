@@ -351,6 +351,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self.logger logInfo:message object:_peripheralInterface];
     
     if (self.discoverServicesCallback) {
+        /*
         NSArray<YMSCBService *> *tempArray = [self.serviceDict allValues];
         NSMutableArray<YMSCBService *> *services = [NSMutableArray new];
         
@@ -363,8 +364,55 @@ NS_ASSUME_NONNULL_BEGIN
                 }
             }
         }
+         */
         
-        self.discoverServicesCallback(services, error);
+        // Expected: self.serviceDict allValues
+        // Actual: peripheralInterface.services
+        // Find missing keys
+        // Find added keys
+        
+        // Remove missing keys from self.serviceDict
+        // Add added keys to self.serviceDict
+        
+        
+        NSArray<NSString *> *expectedServiceUUIDs = [self.servicesByUUIDs allKeys];
+        NSArray<NSString *> *actualServiceUUIDs = [[peripheralInterface services] valueForKeyPath:@"UUID.UUIDString"];
+        
+        NSMutableSet<NSString *> *expected = [NSMutableSet setWithArray:expectedServiceUUIDs];
+        NSMutableSet<NSString *> *actual = [NSMutableSet setWithArray:actualServiceUUIDs];
+        
+        NSMutableSet<NSString *> *missingKeys = [expected mutableCopy];
+        NSMutableSet<NSString *> *addedKeys = [actual mutableCopy];
+        
+        [missingKeys minusSet:actual];
+        [addedKeys minusSet:expected];
+        
+        [expected intersectSet:actual];
+        
+
+        // Remove missing keys from self.serviceDict and self.servicesByUUIDs
+        [self.servicesByUUIDs removeObjectsForKeys:[missingKeys allObjects]];
+
+        __block NSMutableArray<NSString *> *servicesToRemove = [NSMutableArray new];
+        for (NSString *key in missingKeys) {
+            [self.serviceDict enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull serviceKey, YMSCBService * _Nonnull service, BOOL * _Nonnull stop) {
+                if ([key isEqualToString:service.uuid.UUIDString]) {
+                    [servicesToRemove addObject:serviceKey];
+                }
+            }];
+        }
+        
+        [self.serviceDict removeObjectsForKeys:servicesToRemove];
+        
+        
+        // Add added keys to self.serviceDict and self.servicesByUUIDs
+        
+        for (NSString *key in addedKeys) {
+            
+        }
+        
+        
+        //self.discoverServicesCallback(services, error);
         self.discoverServicesCallback = nil;
 
     }
