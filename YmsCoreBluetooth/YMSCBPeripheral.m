@@ -380,8 +380,12 @@ NS_ASSUME_NONNULL_BEGIN
         }
         [self.serviceDict removeObjectsForKeys:servicesToRemove];
         
-        // TODO: Add added keys to self.serviceDict and self.servicesByUUIDs
-        
+        // Add added keys to self.serviceDict and self.servicesByUUIDs
+        for (NSString *UUID in addedUUIDs) {
+            YMSCBService *service = [[YMSCBService alloc] initWithUUID:UUID parent:self];
+            self[UUID] = service;
+        }
+
         // Set the serviceInterface
         for (id<YMSCBServiceInterface> serviceInterface in peripheralInterface.services) {
             YMSCBService *service = self.servicesByUUIDs[serviceInterface.UUID.UUIDString];

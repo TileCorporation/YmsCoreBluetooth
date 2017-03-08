@@ -85,6 +85,20 @@
     return self;
 }
 
+- (instancetype)initWithUUID:(NSString *)UUID
+                      parent:(YMSCBPeripheral *)pObj {
+    
+    self = [super init];
+    if (self) {
+        _name = UUID;
+        _parent = pObj;
+        _characteristicDict = [[NSMutableDictionary alloc] init];
+        _UUID = [CBUUID UUIDWithString:UUID];
+        _logger = _parent.logger;
+    }
+    return self;
+}
+
 - (nullable YMSCBCharacteristic *)objectForKeyedSubscript:(id)key {
     YMSCBCharacteristic *result = nil;
     result = self.characteristicDict[key];
@@ -107,8 +121,7 @@
     
     yc = [[YMSCBCharacteristic alloc] initWithName:cname
                                             parent:self.parent
-                                              uuid:uuid
-                                            offset:addrOffset];
+                                              uuid:uuid];
     yc.parent = self.parent;
     
     self.characteristicDict[cname] = yc;
@@ -125,8 +138,7 @@
     
     yc = [[YMSCBCharacteristic alloc] initWithName:cname
                                             parent:self.parent
-                                              uuid:uuid
-                                            offset:addrOffset];
+                                              uuid:uuid];
     yc.parent = self.parent;
     
     self.characteristicDict[cname] = yc;
@@ -134,7 +146,6 @@
 }
 
 - (void)addCharacteristic:(NSString *)cname withAddress:(int)addr {
-    
     YMSCBCharacteristic *yc;
     NSString *addrString = [NSString stringWithFormat:@"%04x", addr];
 
@@ -142,9 +153,19 @@
     CBUUID *uuid = [CBUUID UUIDWithString:addrString];
     yc = [[YMSCBCharacteristic alloc] initWithName:cname
                                             parent:self.parent
-                                            uuid:uuid
-                                          offset:addr];
+                                            uuid:uuid];
     self.characteristicDict[cname] = yc;
+    self.characteristicsByUUID[yc.UUID.UUIDString] = yc;
+}
+
+- (void)addCharacteristic:(NSString *)UUIDString {
+    YMSCBCharacteristic *yc;
+    
+    CBUUID *uuid = [CBUUID UUIDWithString:UUIDString];
+    yc = [[YMSCBCharacteristic alloc] initWithName:UUIDString
+                                            parent:self.parent
+                                              uuid:uuid];
+    self.characteristicDict[UUIDString] = yc;
     self.characteristicsByUUID[yc.UUID.UUIDString] = yc;
 }
 
@@ -219,7 +240,10 @@
     }
     [self.characteristicDict removeObjectsForKeys:characteristicsToRemove];
     
-    // TODO: Add added keys to self.characteristicDict and self.characteristicsByUUID
+    // Add the added characteristics that exist on the CBService to self.characteristicDict and self.characteristicsByUUID
+    for (NSString *UUID in addedUUIDs) {
+        [self addCharacteristic:UUID];
+    }
     
     // Set the characteristicInterface
     NSArray<id<YMSCBCharacteristicInterface>> *ctInterfaces = [self.serviceInterface characteristics];

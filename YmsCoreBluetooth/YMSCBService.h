@@ -130,6 +130,9 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
                       baseLo:(int64_t)lo
             serviceBLEOffset:(int)serviceOffset;
 
+- (instancetype)initWithUUID:(NSString *)UUID
+                      parent:(YMSCBPeripheral *)pObj;
+
 /** @name Adding a BLE characteristic */
 /**
  Add YMSCBCharacteristic instance given address offset.

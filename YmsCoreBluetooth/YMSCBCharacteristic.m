@@ -30,7 +30,7 @@
 @implementation YMSCBCharacteristic
 
 
-- (instancetype)initWithName:(NSString *)oName parent:(YMSCBPeripheral *)pObj uuid:(CBUUID *)oUUID offset:(int)addrOffset {
+- (instancetype)initWithName:(NSString *)oName parent:(YMSCBPeripheral *)pObj uuid:(CBUUID *)oUUID {
 
     self = [super init];
     
@@ -38,7 +38,6 @@
         _name = oName;
         _parent = pObj;
         _UUID = oUUID;
-        _offset = [NSNumber numberWithInt:addrOffset];
         _writeCallbacks = [NSMutableArray new];
         _readCallbacks = [NSMutableArray new];
         _logger = _parent.logger;
