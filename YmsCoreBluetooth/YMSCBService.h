@@ -79,9 +79,8 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 /// 128 bit base address struct
 @property (atomic, assign) yms_u128_t base;
 
-// TODO: change name to UUID
 /// Service UUID
-@property (atomic, strong) CBUUID *uuid;
+@property (atomic, strong) CBUUID *UUID;
 
 /**
  When set to YES, the CoreBluetooth service is turned on.
@@ -130,6 +129,9 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
                       baseHi:(int64_t)hi
                       baseLo:(int64_t)lo
             serviceBLEOffset:(int)serviceOffset;
+
+- (instancetype)initWithUUID:(NSString *)UUID
+                      parent:(YMSCBPeripheral *)pObj;
 
 /** @name Adding a BLE characteristic */
 /**

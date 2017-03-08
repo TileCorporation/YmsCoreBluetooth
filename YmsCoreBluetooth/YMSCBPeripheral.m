@@ -106,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setObject:(YMSCBService *)obj forKeyedSubscript:(NSString *)key {
     self.serviceDict[key] = obj;
-    self.servicesByUUIDs[obj.uuid.UUIDString] = obj;
+    self.servicesByUUIDs[obj.UUID.UUIDString] = obj;
 }
 
 - (nullable YMSCBService *)serviceForUUID:(CBUUID *)uuid {
@@ -132,7 +132,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSArray<CBUUID *> *result;
 
     NSArray<YMSCBService *> *services = [_serviceDict allValues];
-    result = [services valueForKeyPath:@"uuid"];
+    result = [services valueForKeyPath:@"UUID"];
 
     return result;
 }
@@ -146,7 +146,7 @@ NS_ASSUME_NONNULL_BEGIN
         YMSCBService *btService = self[key];
         
         if (btService) {
-            [tempArray addObject:btService.uuid];
+            [tempArray addObject:btService.UUID];
         } else {
             NSString *message = [NSString stringWithFormat:@"WARNING: service key %@ not found in servicesSubset", key];
             [self.logger logWarn:message object:_peripheralInterface];
@@ -351,22 +351,50 @@ NS_ASSUME_NONNULL_BEGIN
     [self.logger logInfo:message object:_peripheralInterface];
     
     if (self.discoverServicesCallback) {
-        NSArray<YMSCBService *> *tempArray = [self.serviceDict allValues];
-        NSMutableArray<YMSCBService *> *services = [NSMutableArray new];
+        // User defined services
+        NSArray<NSString *> *expectedServiceUUIDs = [self.servicesByUUIDs allKeys];
+        // Actual services on the CBPeripheral
+        NSArray<NSString *> *actualServiceUUIDs = [[peripheralInterface services] valueForKeyPath:@"UUID.UUIDString"];
         
-        for (id<YMSCBServiceInterface> serviceInterface in peripheralInterface.services) {
-            for (YMSCBService *yService in tempArray) {
-                if ([serviceInterface.UUID isEqual:yService.uuid]) {
-                    yService.serviceInterface = serviceInterface;
-                    [services addObject:yService];
-                    break;
+        NSSet<NSString *> *expectedUUIDs = [NSMutableSet setWithArray:expectedServiceUUIDs];
+        NSSet<NSString *> *actualUUIDs = [NSMutableSet setWithArray:actualServiceUUIDs];
+        
+        NSMutableSet<NSString *> *missingUUIDs = [expectedUUIDs mutableCopy];
+        NSMutableSet<NSString *> *addedUUIDs = [actualUUIDs mutableCopy];
+        
+        // Find missing UUIDs
+        [missingUUIDs minusSet:actualUUIDs];
+        // Find added UUIDs
+        [addedUUIDs minusSet:expectedUUIDs];
+        
+        // Remove missing keys from self.serviceDict and self.servicesByUUIDs
+        [self.servicesByUUIDs removeObjectsForKeys:[missingUUIDs allObjects]];
+
+        NSMutableArray<NSString *> *servicesToRemove = [NSMutableArray new];
+        for (NSString *key in missingUUIDs) {
+            [self.serviceDict enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull serviceKey, YMSCBService * _Nonnull service, BOOL * _Nonnull stop) {
+                if ([key isEqualToString:service.UUID.UUIDString]) {
+                    [servicesToRemove addObject:serviceKey];
                 }
-            }
+            }];
+        }
+        [self.serviceDict removeObjectsForKeys:servicesToRemove];
+        
+        // Add added keys to self.serviceDict and self.servicesByUUIDs
+        for (NSString *UUID in addedUUIDs) {
+            YMSCBService *service = [[YMSCBService alloc] initWithUUID:UUID parent:self];
+            self[UUID] = service;
+        }
+
+        // Set the serviceInterface
+        for (id<YMSCBServiceInterface> serviceInterface in peripheralInterface.services) {
+            YMSCBService *service = self.servicesByUUIDs[serviceInterface.UUID.UUIDString];
+            service.serviceInterface = serviceInterface;
         }
         
+        NSArray<YMSCBService *> *services = [self.serviceDict allValues];
         self.discoverServicesCallback(services, error);
         self.discoverServicesCallback = nil;
-
     }
 
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverServices:)]) {

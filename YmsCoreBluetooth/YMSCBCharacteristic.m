@@ -30,15 +30,14 @@
 @implementation YMSCBCharacteristic
 
 
-- (instancetype)initWithName:(NSString *)oName parent:(YMSCBPeripheral *)pObj uuid:(CBUUID *)oUUID offset:(int)addrOffset {
+- (instancetype)initWithName:(NSString *)oName parent:(YMSCBPeripheral *)pObj uuid:(CBUUID *)oUUID {
 
     self = [super init];
     
     if (self) {
         _name = oName;
         _parent = pObj;
-        _uuid = oUUID;
-        _offset = [NSNumber numberWithInt:addrOffset];
+        _UUID = oUUID;
         _writeCallbacks = [NSMutableArray new];
         _readCallbacks = [NSMutableArray new];
         _logger = _parent.logger;
@@ -190,7 +189,7 @@
         [self.parent.peripheralInterface discoverDescriptorsForCharacteristic:self.characteristicInterface];
 
     } else {
-        NSString *message = [NSString stringWithFormat:@"Attempt to discover descriptors with null characteristicInterface: '%@' for %@", self.name, self.uuid];
+        NSString *message = [NSString stringWithFormat:@"Attempt to discover descriptors with null characteristicInterface: '%@' for %@", self.name, self.UUID];
         [self.logger logWarn:message object:self];
     }
 }
@@ -245,7 +244,7 @@
 // TODO: refactor
 - (NSError *)nilCBCharacteristicError:(NSString *)recovery {
     NSString *description = [NSString stringWithFormat:NSLocalizedString(@"CBCharacteristic is nil", nil)];
-    NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"Attempt to invoke operation on nil CBCharacteristic: %@ (%@) on %@", nil), self.name, self.uuid, self.parent];
+    NSString *failureReason = [NSString stringWithFormat:NSLocalizedString(@"Attempt to invoke operation on nil CBCharacteristic: %@ (%@) on %@", nil), self.name, self.UUID, self.parent];
     
     NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: description,
