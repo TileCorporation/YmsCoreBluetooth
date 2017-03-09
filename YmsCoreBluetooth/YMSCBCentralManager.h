@@ -206,6 +206,11 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
                                    logger:(id<YMSCBLogging>)logger;
 
 
+
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central
+                                  logger:(id<YMSCBLogging>)logger;
+
+
 #pragma mark - Peripheral Management
 /** @name Peripheral Management */
 

@@ -42,6 +42,30 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 #pragma mark - Constructors
 
+- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central
+                                  logger:(id<YMSCBLogging>)logger {
+
+    self = [super init];
+    if (self) {
+        _ymsPeripherals = [NSMutableDictionary new];
+
+        
+#if TARGET_IPHONE_SIMULATOR
+        _centralInterface = [[YMSBFMCentralManager alloc] initWithDelegate:self queue:queue options:options];
+#else
+        _centralInterface = central;
+#endif
+        
+        _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
+        _discoveredCallback = nil;
+        _retrievedCallback = nil;
+        _logger = logger;
+    }
+    
+    return self;
+}
+
+
 - (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
                                     queue:(nullable dispatch_queue_t)queue
                                   options:(nullable NSDictionary<NSString *, id> *)options
