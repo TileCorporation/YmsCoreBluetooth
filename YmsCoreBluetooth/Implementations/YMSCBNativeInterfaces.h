@@ -6,6 +6,10 @@
 //  Copyright © 2017 Yummy Melon Software. All rights reserved.
 //
 
+#import "YMSCBCentralManager.h"
+#import "YMSCBPeripheral.h"
+#import "YMSCBService.h"
+#import "YMSCBCharacteristic.h"
 #import "YMSCBDescriptor.h" // Added to make Xcode 8.2.1 warning go away
 
 NS_ASSUME_NONNULL_BEGIN
