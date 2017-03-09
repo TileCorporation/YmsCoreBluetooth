@@ -21,8 +21,11 @@
 #import "DEAPeripheralsViewController.h"
 #import "DEACentralManager.h"
 #import "DEATheme.h"
+#import "DEAExternalCentral.h"
+#import "YMSCBNativeInterfaces.h"
 
 @interface DEAAppDelegate() <YMSCBCentralManagerDelegate>
+@property (nonatomic, strong) DEAExternalCentral *externalCentral;
 
 @end
 
@@ -77,8 +80,11 @@
 }
 
 - (void)initializeAppServices {
+    _externalCentral = [[DEAExternalCentral alloc] init];
+    DEACentralManager *tileSDK_Manager = [DEACentralManager initSharedServiceWithCentral:_externalCentral.central];
+    _externalCentral.delegate = tileSDK_Manager;
+    tileSDK_Manager.delegate = self;
     
-    [DEACentralManager initSharedServiceWithDelegate:self];
 }
 
 - (void)initializeAppearance {

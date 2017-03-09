@@ -40,6 +40,14 @@ static DEACentralManager *sharedCentralManager;
 
 @implementation DEACentralManager
 
++ (instancetype)initSharedServiceWithCentral:(id<YMSCBCentralManagerInterface>)central {
+    if (sharedCentralManager == nil) {
+        sharedCentralManager = [[super allocWithZone:NULL] initWithCentral:central logger:[YMSCBLogger new]];
+    }
+    return sharedCentralManager;
+}
+
+
 + (DEACentralManager *)initSharedServiceWithDelegate:(id)delegate {
     if (sharedCentralManager == nil) {
         dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", DISPATCH_QUEUE_CONCURRENT);
@@ -64,6 +72,8 @@ static DEACentralManager *sharedCentralManager;
     }
     return sharedCentralManager;
 }
+
+
 
 
 - (BOOL)startScan {
