@@ -94,7 +94,7 @@
 }
 
 
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *))writeCallback {
+- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError * _Nullable))writeCallback {
     NSString *message = nil;
     
     //TILAssert(data != nil, @"ERROR: call to writeValue with nil data to %@", self.characteristicInterface);
@@ -178,7 +178,7 @@
     readCB(data, error);
 }
 
-- (void)executeWriteCallback:(NSError *)error {
+- (void)executeWriteCallback:(nullable NSError *)error {
     YMSCBWriteCallbackBlockType writeCB = [self.writeCallbacks pop];
     writeCB(error);
 }

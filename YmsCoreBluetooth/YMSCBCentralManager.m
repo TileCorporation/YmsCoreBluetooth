@@ -146,7 +146,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     return result;
 }
 
-- (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs options:(nullable NSDictionary *)options {
+- (BOOL)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs options:(nullable NSDictionary *)options {
     BOOL result = NO;
     
     NSString *message = nil;
@@ -166,7 +166,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 
-- (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs
+- (BOOL)scanForPeripheralsWithServices:(nullable NSArray<CBUUID *> *)serviceUUIDs
                                options:(nullable NSDictionary *)options
                              withBlock:(nullable YMSCBDiscoverCallbackBlockType)discoverCallback
                             withFilter:(nullable YMSCBFilterCallbackBlockType)filterCallback {
