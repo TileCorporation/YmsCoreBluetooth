@@ -272,7 +272,8 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
                                      baseHi:(int64_t)hi
                                      baseLo:(int64_t)lo;
 
-
+- (nullable instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface
+                                    central:(YMSCBCentralManager *)owner;
 
 /** @name Get all CBService CBUUIDs for this peripheral  */
 /**
