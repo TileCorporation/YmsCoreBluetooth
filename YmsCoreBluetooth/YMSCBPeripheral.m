@@ -61,6 +61,28 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
+- (nullable instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface
+                                    central:(YMSCBCentralManager *)owner {
+    
+    self = [super init];
+    
+    if (self) {
+        _central = owner;
+        
+        _peripheralInterface = peripheralInterface;
+        _peripheralInterface.delegate = self;
+        
+        _rssiPingPeriod = 2.0;
+        _watchdogTimerInterval = 5.0;
+        _logger = _central.logger;
+        
+        _serviceDict = [NSMutableDictionary new];
+        _servicesByUUIDs = [NSMutableDictionary new];
+    }
+    
+    return self;
+}
+
 
 #pragma mark - Peripheral Methods
 
@@ -327,7 +349,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Services Discovery
 
-- (void)discoverServices:(nullable NSArray *)serviceUUIDs withBlock:(nullable void (^)(NSArray * _Nullable services, NSError * _Nullable error))callback {
+- (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs withBlock:(nullable void (^)(NSArray * _Nullable services, NSError * _Nullable error))callback {
     self.discoverServicesCallback = callback;
     
     

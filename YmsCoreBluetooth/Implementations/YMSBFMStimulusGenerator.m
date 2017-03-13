@@ -64,6 +64,36 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
+- (instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central bfmConfig:(NSURL *)bfmURL modelConfig:(NSURL *)modelURL {
+    self = [super init];
+    if (self) {
+        _central = central;
+        _timerQueue = dispatch_queue_create("com.yummymelon.bfmsgtimerqueue", DISPATCH_QUEUE_SERIAL);
+        _timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _timerQueue);
+        _clock = [NSDate date];
+        _modelConfiguration = [[YMSBFMModelConfiguration alloc] initWithConfigurationURL:modelURL];
+        _peripheralConfiguration = [[YMSBFMPeripheralConfiguration alloc] initWithConfigurationURL:bfmURL];
+        _events = [NSMutableArray new];
+        
+        [self genPeripherals];
+        //[self dummyPopulateEvents];
+        
+        // !!!:start simulation clock
+        dispatch_source_set_timer(_timer, DISPATCH_TIME_NOW, YMSBFMStimulusGeneratorClockPeriod, 0);
+        
+        __weak typeof(self) this = self;
+        dispatch_source_set_event_handler(_timer, ^{
+            __strong typeof(this) strongThis = this;
+            
+            [strongThis clockTickHandler];
+        });
+        
+        // Start the timer
+        dispatch_resume(_timer);
+    }
+    return self;
+}
+
 - (void)dealloc {
     dispatch_source_cancel(_timer);
 }
@@ -147,21 +177,27 @@ NS_ASSUME_NONNULL_BEGIN
     
     if (event.type == YMSBFMStimulusEvent_centralDidDiscoverPeripheral) {
         [central centralManager:event.central didDiscoverPeripheral:event.peripheral advertisementData:@{} RSSI:event.RSSI];
+        
     } else if (event.type == YMSBFMStimulusEvent_centralDidConnect) {
         YMSBFMPeripheral *bfmPeripheral = (YMSBFMPeripheral *)event.peripheral;
         [bfmPeripheral setConnectionState:CBPeripheralStateConnected];
         [central centralManager:event.central didConnectPeripheral:event.peripheral];
+        
     } else if (event.type == YMSBFMStimulusEvent_centralDidDisconnect) {
         YMSBFMPeripheral *bfmPeripheral = (YMSBFMPeripheral *)event.peripheral;
         [bfmPeripheral setConnectionState:CBPeripheralStateDisconnected];
         [central centralManager:event.central didDisconnectPeripheral:event.peripheral error:event.error];
+        
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidDiscoverServices) {
         [peripheral peripheral:event.peripheral didDiscoverServices:event.error];
+        
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidDiscoverCharacteristics) {
         [peripheral peripheral:event.peripheral didDiscoverCharacteristicsForService:event.service error:event.error];
+        
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidUpdateValue) {
         YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)event.characteristic;
         [characteristic didUpdateValueWithPeripheral:event.peripheral error:event.error];
+        
     } else if (event.type == YMSBFMStimulusEvent_peripheralDidWriteValue) {
         [peripheral peripheral:event.peripheral didWriteValueForCharacteristic:event.characteristic error:event.error];
         YMSBFMCharacteristic *characteristic = (YMSBFMCharacteristic *)event.characteristic;
@@ -379,6 +415,19 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface peripheral:(id<YMSCBPeripheralInterface>)peripheral {
+    if (!characteristicUUIDs) {
+        NSDictionary<NSString *, NSDictionary<NSString *, id> *> *characteristics = [_peripheralConfiguration characteristicsForServiceUUID:serviceInterface.UUID.UUIDString peripheral:NSStringFromClass(peripheral.class)];
+        NSArray<NSString *> *keys = [characteristics allKeys];
+        __block NSMutableArray<CBUUID *> *tempList = [NSMutableArray new];
+        
+        [keys enumerateObjectsUsingBlock:^(NSString * _Nonnull key, NSUInteger idx, BOOL * _Nonnull stop) {
+            CBUUID *uuid = [CBUUID UUIDWithString:key];
+            [tempList addObject:uuid];
+        }];
+        
+        characteristicUUIDs = [NSArray arrayWithArray:tempList];
+    }
+    
     for (CBUUID *uuid in characteristicUUIDs) {
         NSDictionary<NSString *, NSDictionary<NSString *, id> *> *characteristics = [_peripheralConfiguration characteristicsForServiceUUID:serviceInterface.UUID.UUIDString peripheral:NSStringFromClass(peripheral.class)];
         
@@ -429,11 +478,13 @@ NS_ASSUME_NONNULL_BEGIN
         // TODO: handle retain cycle?
         [characteristic writeValue:data];
         
-        NSDate *futureTime = [_clock dateByAddingTimeInterval:time];
-        YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:futureTime type:YMSBFMStimulusEvent_peripheralDidWriteValue];
-        event.peripheral = characteristicInterface.service.peripheralInterface;
-        event.characteristic = characteristicInterface;
-        [_events push:event];
+        if (type == CBCharacteristicWriteWithResponse) {
+            NSDate *futureTime = [_clock dateByAddingTimeInterval:time];
+            YMSBFMStimulusEvent *event = [[YMSBFMStimulusEvent alloc] initWithTime:futureTime type:YMSBFMStimulusEvent_peripheralDidWriteValue];
+            event.peripheral = characteristicInterface.service.peripheralInterface;
+            event.characteristic = characteristicInterface;
+            [_events push:event];
+        }
     }];
 }
 

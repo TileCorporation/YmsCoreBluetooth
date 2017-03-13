@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly, nullable) NSDictionary<NSString *, NSDictionary<NSString *, id> *> *peripherals;
 
 - (nullable instancetype)initWithConfigurationFile:(nullable NSString *)filename;
+- (nullable instancetype)initWithConfigurationURL:(nullable NSURL *)url;
+
 - (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)servicesForPeripheralIdentifier:(NSString *)identifier;
 - (nullable NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)characteristicForService:(NSDictionary<NSString *, NSDictionary<NSString *, id> *> *)service withCharacteristicUUID:(NSString *)uuid;
 

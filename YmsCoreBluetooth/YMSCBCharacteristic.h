@@ -132,7 +132,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  
  @param error Error object, if failed.
  */
-- (void)executeWriteCallback:(NSError *)error;
+- (void)executeWriteCallback:(nullable NSError *)error;
 
 /** @name Initializing a YMSCBCharacteristic */
 /**
@@ -176,7 +176,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  @param writeCallback Callback block to execute upon response.
  
  */
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *error))writeCallback;
+- (void)writeValue:(NSData *)data withBlock:(nullable void (^)(NSError *error))writeCallback;
 
 /**
  Issue write with byte val and execute callback block writeCallback upon response.

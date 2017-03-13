@@ -61,11 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)discoverCharacteristics:(nullable NSArray<CBUUID *> *)characteristicUUIDs forService:(id<YMSCBServiceInterface>)serviceInterface {
-    if (!characteristicUUIDs) {
-        // TODO: Handle nil uuids. Add all characteristics for this service.
-    } else {
-        [_stimulusGenerator discoverCharacteristics:characteristicUUIDs forService:serviceInterface peripheral:self];
-    }
+    [_stimulusGenerator discoverCharacteristics:characteristicUUIDs forService:serviceInterface peripheral:self];
 }
 
 - (void)readValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface {
