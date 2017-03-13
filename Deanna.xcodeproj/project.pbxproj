@@ -47,6 +47,7 @@
 		D98D66671BB8CEAA00E82BE4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66641BB8CEAA00E82BE4 /* AppKit.framework */; };
 		D98D66681BB8CEAA00E82BE4 /* IOBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66651BB8CEAA00E82BE4 /* IOBluetooth.framework */; };
 		D98D66691BB8CEAA00E82BE4 /* IOBluetoothUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D98D66661BB8CEAA00E82BE4 /* IOBluetoothUI.framework */; };
+		D991D1B41E7135BC00C03895 /* DEAExternalCentral.m in Sources */ = {isa = PBXBuildFile; fileRef = D991D1B31E7135BC00C03895 /* DEAExternalCentral.m */; };
 		D9960A54173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D9960A53173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m */; };
 		D99659151E1F569300F67BCA /* YMSCBLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = D99659141E1F569300F67BCA /* YMSCBLogger.m */; };
 		D99659161E1F569300F67BCA /* YMSCBLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = D99659141E1F569300F67BCA /* YMSCBLogger.m */; };
@@ -239,6 +240,8 @@
 		D98D66641BB8CEAA00E82BE4 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AppKit.framework; sourceTree = DEVELOPER_DIR; };
 		D98D66651BB8CEAA00E82BE4 /* IOBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOBluetooth.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/IOBluetooth.framework; sourceTree = DEVELOPER_DIR; };
 		D98D66661BB8CEAA00E82BE4 /* IOBluetoothUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOBluetoothUI.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/IOBluetoothUI.framework; sourceTree = DEVELOPER_DIR; };
+		D991D1B21E7135BC00C03895 /* DEAExternalCentral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEAExternalCentral.h; sourceTree = "<group>"; };
+		D991D1B31E7135BC00C03895 /* DEAExternalCentral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEAExternalCentral.m; sourceTree = "<group>"; };
 		D9960A52173B0A1B0013C8E7 /* DEADeviceInfoViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEADeviceInfoViewCell.h; sourceTree = "<group>"; };
 		D9960A53173B0A1B0013C8E7 /* DEADeviceInfoViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEADeviceInfoViewCell.m; sourceTree = "<group>"; };
 		D99659131E1F569300F67BCA /* YMSCBLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSCBLogger.h; sourceTree = "<group>"; };
@@ -522,6 +525,8 @@
 		D9718B83167FA1400001E42C /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				D991D1B21E7135BC00C03895 /* DEAExternalCentral.h */,
+				D991D1B31E7135BC00C03895 /* DEAExternalCentral.m */,
 				D906E5EF16DCAC55001D7932 /* DEACentralManager.h */,
 				D906E5F016DCAC55001D7932 /* DEACentralManager.m */,
 				D9CB2C0616A71F8E00279DDA /* SensorTag */,
@@ -957,6 +962,7 @@
 				EA657D5D1E3835A100216E2B /* SensorTagTemperatureBFMService.m in Sources */,
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
 				EA674CCC1E3C2BFA00E95998 /* YMSBFMSyntheticDelivererConstant.m in Sources */,
+				D991D1B41E7135BC00C03895 /* DEAExternalCentral.m in Sources */,
 				D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */,
 				D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */,
 				EA674CC41E3C108A00E95998 /* YMSBFMSyntheticGeneratorConstant.m in Sources */,

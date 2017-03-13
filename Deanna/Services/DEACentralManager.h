@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (DEACentralManager *)initSharedServiceWithDelegate:(id)delegate;
 
++ (instancetype)initSharedServiceWithCentral:(id<YMSCBCentralManagerInterface>)central;
+
 /**
  Return singleton instance.
  */
