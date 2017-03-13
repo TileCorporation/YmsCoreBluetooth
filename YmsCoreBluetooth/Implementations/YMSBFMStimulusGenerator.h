@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) YMSBFMPeripheralConfiguration *peripheralConfiguration;
 
 - (instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central;
+- (instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central bfmConfig:(NSURL *)bfmURL modelConfig:(NSURL *)modelURL;
 
 - (void)genPeripherals;
 

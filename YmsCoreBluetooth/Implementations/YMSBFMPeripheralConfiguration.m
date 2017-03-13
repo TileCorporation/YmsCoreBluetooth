@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
             configFileURL = [documentURL URLByAppendingPathComponent:kYMSBFMPeripheralConfigDefaultFilename];
         }
         
-        if ([_fileManager fileExistsAtPath:configFileURL.path]) {
+        if (configFileURL && [_fileManager fileExistsAtPath:configFileURL.path]) {
             NSData *jsonData = [NSData dataWithContentsOfURL:configFileURL];
             NSError *error = nil;
             _configuration = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:&error];
@@ -61,6 +61,40 @@ NS_ASSUME_NONNULL_BEGIN
     }
     return self;
 }
+
+- (nullable instancetype)initWithConfigurationURL:(nullable NSURL *)url {
+    self = [super init];
+    if (self) {
+        _fileManager = [NSFileManager defaultManager];
+        
+        if (!url) {
+            NSArray<NSURL *> *a = [_fileManager URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask];
+            
+            NSURL *documentURL = nil;
+            if (a.count >= 1) {
+                documentURL = a[0];
+                NSLog(@"Documents Folder: %@", documentURL);
+            }
+
+            url = [documentURL URLByAppendingPathComponent:kYMSBFMPeripheralConfigDefaultFilename];
+        }
+        
+        if (url && [_fileManager fileExistsAtPath:url.path]) {
+            NSData *jsonData = [NSData dataWithContentsOfURL:url];
+            NSError *error = nil;
+            _configuration = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableLeaves error:&error];
+            
+            if (error) {
+                NSAssert(NO, @"ERROR: Processing JSON file %@ failed.", url);
+            }
+        } else {
+            NSAssert(NO, @"ERROR: Configuration file %@ does not exist.", url);
+        }
+    }
+    
+    return self;
+}
+
 
 - (NSArray<NSDictionary<id, id> *> *)peripherals {
     NSArray<NSDictionary<id, id> *> *result = nil;
