@@ -229,6 +229,8 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
  */
 - (nullable YMSCBPeripheral *)findPeripheral:(nonnull YMSCBPeripheral *)yPeripheral;
 
+- (nullable YMSCBPeripheral *)findPeripheralWithIdentifier:(NSUUID *)identifier;
+
 #pragma mark - Scan Methods
 /** @name Scanning for Peripherals */
 /**

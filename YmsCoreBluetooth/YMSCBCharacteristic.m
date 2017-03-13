@@ -94,7 +94,7 @@
 }
 
 
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError * _Nullable))writeCallback {
+- (void)writeValue:(NSData *)data withBlock:(nullable void (^)(NSError * _Nullable))writeCallback {
     NSString *message = nil;
     
     //TILAssert(data != nil, @"ERROR: call to writeValue with nil data to %@", self.characteristicInterface);
