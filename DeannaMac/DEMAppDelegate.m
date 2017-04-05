@@ -23,12 +23,17 @@
 #import "DEMPeripheralViewCell.h"
 #import "DEASimpleKeysService.h"
 #import "DEASensorTagWindow.h"
+#import "YMSCBLogger.h"
 
 @implementation DEMAppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
-    [DEACentralManager initSharedServiceWithDelegate:self];
+    [DEACentralManager initSharedServiceWithCentral:nil
+                                           delegate:self
+                                              queue:nil
+                                            options:nil
+                                             logger:[YMSCBLogger new]];
 }
 
 - (void)applicationWillBecomeActive:(NSNotification *)notification {

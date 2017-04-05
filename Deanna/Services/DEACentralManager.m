@@ -40,27 +40,31 @@ static DEACentralManager *sharedCentralManager;
 
 @implementation DEACentralManager
 
-+ (instancetype)initSharedServiceWithCentral:(id<YMSCBCentralManagerInterface>)central {
++ (instancetype)initSharedServiceWithCentral:(nullable id<YMSCBCentralManagerInterface>)centralInterface
+                                    delegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
+                                       queue:(nullable dispatch_queue_t)queue
+                                     options:(nullable NSDictionary<NSString *, id> *)options
+                                      logger:(id<YMSCBLogging>)logger {
+    
     if (sharedCentralManager == nil) {
-        sharedCentralManager = [[super allocWithZone:NULL] initWithCentral:central logger:[YMSCBLogger new]];
-    }
-    return sharedCentralManager;
-}
-
-
-+ (DEACentralManager *)initSharedServiceWithDelegate:(id)delegate {
-    if (sharedCentralManager == nil) {
-        dispatch_queue_t queue = dispatch_queue_create("com.yummymelon.deanna", DISPATCH_QUEUE_CONCURRENT);
-        sharedCentralManager = [[super allocWithZone:NULL] initWithDelegate:delegate
-                                                                      queue:queue
-                                                                    options:nil
-                                                                     logger:[YMSCBLogger new]];
+        
+        if (!queue) {
+            queue = dispatch_queue_create("com.yummymelon.deanna", DISPATCH_QUEUE_CONCURRENT);
+        }
+        sharedCentralManager = [[super allocWithZone:NULL] initWithCentral:centralInterface
+                                                                  delegate:delegate
+                                                                     queue:queue
+                                                                   options:options
+                                                                    logger:logger];
+ 
+    
 #if TARGET_IPHONE_SIMULATOR
         YMSBFMCentralManager *centralInterface = (YMSBFMCentralManager *)sharedCentralManager.centralInterface;
         SensorTagStimulusGenerator *stimulusGenerator = [[SensorTagStimulusGenerator alloc] initWithCentral:centralInterface];
         centralInterface.stimulusGenerator = stimulusGenerator;
 #endif
     }
+    
     return sharedCentralManager;
     
 }

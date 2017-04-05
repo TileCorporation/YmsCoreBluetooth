@@ -43,12 +43,7 @@
     
     self.title = @"Deanna";
     
-    /*
-     First time DEACentralManager singleton is instantiated.
-     All subsequent references will use [DEACentralManager sharedService].
-     */
-    DEACentralManager *centralManager = [DEACentralManager initSharedServiceWithDelegate:self];
-    
+    DEACentralManager *centralManager = [DEACentralManager sharedService];
 
     [self.navigationController setToolbarHidden:NO];
 
