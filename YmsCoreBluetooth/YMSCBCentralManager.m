@@ -42,46 +42,30 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 #pragma mark - Constructors
 
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central
+
+- (nullable instancetype)initWithCentral:(nullable id<YMSCBCentralManagerInterface>)centralInterface
+                                delegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
+                                   queue:(nullable dispatch_queue_t)queue
+                                 options:(nullable NSDictionary<NSString *, id> *)options
                                   logger:(id<YMSCBLogging>)logger {
-
-    self = [super init];
-    if (self) {
-        _ymsPeripherals = [NSMutableDictionary new];
-
-        
-#if TARGET_IPHONE_SIMULATOR
-        _centralInterface = [[YMSBFMCentralManager alloc] initWithDelegate:self queue:queue options:options];
-#else
-        _centralInterface = central;
-#endif
-        
-        _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
-        _discoveredCallback = nil;
-        _retrievedCallback = nil;
-        _logger = logger;
-    }
     
-    return self;
-}
-
-
-- (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
-                                    queue:(nullable dispatch_queue_t)queue
-                                  options:(nullable NSDictionary<NSString *, id> *)options
-                                   logger:(id<YMSCBLogging>)logger {
     self = [super init];
     if (self) {
         _ymsPeripherals = [NSMutableDictionary new];
         _delegate = delegate;
         _queue = queue;
-
+        
+        if (centralInterface) {
+            // !!!: It is the responsibility of the developer using this call to send this object YMSCBCentralManagerInterfaceDelegate calls
+            _centralInterface  = centralInterface;
+        } else {
 #if TARGET_IPHONE_SIMULATOR
-        _centralInterface = [[YMSBFMCentralManager alloc] initWithDelegate:self queue:queue options:options];
+            _centralInterface = [[YMSBFMCentralManager alloc] initWithDelegate:self queue:queue options:options];
 #else
-        _centralInterface = [[CBCentralManager alloc] initWithDelegate:self queue:queue options:options];
+            _centralInterface = [[CBCentralManager alloc] initWithDelegate:self queue:queue options:options];
 #endif
-
+        }
+        
         _ymsPeripheralsQueue = dispatch_queue_create("com.yummymelon.ymsPeripherals", DISPATCH_QUEUE_SERIAL);
         _discoveredCallback = nil;
         _retrievedCallback = nil;
@@ -90,6 +74,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     
     return self;
 }
+
 
 - (CBCentralManagerState)state {
     CBCentralManagerState state;
@@ -350,27 +335,30 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDiscoverPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
     
-    BOOL shouldProcess = YES;
-    
-    if (self.filteredCallback) {
-        shouldProcess = self.filteredCallback(peripheralInterface.name, advertisementData, RSSI);
-    }
-    
-    if (shouldProcess && self.discoveredCallback) {
-        YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
-        if (!yPeripheral) {
-            yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface];
-            if (yPeripheral) {
-                [self addPeripheral:yPeripheral];
+    // this could get called by multiple threads at the same time
+    dispatch_sync(self.ymsPeripheralsQueue, ^{
+        BOOL shouldProcess = YES;
+        
+        if (self.filteredCallback) {
+            shouldProcess = self.filteredCallback(peripheralInterface.name, advertisementData, RSSI);
+        }
+        
+        if (shouldProcess && self.discoveredCallback) {
+            YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+            if (!yPeripheral) {
+                yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface];
+                if (yPeripheral) {
+                    [self addPeripheral:yPeripheral];
+                }
             }
-        }
-        
-        self.discoveredCallback(yPeripheral, advertisementData, RSSI);
-        
-        if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
-            [self.delegate centralManager:self didDiscoverPeripheral:yPeripheral advertisementData:advertisementData RSSI:RSSI];
-        }
-    }
+            
+            self.discoveredCallback(yPeripheral, advertisementData, RSSI);
+            
+            if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
+                [self.delegate centralManager:self didDiscoverPeripheral:yPeripheral advertisementData:advertisementData RSSI:RSSI];
+            }
+        }   
+    });
 }
 
 

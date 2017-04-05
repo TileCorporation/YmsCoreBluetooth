@@ -32,13 +32,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DEACentralManager : YMSCBCentralManager
 
-/**
- Return singleton instance.
- @param delegate UI delegate.
- */
-+ (DEACentralManager *)initSharedServiceWithDelegate:(id)delegate;
 
-+ (instancetype)initSharedServiceWithCentral:(id<YMSCBCentralManagerInterface>)central;
++ (instancetype)initSharedServiceWithCentral:(nullable id<YMSCBCentralManagerInterface>)centralInterface
+                                    delegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
+                                       queue:(nullable dispatch_queue_t)queue
+                                     options:(nullable NSDictionary<NSString *, id> *)options
+                                      logger:(id<YMSCBLogging>)logger;
 
 /**
  Return singleton instance.

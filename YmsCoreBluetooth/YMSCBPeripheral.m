@@ -269,7 +269,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!self.connectCallback) {
         NSString *message = [NSString stringWithFormat:@"> connectPeripheral: %@", _peripheralInterface];
         [self.logger logInfo:message object:self.central];
-        self.connectCallback = [connectCallback copy];
+        self.connectCallback = connectCallback;
         [self.central connectPeripheral:self options:options];
     } else {
         NSDictionary *userInfo = @{
@@ -292,9 +292,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     NSString *message = [NSString stringWithFormat:@"> cancelPeripheralConnection: %@", _peripheralInterface];
-    [self.logger logInfo:message object:self.central];
-    
-    [self.logger logInfo:message object:_peripheralInterface];
+
+    [self.logger logInfo:message object:self];
     [self.central cancelPeripheralConnection:self];
 }
 

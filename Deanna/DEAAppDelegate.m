@@ -23,6 +23,7 @@
 #import "DEATheme.h"
 #import "DEAExternalCentral.h"
 #import "YMSCBNativeInterfaces.h"
+#import "YMSCBLogger.h"
 
 @interface DEAAppDelegate() <YMSCBCentralManagerDelegate>
 @property (nonatomic, strong) DEAExternalCentral *externalCentral;
@@ -81,9 +82,13 @@
 
 - (void)initializeAppServices {
     _externalCentral = [[DEAExternalCentral alloc] init];
-    DEACentralManager *tileSDK_Manager = [DEACentralManager initSharedServiceWithCentral:_externalCentral.central];
+    DEACentralManager *tileSDK_Manager = [DEACentralManager initSharedServiceWithCentral:_externalCentral.central
+                                                                                delegate:self
+                                                                                   queue:nil
+                                                                                 options:nil
+                                                                                  logger:[YMSCBLogger new]];
+    
     _externalCentral.delegate = tileSDK_Manager;
-    tileSDK_Manager.delegate = self;
     
 }
 
