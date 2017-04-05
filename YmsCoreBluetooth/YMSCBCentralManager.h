@@ -52,7 +52,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
 
 @property(readonly) CBCentralManagerState state;
 
-
 - (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerInterfaceDelegate>)delegate
                                     queue:(nullable dispatch_queue_t)queue;
 
@@ -194,22 +193,18 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
 /**
  Constructor for YMSCBCentralManager
 
+ @param centralInterface Object which conforms to the YMSCBCentralManagerInterface interface
  @param delegate Delegate of this class instance.
  @param queue The dispatch queue for BLE central role events.
  @param options CBCentralManager options
  @param logger logger object
  @return instance of YMSCBCentralManager
  */
-- (nullable instancetype)initWithDelegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
-                                    queue:(nullable dispatch_queue_t)queue
-                                  options:(nullable NSDictionary<NSString *, id> *)options
-                                   logger:(id<YMSCBLogging>)logger;
-
-
-
-- (nullable instancetype)initWithCentral:(id<YMSCBCentralManagerInterface>)central
+- (nullable instancetype)initWithCentral:(nullable id<YMSCBCentralManagerInterface>)centralInterface
+                                delegate:(nullable id<YMSCBCentralManagerDelegate>)delegate
+                                   queue:(nullable dispatch_queue_t)queue
+                                 options:(nullable NSDictionary<NSString *, id> *)options
                                   logger:(id<YMSCBLogging>)logger;
-
 
 #pragma mark - Peripheral Management
 /** @name Peripheral Management */

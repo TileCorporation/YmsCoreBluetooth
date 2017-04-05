@@ -240,7 +240,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 @property (nonatomic, assign) NSTimeInterval watchdogTimerInterval;
 
 /// Holds callback for connection established.
-@property (atomic, copy, nullable) YMSCBPeripheralConnectCallbackBlockType connectCallback;
+@property (nonatomic, copy, nullable) YMSCBPeripheralConnectCallbackBlockType connectCallback;
 
 /// Holds callback for services discovered.
 @property (nonatomic, copy, nullable) YMSCBPeripheralDiscoverServicesBlockType discoverServicesCallback;
