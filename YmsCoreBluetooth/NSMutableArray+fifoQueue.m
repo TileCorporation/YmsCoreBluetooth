@@ -1,5 +1,5 @@
 //
-// Copyright 2013-2015 Yummy Melon Software LLC
+// Copyright 2013-2014 Yummy Melon Software LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,19 +21,67 @@
 
 @implementation NSMutableArray (fifoQueue)
 
+#pragma mark - Properties
+
+@dynamic queue;
+
+- (dispatch_queue_t)queue {
+    
+    static dispatch_queue_t queue;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        queue = dispatch_queue_create("NSMutableArray fifo queue", DISPATCH_QUEUE_CONCURRENT);
+    });
+    return queue;
+}
+
+#pragma mark - Methods
+
 - (void)push:(id)anObject {
-    [self addObject:anObject];
+    
+    __weak typeof(self) weakSelf = self;
+    dispatch_barrier_sync(self.queue, ^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf addObject:anObject];
+    });
 }
 
 - (id)pop {
-    id result = nil;
     
-    if ([self count] > 0) {
-        result = [self objectAtIndex:0];
-        [self removeObjectAtIndex:0];
-    }
-
+    __block id result = nil;
+    
+    __weak typeof(self) weakSelf = self;
+    dispatch_barrier_sync(self.queue, ^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        if ([strongSelf count] > 0) {
+            result = [strongSelf objectAtIndex:0];
+            [strongSelf removeObjectAtIndex:0];
+        }
+    });
+    
     return result;
+}
+
+- (BOOL)threadSafeContainsObject:(id)anObject {
+    
+    __block BOOL result = NO;
+    
+    __weak typeof(self) weakSelf = self;
+    dispatch_sync(self.queue, ^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        result = [strongSelf containsObject:anObject];
+    });
+    
+    return result;
+}
+
+- (void)threadSafeRemoveObjectsInArray:(NSArray *)array {
+    
+    __weak typeof(self) weakSelf = self;
+    dispatch_barrier_async(self.queue, ^{
+        __strong typeof(weakSelf) strongSelf = weakSelf;
+        [strongSelf removeObjectsInArray:array];
+    });
 }
 
 @end

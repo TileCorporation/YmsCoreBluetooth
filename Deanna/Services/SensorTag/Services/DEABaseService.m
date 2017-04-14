@@ -81,9 +81,10 @@
     }];
     
     YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
-    [dataCt setNotifyValue:NO withBlock:^(NSError *error) {
+    [dataCt setNotifyValue:NO withStateChangeBlock:^(NSError *error) {
         NSLog(@"Data notification for %@ off", this.name);
-
+    } withNotificationBlock:^(NSData *data, NSError *error) {
+        
     }];
     
 
@@ -106,8 +107,10 @@
     }];
     
     YMSCBCharacteristic *dataCt = self.characteristicDict[@"data"];
-    [dataCt setNotifyValue:YES withBlock:^(NSError *error) {
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError *error) {
         NSLog(@"Data notification for %@ on", this.name);
+    } withNotificationBlock:^(NSData *data, NSError *error) {
+        
     }];
     
 

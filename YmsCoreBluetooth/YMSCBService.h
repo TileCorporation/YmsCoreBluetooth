@@ -1,5 +1,5 @@
 // 
-// Copyright 2013-2015 Yummy Melon Software LLC
+// Copyright 2013-2014 Yummy Melon Software LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,9 +44,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 
  YMSCBService holds an instance of CBService (cbService).
  
- This class is typically subclassed to map to a service in a BLE peripheral. The subclass
- typically implements notifyCharacteristicHandler:error: to handle characteristics whose
- BLE notification has been enabled. 
+ This class is typically subclassed to map to a service in a BLE peripheral.
  */
 
 @interface YMSCBService : NSObject
@@ -175,20 +173,6 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 - (YMSCBCharacteristic *)findCharacteristic:(CBCharacteristic *)ct;
 
 /**
- Method to handle response update for a prior read or write request to a characteristic.  
- 
- This method is invoked by the CBPeripheralDelegate method peripheral:didUpdateValueForCharacteristic:error: 
- conformed to by YMSCBPeripheral.
- 
- This method is typically overridden to handle characteristics whose notification has been turned on.
- 
- @param yc Characteristic receiving update.
- @param error Error object.
- */
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error;
-
-
-/**
  Discover characteristics for this service.
  
  @param characteristicUUIDs An array of CBUUID objects that you are interested in. Here, each CBUUID object represents a UUID that identifies the type of a characteristic you want to discover.
@@ -214,5 +198,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 - (id)objectForKeyedSubscript:(id)key;
 
 //- (void)defaultDiscoveredCharacteristicsHandler:(NSDictionary *)chDict withError:(NSError *)error;
+
+- (void)reset;
 
 @end

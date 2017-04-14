@@ -7,8 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 
+@protocol YMSLogger<NSObject>
+- (void)log:(NSString *)message;
+- (void)log:(NSString *)message peripheral:(CBPeripheral *)peripheral;
+- (void)testLog:(NSString *)message peripheral:(CBPeripheral *)peripheral;
+@end
 
 @interface YMSLogManager : NSObject
 
+@property NSObject<YMSLogger> *logger;
+
++ (instancetype)sharedManager;
+- (void)log:(NSString *)message;
+- (void)log:(NSString *)message peripheral:(CBPeripheral *)peripheral;
+- (void)testLog:(NSString *)message peripheral:(CBPeripheral *)peripheral;
 @end

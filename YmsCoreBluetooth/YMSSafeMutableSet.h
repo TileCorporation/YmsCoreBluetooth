@@ -1,4 +1,4 @@
 #import <Foundation/Foundation.h>
 
-@interface YmsSafeMutableSet : NSMutableSet
+@interface YMSSafeMutableSet : NSMutableSet
 @end

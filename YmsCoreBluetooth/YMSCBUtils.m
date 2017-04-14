@@ -1,5 +1,5 @@
 // 
-// Copyright 2013-2015 Yummy Melon Software LLC
+// Copyright 2013-2014 Yummy Melon Software LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 #import "YMSCBUtils.h"
 
 
-
+NSString *const kYMSCBErrorDomain = @"com.yummymelon.ymscorebluetooth.error";
 
 @implementation YMSCBUtils
 

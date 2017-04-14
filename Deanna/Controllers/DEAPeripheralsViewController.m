@@ -321,7 +321,8 @@
     //static NSString *UnknownPeripheralCellIdentifier = @"UnknownPeripheralCell";
 
     DEACentralManager *centralManager = [DEACentralManager sharedService];
-    YMSCBPeripheral *yp = [centralManager peripheralAtIndex:indexPath.row];
+//    YMSCBPeripheral *yp = [centralManager peripheralAtIndex:indexPath.row];
+    YMSCBPeripheral *yp = nil;
     
     UITableViewCell *cell = nil;
     
@@ -356,7 +357,8 @@
     switch (editingStyle) {
         case UITableViewCellEditingStyleDelete: {
             DEACentralManager *centralManager = [DEACentralManager sharedService];
-            YMSCBPeripheral *yp = [centralManager peripheralAtIndex:indexPath.row];
+//            YMSCBPeripheral *yp = [centralManager peripheralAtIndex:indexPath.row];
+            YMSCBPeripheral *yp = nil;
             if ([yp isKindOfClass:[DEASensorTag class]]) {
                 if (yp.cbPeripheral.state == CBPeripheralStateConnected) {
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -397,7 +399,8 @@
 - (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath {
     DEACentralManager *centralManager = [DEACentralManager sharedService];
     
-    DEASensorTag *sensorTag = (DEASensorTag *)[centralManager.ymsPeripherals objectAtIndex:indexPath.row];
+//    DEASensorTag *sensorTag = (DEASensorTag *)[centralManager.ymsPeripherals objectAtIndex:indexPath.row];
+    DEASensorTag *sensorTag = (DEASensorTag *)nil;
     
     DEASensorTagViewController *stvc = [[DEASensorTagViewController alloc] initWithNibName:@"DEASensorTagViewController" bundle:nil];
     stvc.sensorTag = sensorTag;

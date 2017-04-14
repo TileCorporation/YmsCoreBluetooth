@@ -1,5 +1,5 @@
 // 
-// Copyright 2013-2015 Yummy Melon Software LLC
+// Copyright 2013-2014 Yummy Melon Software LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,9 +66,14 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 /// Notification state callback
 @property (atomic, copy) YMSCBWriteCallbackBlockType notificationStateCallback;
 
+/// Notification callback
+@property (atomic, copy) YMSCBReadCallbackBlockType notificationCallback;
+
 /// Callback for descriptors that are discovered.
 @property (atomic, copy) YMSCBDiscoverDescriptorsCallbackBlockType discoverDescriptorsCallback;
 
+/// When YES, logging is enabled
+@property (atomic, assign) BOOL logEnabled;
 
 /**
  FIFO queue for reads.
@@ -92,13 +97,6 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  */
 - (void)executeNotificationStateCallback:(NSError *)error;
 
-/**
- Handler method to process first callback in readCallbacks.
-
- @param data Value returned from read request.
- @param error Error object, if failed.
- */
-- (void)executeReadCallback:(NSData *)data error:(NSError *)error;
 
 /**
  Handler method to process first callback in writeCallbacks.
@@ -134,16 +132,13 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  When notifyValue is YES, then cbCharacterisic is set to notify upon any changes to its value. 
  When notifyValue is NO, then no notifications are sent.
  
- An implementation of the method [YMSCBService notifyCharacteristicHandler:error:] is used to handle
- updates to cbCharacteristic. Note that notification handling is done at the YMSCBService level via 
- method handler and not by callback blocks. The reason for this is opinion: It is more convenient to
- write a method handler to deal with non-deterministic, asynchronous notification events than it is with blocks.
- 
  @param notifyValue Set notification enable.
  @param notifyStateCallback Callback to execute upon change in notification state.
+ @param notificationCallback Callback to execute upon receiving notification.
  */
-- (void)setNotifyValue:(BOOL)notifyValue withBlock:(void (^)(NSError *error))notifyStateCallback;
-
+- (void)setNotifyValue:(BOOL)notifyValue
+  withStateChangeBlock:(void (^)(NSError *error))notifyStateCallback
+ withNotificationBlock:(void (^)(NSData *data, NSError *error))notificationCallback;
 
 /** @name Issuing a Write Request */
 /**
@@ -210,5 +205,6 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 
 - (void)syncDescriptors:(NSArray *)foundDescriptors;
 
+- (void)reset;
 
 @end

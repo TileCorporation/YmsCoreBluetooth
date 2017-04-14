@@ -1,5 +1,5 @@
 //
-// Copyright 2013-2015 Yummy Melon Software LLC
+// Copyright 2013-2014 Yummy Melon Software LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,12 +26,13 @@
 #import "YMSCBUtils.h"
 
 // iOS7
-#define kYMSCBVersionNumber 1090
-#define kYMSCBVersion "1.090"
+#define kYMSCBVersionNumber 1091
+#define kYMSCBVersion "1.091"
 extern NSString *const YMSCBVersion;
 
 @class YMSCBPeripheral;
 @class YMSCBCentralManager;
+@class YMSSafeMutableSet;
 
 typedef void (^YMSCBDiscoverCallbackBlockType)(CBPeripheral *, NSDictionary *, NSNumber *, NSError *);
 typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
@@ -63,7 +64,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  The delegate object will be sent CBCentralManagerDelegate messages received by manager.
  */
-@property (nonatomic, weak) id<CBCentralManagerDelegate> delegate;
+@property (atomic, weak) id<CBCentralManagerDelegate> delegate;
 
 /**
  The CBCentralManager object.
@@ -71,7 +72,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  In typical practice, there is only one instance of CBCentralManager and it is located in a singleton instance of YMSCBCentralManager.
  This class listens to CBCentralManagerDelegate messages sent by manager, which in turn forwards those messages to delegate.
  */
-@property (atomic, strong) CBCentralManager *manager;
+@property (nonatomic, strong) CBCentralManager *manager;
 
 /**
  Array of NSStrings to search to match CBPeripheral instances.
@@ -89,7 +90,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  This array holds all YMSCBPeripheral instances discovered or retrieved by manager.
  */
-@property (atomic, readonly, strong) NSArray *ymsPeripherals;
+@property (nonatomic, strong) YMSSafeMutableSet *ymsPeripherals;
 
 /// Count of ymsPeripherals.
 @property (atomic, readonly, assign) NSUInteger count;
@@ -131,6 +132,9 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  */
 - (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue useStoredPeripherals:(BOOL)useStore delegate:(id<CBCentralManagerDelegate>) delegate;
 
+- (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue options:(NSDictionary *)options useStoredPeripherals:(BOOL)useStore delegate:(id<CBCentralManagerDelegate>)delegate;
+
+
 #pragma mark - Peripheral Management
 /** @name Peripheral Management */
 /**
@@ -153,12 +157,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
 - (void)handleFoundPeripheral:(CBPeripheral *)peripheral;
 
 /**
- Returns the YSMCBPeripheral instance from ymsPeripherals at index.
- @param index An index within the bounds of ymsPeripherals.
- */
-- (YMSCBPeripheral *)peripheralAtIndex:(NSUInteger)index;
-
-/**
  Add YMSCBPeripheral instance to ymsPeripherals.
  @param yperipheral Instance of YMSCBPeripheral
  */
@@ -170,12 +168,6 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @param yperipheral Instance of YMSCBPeripheral
  */
 - (void)removePeripheral:(YMSCBPeripheral *)yperipheral;
-
-/**
- Remove YMSCBPeripheral instance at index
- @param index The index from which to remove the object in ymsPeripherals. The value must not exceed the bounds of the array.
- */
-- (void)removePeripheralAtIndex:(NSUInteger)index;
 
 /**
  Remove all YMSCBPeripheral instances
@@ -198,7 +190,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  scanForPeripheralsWithServices:options:
  
  */
-- (void)startScan;
+- (BOOL)startScan;
 
 /**
  Wrapper around the method scanForPeripheralWithServices:options: in CBCentralManager.
@@ -208,7 +200,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @param serviceUUIDs An array of CBUUIDs the app is interested in.
  @param options A dictionary to customize the scan, see CBCentralManagerScanOptionAllowDuplicatesKey.
  */
-- (void)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options;
+- (BOOL)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options;
 
 /**
  Scans for peripherals that are advertising service(s), invoking a callback block for each peripheral
@@ -225,7 +217,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  * `error` - The cause of a failure, if any.
  
  */
-- (void)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options withBlock:(void (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError *error))discoverCallback;
+- (BOOL)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options withBlock:(void (^)(CBPeripheral *peripheral, NSDictionary *advertisementData, NSNumber *RSSI, NSError *error))discoverCallback;
 
 
 /**
@@ -242,6 +234,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  @param identifiers A list of NSUUID objects.
  @return A list of peripherals.
+
  */
 - (NSArray *)retrievePeripheralsWithIdentifiers:(NSArray *)identifiers;
 
@@ -256,7 +249,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  applications, which will need to be connected locally
  via connectPeripheral:options: before they can be used.
 
- @param serviceUUIDS A list of NSUUID services
+ @param identifiers A list of NSUUID services
  @return A list of CBPeripheral objects.
  */
 - (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDS;

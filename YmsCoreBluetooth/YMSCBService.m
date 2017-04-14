@@ -1,5 +1,5 @@
 // 
-// Copyright 2013-2015 Yummy Melon Software LLC
+// Copyright 2013-2014 Yummy Melon Software LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@
 #import "YMSCBUtils.h"
 #import "YMSCBPeripheral.h"
 #import "YMSCBCharacteristic.h"
+#import "YMSLogManager.h"
 
 @interface YMSCBService ()
 @end
@@ -121,7 +122,7 @@
 - (void)addCharacteristic:(NSString *)cname withAddress:(int)addr {
     
     YMSCBCharacteristic *yc;
-    NSString *addrString = [NSString stringWithFormat:@"%x", addr];
+    NSString *addrString = [NSString stringWithFormat:@"%04x", addr];
     
     
     CBUUID *uuid = [CBUUID UUIDWithString:addrString];
@@ -177,9 +178,9 @@
         }
     }
     
-    __weak YMSCBService *this = self;
+    __weak YMSCBService *weakSelf = self;
     _YMS_PERFORM_ON_MAIN_THREAD(^{
-        this.isEnabled = YES;
+        weakSelf.isEnabled = YES;
     });
     
 }
@@ -198,16 +199,20 @@
     return result;
 }
 
-
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error {
-    if (error) {
-        return;
-    }
-}
-
-
 - (void)discoverCharacteristics:(NSArray *)characteristicUUIDs withBlock:(void (^)(NSDictionary *, NSError *))callback {
     self.discoverCharacteristicsCallback = callback;
+
+    YMSLogManager *localFileManager = [YMSLogManager sharedManager];
+    
+    NSMutableArray *bufArray = [NSMutableArray new];
+    [characteristicUUIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        [bufArray addObject:[NSString stringWithFormat:@"%@", obj]];
+    }];
+    NSString *buf = [bufArray componentsJoinedByString:@","];
+    
+    NSString *message = [NSString stringWithFormat:@"> discoverCharacteristics:%@ forService: %@", buf, self.cbService];
+    
+    [localFileManager log:message peripheral:self.parent.cbPeripheral];
     
     [self.parent.cbPeripheral discoverCharacteristics:characteristicUUIDs
                                            forService:self.cbService];
@@ -222,10 +227,23 @@
         self.discoverCharacteristicsCallback = nil;
          
     } else {
-        NSAssert(NO, @"ERROR: discoveredCharacteristicsCallback is nil; please check for multi-threaded access of handleDiscoveredCharacteristicsResponse");
+        //TILAssert(NO, @"ERROR: discoveredCharacteristicsCallback is nil; please check for multi-threaded access of handleDiscoveredCharacteristicsResponse");
+        NSLog(@"ERROR: discoveredCharacteristicsCallback is nil for %@; please check for multi-threaded access of handleDiscoveredCharacteristicsResponse",
+              [self.parent.cbPeripheral.identifier UUIDString]);
+        
     }
     
 }
 
+- (void)reset {
+    self.cbService = nil;
+    self.isEnabled = NO;
+    self.isOn = NO;
+    
+    for (id key in self.characteristicDict) {
+        YMSCBCharacteristic *ct = self.characteristicDict[key];
+        [ct reset];
+    }
+}
 
 @end

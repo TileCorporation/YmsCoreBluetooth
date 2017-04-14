@@ -1,5 +1,5 @@
 // 
-// Copyright 2013-2015 Yummy Melon Software LLC
+// Copyright 2013-2014 Yummy Melon Software LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,6 +32,10 @@
 typedef void (^YMSCBPeripheralConnectCallbackBlockType)(YMSCBPeripheral *, NSError *);
 typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
 
+@protocol YMSCBPeripheralDelegate <NSObject>
+@optional
+- (void)unconnectedPeripheralDidUpdateRSSI:(YMSCBPeripheral *)peripheral error:(NSError *)error;
+@end
 
 /**
  Base class for defining a Bluetooth LE peripheral.
@@ -60,7 +64,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
  The delegate object will be forwarded CBPeripheralDelegate messages sent by cbPeripheral.
  
  */
-@property (nonatomic, weak) id<CBPeripheralDelegate> delegate;
+@property (atomic, weak) id<CBPeripheralDelegate, YMSCBPeripheralDelegate> delegate;
 
 /**
  Flag to indicate if the watchdog timer has expired and forced a disconnect.
@@ -185,7 +189,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
 - (void)disconnect;
 
 /**
- Invokes CBPeripheral.readRSSI method to retrieve current RSSI value for cbPeripheral.
+ Invokes [CBPeripheral readRSSI] method to retrieve current RSSI value for cbPeripheral.
  */
 - (void)readRSSI;
 
@@ -249,5 +253,17 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
  @return object in serviceDict.
  */
 - (id)objectForKeyedSubscript:(id)key;
+
+- (void)replaceCBPeripheral:(CBPeripheral *)peripheral;
+
+- (void)reset;
+
+/**
+ Synchronize list of CBService objects with their YMSCBService container.
+ 
+ @param services Array of CBService objects, typical CBPeripheral.services
+ */
+- (void)syncServices:(NSArray *)services;
+
 @end
 

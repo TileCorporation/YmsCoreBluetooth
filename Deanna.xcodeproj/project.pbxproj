@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A45E51D91EA0CB77001B12DA /* YMSSafeMutableSet.m in Sources */ = {isa = PBXBuildFile; fileRef = A45E51D81EA0CB77001B12DA /* YMSSafeMutableSet.m */; };
+		A45E51DC1EA0CCF4001B12DA /* YMSLogManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A45E51DB1EA0CCF4001B12DA /* YMSLogManager.m */; };
 		D906E5F116DCAC55001D7932 /* DEACentralManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D906E5F016DCAC55001D7932 /* DEACentralManager.m */; };
 		D907A76B16E0393300EA8D5B /* DEABarometerViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D907A76A16E0393300EA8D5B /* DEABarometerViewCell.m */; };
 		D90C0C3A16DD6297002D3FFD /* DEABaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D90C0C3916DD6297002D3FFD /* DEABaseViewController.m */; };
@@ -100,6 +102,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A45E51D71EA0CB77001B12DA /* YMSSafeMutableSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSSafeMutableSet.h; sourceTree = "<group>"; };
+		A45E51D81EA0CB77001B12DA /* YMSSafeMutableSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSSafeMutableSet.m; sourceTree = "<group>"; };
+		A45E51DA1EA0CCF4001B12DA /* YMSLogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YMSLogManager.h; sourceTree = "<group>"; };
+		A45E51DB1EA0CCF4001B12DA /* YMSLogManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YMSLogManager.m; sourceTree = "<group>"; };
 		D906E5EF16DCAC55001D7932 /* DEACentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEACentralManager.h; sourceTree = "<group>"; };
 		D906E5F016DCAC55001D7932 /* DEACentralManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DEACentralManager.m; sourceTree = "<group>"; };
 		D907A76916E0393300EA8D5B /* DEABarometerViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DEABarometerViewCell.h; sourceTree = "<group>"; };
@@ -258,6 +264,8 @@
 		D933CEC216DDAFA700EDDAD6 /* YmsCoreBluetooth */ = {
 			isa = PBXGroup;
 			children = (
+				A45E51D71EA0CB77001B12DA /* YMSSafeMutableSet.h */,
+				A45E51D81EA0CB77001B12DA /* YMSSafeMutableSet.m */,
 				D933CEC416DDAFA700EDDAD6 /* YMS128.h */,
 				D933CEC316DDAFA700EDDAD6 /* YMS128.c */,
 				D933CEC516DDAFA700EDDAD6 /* YMSCBCentralManager.h */,
@@ -276,6 +284,8 @@
 				D9812903173F3804008EA8D5 /* YMSCBStoredPeripherals.m */,
 				D9268B4117306295009C4284 /* NSMutableArray+fifoQueue.h */,
 				D9268B4217306295009C4284 /* NSMutableArray+fifoQueue.m */,
+				A45E51DA1EA0CCF4001B12DA /* YMSLogManager.h */,
+				A45E51DB1EA0CCF4001B12DA /* YMSLogManager.m */,
 			);
 			path = YmsCoreBluetooth;
 			sourceTree = "<group>";
@@ -664,12 +674,14 @@
 				D933CED016DDAFA700EDDAD6 /* YMSCBCentralManager.m in Sources */,
 				D933CED116DDAFA700EDDAD6 /* YMSCBCharacteristic.m in Sources */,
 				D933CED216DDAFA700EDDAD6 /* YMSCBPeripheral.m in Sources */,
+				A45E51D91EA0CB77001B12DA /* YMSSafeMutableSet.m in Sources */,
 				D933CED316DDAFA700EDDAD6 /* YMSCBService.m in Sources */,
 				D933CED416DDAFA700EDDAD6 /* YMSCBUtils.m in Sources */,
 				D9F412F016DED0030094FEFA /* DEASensorTagViewController.m in Sources */,
 				D9F412F416DED7510094FEFA /* DEATemperatureViewCell.m in Sources */,
 				D9F412F716DEE76C0094FEFA /* DEAAccelerometerViewCell.m in Sources */,
 				D9F412FA16DEF6140094FEFA /* DEAHumidityViewCell.m in Sources */,
+				A45E51DC1EA0CCF4001B12DA /* YMSLogManager.m in Sources */,
 				D9F412FD16DEFA510094FEFA /* DEASimpleKeysViewCell.m in Sources */,
 				D9DE671116E0223E00F1B15C /* DEABarometerService.m in Sources */,
 				D907A76B16E0393300EA8D5B /* DEABarometerViewCell.m in Sources */,

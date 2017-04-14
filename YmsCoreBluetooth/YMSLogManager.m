@@ -9,14 +9,27 @@
 #import "YMSLogManager.h"
 
 @implementation YMSLogManager
-+ (instancetype)sharedLogger {
-    static id sharedLogger = nil;
+
++ (instancetype)sharedManager {
+    static id sharedManager = nil;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedLogger = [[YMSLogManager alloc] init];
+        sharedManager = [YMSLogManager new];
     });
     
-    return sharedLogger;
+    return sharedManager;
+}
+
+- (void)log:(NSString *)message {
+    [self.logger log:message];
+}
+
+-(void)log:(NSString *)message peripheral:(CBPeripheral *)peripheral {
+    [self.logger log:message peripheral:peripheral];
+}
+
+-(void)testLog:(NSString *)message peripheral:(CBPeripheral *)peripheral {
+   [self.logger testLog:message peripheral:peripheral];
 }
 @end

@@ -131,13 +131,14 @@ float calcGyro(int16_t v, float c, int16_t d) {
         NSLog(@"Turned On: %@", this.name);
     }];
     
-    [dataCt setNotifyValue:YES withBlock:^(NSError *error) {
+    [dataCt setNotifyValue:YES withStateChangeBlock:^(NSError *error) {
         if (error) {
             return;
         }
         NSLog(@"Notification for data of %@ turned on", this.name);
+    } withNotificationBlock:^(NSData *data, NSError *error) {
+        
     }];
-    
     
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         this.isOn = YES;

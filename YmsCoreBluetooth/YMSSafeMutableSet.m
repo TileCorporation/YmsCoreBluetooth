@@ -1,20 +1,20 @@
-#import "YmsSafeMutableSet.h"
+#import "YMSSafeMutableSet.h"
 
-@interface YmsSafeMutableSet ()
+@interface YMSSafeMutableSet ()
 
 @property (nonatomic, strong) NSMutableSet *set;
 @property (nonatomic, strong, readonly) dispatch_queue_t queue;
 
 @end
 
-@implementation YmsSafeMutableSet
+@implementation YMSSafeMutableSet
 
 - (instancetype)init {
     
     self = [super init];
     if (self) {
         _set = [NSMutableSet new];
-        _queue = dispatch_queue_create("YmsSafeMutableSet queue", DISPATCH_QUEUE_CONCURRENT);
+        _queue = dispatch_queue_create("YMSSafeMutableSet queue", DISPATCH_QUEUE_CONCURRENT);
     }
     return self;
 }
@@ -99,7 +99,7 @@
     });
 }
 
-- (void)intersectSet:(YmsSafeMutableSet *)otherSet {
+- (void)intersectSet:(YMSSafeMutableSet *)otherSet {
     
     __weak typeof(self) weakSelf = self;
     dispatch_barrier_async(self.queue, ^{
@@ -108,7 +108,7 @@
     });
 }
 
-- (void)minusSet:(YmsSafeMutableSet *)otherSet {
+- (void)minusSet:(YMSSafeMutableSet *)otherSet {
     
     __weak typeof(self) weakSelf = self;
     dispatch_barrier_async(self.queue, ^{
