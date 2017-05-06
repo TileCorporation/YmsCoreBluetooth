@@ -9,6 +9,7 @@ Pod::Spec.new do |s|
   s.platform     = :ios, :osx
   s.ios.deployment_target = '7.0'
   s.osx.deployment_target = '10.9'
+  s.watchos.deployment_target = '1.0'
   s.source       = { :git => "https://github.com/kickingvegas/YmsCoreBluetooth.git", :tag => "1.10.0" }
   s.source_files  = 'YmsCoreBluetooth', 'YmsCoreBluetooth/**/*.{h,m,c}'
   s.public_header_files = 'YmsCoreBluetooth/**/*.h'
