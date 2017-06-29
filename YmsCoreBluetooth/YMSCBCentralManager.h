@@ -249,7 +249,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  applications, which will need to be connected locally
  via connectPeripheral:options: before they can be used.
 
- @param identifiers A list of NSUUID services
+ @param serviceUUIDS A list of NSUUID services
  @return A list of CBPeripheral objects.
  */
 - (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDS;
