@@ -29,7 +29,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 @interface YMSCBCentralManager ()
 
-@property (nonatomic, strong) NSMutableDictionary<NSString *, YMSCBPeripheral *> *ymsPeripherals;
+@property (nonatomic, strong) NSMutableDictionary<NSString *, id<YMSCBPeripheralInterface>> *ymsPeripherals;
 
 @end
 
@@ -97,7 +97,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     return result;
 }
 
-- (void)addPeripheral:(YMSCBPeripheral *)yp {
+- (void)addPeripheral:(id<YMSCBPeripheralInterface>)yp {
     __weak typeof(self) this = self;
     dispatch_async(self.ymsPeripheralsQueue, ^{
         __strong typeof(this) strongThis = this;
@@ -105,7 +105,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     });
 }
 
-- (void)removePeripheral:(YMSCBPeripheral *)yp {
+- (void)removePeripheral:(id<YMSCBPeripheralInterface>)yp {
     __weak typeof(self) this = self;
     dispatch_async(self.ymsPeripheralsQueue, ^{
         __strong typeof(this) strongThis = this;
@@ -113,15 +113,15 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     });
 }
 
-- (nullable YMSCBPeripheral *)findPeripheral:(YMSCBPeripheral *)yPeripheral {
-    YMSCBPeripheral *result = nil;
+- (nullable id<YMSCBPeripheralInterface>)findPeripheral:(id<YMSCBPeripheralInterface>)yPeripheral {
+    id<YMSCBPeripheralInterface> result = nil;
     NSString *key = yPeripheral.identifier.UUIDString;
     result = self.ymsPeripherals[key];
     return result;
 }
 
-- (nullable YMSCBPeripheral *)findPeripheralWithIdentifier:(NSUUID *)identifier {
-    YMSCBPeripheral *result = nil;
+- (nullable id<YMSCBPeripheralInterface>)findPeripheralWithIdentifier:(NSUUID *)identifier {
+    id<YMSCBPeripheralInterface> result = nil;
     NSString *key = identifier.UUIDString;
     result = self.ymsPeripherals[key];
     return result;
@@ -129,7 +129,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 
-- (nullable YMSCBPeripheral *)ymsPeripheralWithInterface:(id<YMSCBPeripheralInterface>)peripheralInterface {
+- (nullable YMSCBPeripheral *)ymsPeripheralWithInterface:(id<YMSCBPeripheralInterface>)peripheralInterface advertisementData:(nullable NSDictionary<NSString *,id> *)advertisementData {
     /*
      * THIS METHOD IS TO BE OVERRIDDEN
      */
@@ -161,14 +161,15 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     NSString *message = nil;
     if (self.centralInterface.state == CBCentralManagerStatePoweredOn) {
         message = [NSString stringWithFormat:@"BLE OPERATION: START SCAN serviceUUIDs: %@ options: %@", serviceUUIDs, options];
-        [self.logger logInfo:message object:self];
+        [self.logger logInfo:message object:self.centralInterface];
         
         [self.centralInterface scanForPeripheralsWithServices:serviceUUIDs options:options];
         self.isScanning = YES;
         result = YES;
     } else {
         message = [NSString stringWithFormat:@"Unable to start scan: CBCentralManagerState is not ON"];
-        [self.logger logError:message object:self];
+        // TODO: define error object
+        [self.logger logError:message object:self error:nil];
     }
     
     return result;
@@ -215,7 +216,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     for (id<YMSCBPeripheralInterface> peripheralInterface in peripheralInterfaces) {
         YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
         if (!yPeripheral) {
-            yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface];
+            yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface advertisementData:nil];
             if (yPeripheral) {
                 [self addPeripheral:yPeripheral];
             }
@@ -238,9 +239,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     NSMutableArray *tempArray = [NSMutableArray new];
     
     for (id<YMSCBPeripheralInterface> peripheralInterface in peripheralInterfaces) {
-        YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+        YMSCBPeripheral *yPeripheral = (YMSCBPeripheral *)[self findPeripheralWithIdentifier:peripheralInterface.identifier];
         if (!yPeripheral) {
-            yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface];
+            yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface advertisementData:nil];
             if (yPeripheral) {
                 [self addPeripheral:yPeripheral];
             }
@@ -344,14 +345,15 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
         }
         
         if (shouldProcess && self.discoveredCallback) {
-            YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
+            YMSCBPeripheral *yPeripheral = (YMSCBPeripheral *)[self findPeripheralWithIdentifier:peripheralInterface.identifier];
             if (!yPeripheral) {
-                yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface];
+                yPeripheral = [self ymsPeripheralWithInterface:peripheralInterface advertisementData:advertisementData];
                 if (yPeripheral) {
                     [self addPeripheral:yPeripheral];
                 }
             }
             
+            [yPeripheral didDiscoverPeripheralWithAdvertisementData:advertisementData RSSI:RSSI];
             self.discoveredCallback(yPeripheral, advertisementData, RSSI);
             
             if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)]) {
@@ -363,11 +365,10 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface {
-    NSString *message = [NSString stringWithFormat:@"< didConnectPeripheral: %@", peripheralInterface];
-    [self.logger logInfo:message object:self.centralInterface];
-    
-    YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
-    [yPeripheral handleConnectionResponse:nil];
+
+    [self.logger logInfo:@"didConnectPeripheral" phase:YMSCBLoggerPhaseTypeResponse object:self.centralInterface];
+    YMSCBPeripheral *yPeripheral = (YMSCBPeripheral *)[self findPeripheralWithIdentifier:peripheralInterface.identifier];
+    [yPeripheral didConnectPeripheral];
     
     if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didConnectPeripheral:)]) {
         [self.delegate centralManager:self didConnectPeripheral:yPeripheral];
@@ -376,11 +377,16 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didDisconnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didDisconnectPeripheral: %@ error: %@", peripheralInterface, error];
-    [self.logger logInfo:message object:self.centralInterface];
     
-    YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
-    [yPeripheral reset];
+    NSString *message = @"didDisconnectPeripheral";
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse object:self.centralInterface error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse object:self.centralInterface];
+    }
+    
+    YMSCBPeripheral *yPeripheral = (YMSCBPeripheral *)[self findPeripheralWithIdentifier:peripheralInterface.identifier];
+    [yPeripheral didDisconnectPeripheral:error];
     
     if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didDisconnectPeripheral:error:)]) {
         [self.delegate centralManager:self didDisconnectPeripheral:yPeripheral error:error];
@@ -389,11 +395,11 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface didFailToConnectPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didFailToConnectPeripheral: %@ error: %@", peripheralInterface, error];
-    [self.logger logInfo:message object:self.centralInterface];
+    NSString *message = @"didFailToConnectPeripheral";
+    [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse object:self.centralInterface error:error];
     
-    YMSCBPeripheral *yPeripheral = [self findPeripheralWithIdentifier:peripheralInterface.identifier];
-    [yPeripheral reset];
+    YMSCBPeripheral *yPeripheral = (YMSCBPeripheral *)[self findPeripheralWithIdentifier:peripheralInterface.identifier];
+    [yPeripheral didFailToConnectPeripheral:error];
     
     if (yPeripheral && [self.delegate respondsToSelector:@selector(centralManager:didFailToConnectPeripheral:error:)]) {
         [self.delegate centralManager:self didFailToConnectPeripheral:yPeripheral error:error];
@@ -403,9 +409,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (void)centralManager:(id<YMSCBCentralManagerInterface>)centralInterface willRestoreState:(NSDictionary<NSString *,id> *)dict {
-    NSString *message = [NSString stringWithFormat:@"< willRestoreState: %@", dict];
-    [self.logger logInfo:message object:self.centralInterface];
-    
+    NSString *message = @"willRestoreState";
+    [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse objects:@[self.centralInterface, dict]];
+
     if ([self.delegate respondsToSelector:@selector(centralManager:willRestoreState:)]) {
         [self.delegate centralManager:self willRestoreState:dict];
     }
@@ -413,9 +419,27 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 #pragma mark - YMSCBLogger Protocol Methods
 
-- (void)logError:(NSString *)message object:(id)object {
+- (void)logError:(NSString *)message object:(id)object error:(NSError *)error {
     if (self.logger) {
-        [self.logger logError:message object:object];
+        [self.logger logError:message object:object error:error];
+    }
+}
+
+- (void)logError:(NSString *)message objects:(NSArray<id> *)objects error:(NSError *)error {
+    if (self.logger) {
+        [self.logger logError:message objects:objects error:error];
+    }
+}
+
+- (void)logError:(NSString *)message phase:(uint8_t)phase object:(id)object error:(NSError *)error {
+    if (self.logger) {
+        [self.logger logError:message phase:phase object:object error:error];
+    }
+}
+
+- (void)logError:(NSString *)message phase:(uint8_t)phase objects:(NSArray<id> *)objects error:(NSError *)error {
+    if (self.logger) {
+        [self.logger logError:message phase:phase objects:objects error:error];
     }
 }
 
@@ -425,9 +449,33 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     }
 }
 
+- (void)logWarn:(NSString *)message objects:(NSArray<id> *)objects {
+    if (self.logger) {
+        [self.logger logWarn:message objects:objects];
+    }
+}
+
 - (void)logInfo:(NSString *)message object:(id)object {
     if (self.logger) {
         [self.logger logInfo:message object:object];
+    }
+}
+
+- (void)logInfo:(NSString *)message objects:(NSArray<id> *)objects {
+    if (self.logger) {
+        [self.logger logInfo:message objects:objects];
+    }
+}
+
+- (void)logInfo:(NSString *)message phase:(uint8_t)phase object:(id)object {
+    if (self.logger) {
+        [self.logger logInfo:message phase:phase object:object];
+    }
+}
+
+- (void)logInfo:(NSString *)message phase:(uint8_t)phase objects:(NSArray<id> *)objects {
+    if (self.logger) {
+        [self.logger logInfo:message phase:phase objects:objects];
     }
 }
 
@@ -437,9 +485,21 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     }
 }
 
+- (void)logDebug:(NSString *)message objects:(NSArray<id> *)objects {
+    if (self.logger) {
+        [self.logger logDebug:message objects:objects];
+    }
+}
+
 - (void)logVerbose:(NSString *)message object:(id)object {
     if (self.logger) {
         [self.logger logVerbose:message object:object];
+    }
+}
+
+- (void)logVerbose:(NSString *)message objects:(NSArray<id> *)objects {
+    if (self.logger) {
+        [self.logger logVerbose:message objects:objects];
     }
 }
 

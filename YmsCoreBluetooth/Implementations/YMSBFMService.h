@@ -7,6 +7,7 @@
 //
 
 @import Foundation;
+@import CoreBluetooth;
 #import "YMSCBService.h"
 @class YMSBFMConfiguration;
 @class YMSBFMStimulusGenerator;

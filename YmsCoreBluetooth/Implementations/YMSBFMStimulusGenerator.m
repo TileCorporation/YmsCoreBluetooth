@@ -383,11 +383,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)cancelPeripheralConnection:(id<YMSCBPeripheralInterface>)peripheralInterface {
     YMSBFMPeripheral *peripheral = (YMSBFMPeripheral *)peripheralInterface;
-#if TARGET_OS_IOS
     [peripheral setConnectionState:CBPeripheralStateDisconnecting];
-#else
-    [peripheral setConnectionState:CBPeripheralStateDisconnected];
-#endif
     
     NSError *error = nil;
     [self centralManager:_central didDisconnectPeripheral:peripheralInterface error:error];

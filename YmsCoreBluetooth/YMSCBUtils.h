@@ -29,6 +29,12 @@ typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
     kYMSCBErrorCodeNilDescriptor
 };
 
+typedef NS_ENUM(uint8_t, YMSCBLoggerPhaseType) {
+    YMSCBLoggerPhaseTypeNone = 0,
+    YMSCBLoggerPhaseTypeRequest = 1,
+    YMSCBLoggerPhaseTypeResponse = 2
+};
+
 #ifndef _YMS_PERFORM_ON_MAIN_THREAD
 #define _YMS_PERFORM_ON_MAIN_THREAD(block) dispatch_async(dispatch_get_main_queue(), block);
 #endif
@@ -36,11 +42,24 @@ typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
 
 @protocol YMSCBLogging
 
-- (void)logError:(NSString *)message object:(id)object;
+- (void)logError:(NSString *)message object:(id)object error:(NSError *)error;
+- (void)logError:(NSString *)message objects:(NSArray<id> *)objects error:(NSError *)error;
+- (void)logError:(NSString *)message phase:(uint8_t)phase object:(id)object error:(NSError *)error;
+- (void)logError:(NSString *)message phase:(uint8_t)phase objects:(NSArray<id> *)objects error:(NSError *)error;
+
 - (void)logWarn:(NSString *)message object:(id)object;
+- (void)logWarn:(NSString *)message objects:(NSArray<id> *)objects;
+
 - (void)logInfo:(NSString *)message object:(id)object;
+- (void)logInfo:(NSString *)message objects:(NSArray<id> *)objects;
+- (void)logInfo:(NSString *)message phase:(uint8_t)phase object:(id)object;
+- (void)logInfo:(NSString *)message phase:(uint8_t)phase objects:(NSArray<id> *)objects;
+
 - (void)logDebug:(NSString *)message object:(id)object;
+- (void)logDebug:(NSString *)message objects:(NSArray<id> *)objects;
+
 - (void)logVerbose:(NSString *)message object:(id)object;
+- (void)logVerbose:(NSString *)message objects:(NSArray<id> *)objects;
 
 @end
 

@@ -7,6 +7,7 @@
 //
 
 @import Foundation;
+@import CoreBluetooth;
 #import "YMSCBCharacteristic.h"
 @class YMSBFMSyntheticValue;
 @class YMSBFMStimulusGenerator;

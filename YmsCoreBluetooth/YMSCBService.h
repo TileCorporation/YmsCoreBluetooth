@@ -180,7 +180,7 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 /**
  Synchronize found CBCharacteristics with corresponding YMSCBCharacteristic containers.
  */
-- (void)syncCharacteristics;
+- (void)syncWithCharacteristics:(NSArray<id<YMSCBCharacteristicInterface>> *)characteristics;
 
 /**
  Method to handle response update for a prior read or write request to a characteristic.  
@@ -222,9 +222,6 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 - (nullable YMSCBCharacteristic *)objectForKeyedSubscript:(id)key;
 
 - (nullable YMSCBCharacteristic *)characteristicForUUID:(CBUUID *)uuid;
-
-
-//- (void)defaultDiscoveredCharacteristicsHandler:(NSDictionary *)chDict withError:(NSError *)error;
 
 - (void)reset;
 
