@@ -157,7 +157,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
  
  This array holds all YMSCBPeripheral instances discovered or retrieved by manager.
  */
-@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, YMSCBPeripheral *> *ymsPeripherals;
+@property (nonatomic, strong, readonly) NSMutableDictionary<NSString *, id<YMSCBPeripheralInterface>> *ymsPeripherals;
 
 /// Count of ymsPeripherals.
 @property (atomic, readonly, assign) NSUInteger count;
@@ -214,9 +214,10 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
  Factory method for creating new instances that inherit from YMSCBPeripheral
 
  @param peripheralInterface object which conforms to YMSCBPeripheralInterface
+ @param advertisementData advertisement data if available
  @return instance of YMSCBPeripheral
  */
-- (nullable YMSCBPeripheral *)ymsPeripheralWithInterface:(id<YMSCBPeripheralInterface>)peripheralInterface;
+- (nullable YMSCBPeripheral *)ymsPeripheralWithInterface:(id<YMSCBPeripheralInterface>)peripheralInterface advertisementData:(nullable NSDictionary<NSString *,id> *)advertisementData;
 
 - (void)addPeripheral:(YMSCBPeripheral *)yPeripheral;
 
@@ -227,9 +228,9 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(YMSCBPeripheral *yPeripheral);
  @param yPeripheral peripheral corresponding with YMSCBPeripheral
  @return instance of YMSCBPeripheral
  */
-- (nullable YMSCBPeripheral *)findPeripheral:(nonnull YMSCBPeripheral *)yPeripheral;
+- (nullable id<YMSCBPeripheralInterface>)findPeripheral:(nonnull id<YMSCBPeripheralInterface>)yPeripheral;
 
-- (nullable YMSCBPeripheral *)findPeripheralWithIdentifier:(NSUUID *)identifier;
+- (nullable id<YMSCBPeripheralInterface>)findPeripheralWithIdentifier:(NSUUID *)identifier;
 
 #pragma mark - Scan Methods
 /** @name Scanning for Peripherals */

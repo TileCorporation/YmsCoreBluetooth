@@ -208,13 +208,13 @@
 }
 
 
-- (void)syncCharacteristics {
+- (void)syncWithCharacteristics:(NSArray<id<YMSCBCharacteristicInterface>> *)characteristics {
     // TODO: Does this need to be @synchronized(self)?
     
     // User defined characteristics
     NSArray<NSString *> *expectedCharacteristicUUIDs = [self.characteristicsByUUID allKeys];
     // Actual characteristics on the CBService
-    NSArray<NSString *> *actualCharacteristicUUIDs = [[self.serviceInterface characteristics] valueForKeyPath:@"UUID.UUIDString"];
+    NSArray<NSString *> *actualCharacteristicUUIDs = [characteristics valueForKeyPath:@"UUID.UUIDString"];
     
     NSSet<NSString *> *expectedUUIDs = [NSMutableSet setWithArray:expectedCharacteristicUUIDs];
     NSSet<NSString *> *actualUUIDs = [NSMutableSet setWithArray:actualCharacteristicUUIDs];
@@ -246,7 +246,7 @@
     }
     
     // Set the characteristicInterface
-    NSArray<id<YMSCBCharacteristicInterface>> *ctInterfaces = [self.serviceInterface characteristics];
+    NSArray<id<YMSCBCharacteristicInterface>> *ctInterfaces = characteristics;
     for (id<YMSCBCharacteristicInterface> ctInterface in ctInterfaces) {
         YMSCBCharacteristic *characteristic = self.characteristicsByUUID[ctInterface.UUID.UUIDString];
         characteristic.characteristicInterface = ctInterface;
@@ -269,15 +269,15 @@
 - (void)discoverCharacteristics:(NSArray *)characteristicUUIDs withBlock:(void (^)(NSDictionary *, NSError *))callback {
     self.discoverCharacteristicsCallback = callback;
     
-    NSMutableArray *bufArray = [NSMutableArray new];
-    [characteristicUUIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        [bufArray addObject:[NSString stringWithFormat:@"%@", obj]];
-    }];
-    NSString *buf = [bufArray componentsJoinedByString:@","];
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:self.parent.peripheralInterface];
+    [objects addObject:_serviceInterface];
+    if (characteristicUUIDs) {
+        [objects addObjectsFromArray:characteristicUUIDs];
+    }
     
-    NSString *message = [NSString stringWithFormat:@"> discoverCharacteristics:%@ forService: %@", buf, self.serviceInterface];
-    [self.logger logInfo:message object:self.parent.peripheralInterface];
-    
+    NSString *message = @"discoverCharacteristics:forService:";
+    [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeRequest objects:objects];
     
     [self.parent.peripheralInterface discoverCharacteristics:characteristicUUIDs
                                                   forService:self.serviceInterface];

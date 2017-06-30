@@ -117,7 +117,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  
  @param error Error object, if failed.
  */
-- (void)executeNotificationStateCallback:(NSError *)error;
+- (void)executeNotificationStateCallback:(nullable NSError *)error;
 
 /**
  Handler method to process first callback in readCallbacks.
@@ -125,7 +125,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  @param data Value returned from read request.
  @param error Error object, if failed.
  */
-- (void)executeReadCallback:(NSData *)data error:(NSError *)error;
+- (void)executeReadCallback:(NSData *)data error:(nullable NSError *)error;
 
 /**
  Handler method to process first callback in writeCallbacks.
@@ -221,12 +221,13 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
  @param ydescriptors Array of YMSCBDescriptor instances.
  @param error Error object, if failure.
  */
-- (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(NSError *)error;
+- (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(nullable NSError *)error;
 
 
 - (void)syncDescriptors;
 
 - (void)reset;
 
-NS_ASSUME_NONNULL_END
 @end
+
+NS_ASSUME_NONNULL_END

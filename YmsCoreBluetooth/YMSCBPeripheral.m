@@ -170,7 +170,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (btService) {
             [tempArray addObject:btService.UUID];
         } else {
-            NSString *message = [NSString stringWithFormat:@"WARNING: service key %@ not found in servicesSubset", key];
+            NSString *message = [NSString stringWithFormat:@"service key %@ not found in servicesSubset", key];
             [self.logger logWarn:message object:_peripheralInterface];
         }
     }
@@ -267,8 +267,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(void (^)(YMSCBPeripheral * _Nullable yp, NSError * _Nullable error))connectCallback {
     if (!self.connectCallback) {
-        NSString *message = [NSString stringWithFormat:@"> connectPeripheral: %@", _peripheralInterface];
-        [self.logger logInfo:message object:self.central];
+        NSString *message = @"connectPeripheral";
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeRequest object:_peripheralInterface];
+        
         self.connectCallback = connectCallback;
         [self.central connectPeripheral:self options:options];
     } else {
@@ -290,31 +291,38 @@ NS_ASSUME_NONNULL_BEGIN
     if (self.connectCallback) {
         self.connectCallback = nil;
     }
-    
-    NSString *message = [NSString stringWithFormat:@"> cancelPeripheralConnection: %@", _peripheralInterface];
-
-    [self.logger logInfo:message object:self];
+    NSString *message = @"cancelPeripheralConnection";
+    [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeRequest object:_peripheralInterface];
     [self.central cancelPeripheralConnection:self];
 }
 
-
-- (void)handleConnectionResponse:(nullable NSError *)error {
+- (void)didConnectPeripheral {
     [self invalidateWatchdog];
     
     if (self.connectCallback) {
-        self.connectCallback(self, error);
+        self.connectCallback(self, nil);
         self.connectCallback = nil;
     }
 }
 
-
-- (void)readRSSI {
-    NSString *message = [NSString stringWithFormat:@"> readRSSI"];
-    [self.logger logInfo:message object:_peripheralInterface];
+- (void)didDisconnectPeripheral:(nullable NSError *)error {
+    [self reset];
     
-    [_peripheralInterface readRSSI];
 }
 
+- (void)didFailToConnectPeripheral:(nullable NSError *)error {
+    [self reset];
+}
+
+- (void)didDiscoverPeripheralWithAdvertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI {
+    // !!!: `advertisementData` and RSSI are not persisted at this level. It is up to the subclass implementation to determine whether to persist this information.
+}
+
+- (void)readRSSI {
+    NSString *message = @"readRSSI";
+    [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeRequest object:_peripheralInterface];
+    [_peripheralInterface readRSSI];
+}
 
 - (void)reset {
     self.connectCallback = nil;
@@ -350,26 +358,39 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)discoverServices:(nullable NSArray<CBUUID *> *)serviceUUIDs withBlock:(nullable void (^)(NSArray * _Nullable services, NSError * _Nullable error))callback {
     self.discoverServicesCallback = callback;
-    
-    
-    NSMutableArray *bufArray = [NSMutableArray new];
-    [serviceUUIDs enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        [bufArray addObject:[NSString stringWithFormat:@"%@", obj]];
-    }];
-    
-    NSString *buf = [bufArray componentsJoinedByString:@","];
-    NSString *message = [NSString stringWithFormat:@"> discoverServices: [%@]", buf];
-    [self.logger logInfo:message object:_peripheralInterface];
+
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:_peripheralInterface];
+    [objects addObjectsFromArray:serviceUUIDs];
+    NSString *message = @"discoverServices";
+    [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeRequest objects:objects];
     
     [_peripheralInterface discoverServices:serviceUUIDs];
 }
 
+- (void)syncServices:(NSArray<id<YMSCBServiceInterface>> *)services {
+    for (id<YMSCBServiceInterface> cbService in services) {
+        YMSCBService *service = [self serviceForUUID:cbService.UUID];
+        if (service) {
+            service.serviceInterface = cbService;
+            [service syncWithCharacteristics:cbService.characteristics];
+        }
+    }
+}
 
 #pragma mark - YMSCBPeripheralInterfaceDelegate Methods
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverServices:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didDiscoverServices:%@", error.description];
-    [self.logger logInfo:message object:_peripheralInterface];
+    NSString *message = @"didDiscoverServices";
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:_peripheralInterface];
+    [objects addObjectsFromArray:peripheralInterface.services];
+
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse objects:objects error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse objects:objects];
+    }
     
     if (self.discoverServicesCallback) {
         // User defined services
@@ -424,12 +445,21 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverCharacteristicsForService:(id<YMSCBServiceInterface>)serviceInterface error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didDiscoverCharacteristicsForService: %@ error:%@", serviceInterface, error.description];
-    [self.logger logInfo:message object:_peripheralInterface];
+    NSString *message = @"didDiscoverCharacteristicsForService";
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:_peripheralInterface];
+    [objects addObject:serviceInterface];
+    [objects addObjectsFromArray:serviceInterface.characteristics];
+
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse objects:objects error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse objects:objects];
+    }
 
     YMSCBService *yService = [self serviceForUUID:serviceInterface.UUID];
 
-    [yService syncCharacteristics];
+    [yService syncWithCharacteristics:[serviceInterface characteristics]];
     [yService handleDiscoveredCharacteristicsResponse:yService.characteristicDict withError:error];
     
     if ([self.delegate respondsToSelector:@selector(peripheral:didDiscoverCharacteristicsForService:error:)]) {
@@ -451,6 +481,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didDiscoverDescriptorsForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    NSString *message = @"didDiscoverDescriptorsForCharacteristic";
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:_peripheralInterface];
+    [objects addObject:characteristicInterface];
+    [objects addObjectsFromArray:characteristicInterface.descriptors];
+    
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse objects:objects error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse objects:objects];
+    }
+    
     YMSCBCharacteristic *yCharacteristic = [self characteristicForInterface:characteristicInterface];
 
     [yCharacteristic syncDescriptors];
@@ -464,19 +506,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristicInterface, error];
-    [self.logger logInfo:message object:_peripheralInterface];
+    NSString *message = @"didUpdateValueForCharacteristic";
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:_peripheralInterface];
+    [objects addObject:characteristicInterface];
     
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse objects:objects error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse objects:objects];
+    }
+
     YMSCBCharacteristic *ct = [self characteristicForInterface:characteristicInterface];
-    
     NSData *value = [characteristicInterface.value copy];
 
     if (ct.readCallbacks && (ct.readCallbacks.count > 0)) {
         [ct executeReadCallback:value error:error];
         
         if (characteristicInterface.isNotifying) {
-            message = [NSString stringWithFormat:@"Read callback called for notifying characteristic %@", characteristicInterface];
-            [self.logger logWarn:message object:_peripheralInterface];
+            message = @"Read callback called for notifying characteristic";
+            [self.logger logWarn:message objects:objects];
              
         }
     } else {
@@ -484,8 +533,8 @@ NS_ASSUME_NONNULL_BEGIN
             if (ct.notificationCallback) {
                 ct.notificationCallback(value, error);
             } else {
-                message = [NSString stringWithFormat:@"No notification callback defined for %@", characteristicInterface];
-                [self.logger logWarn:message object:_peripheralInterface];
+                message = @"No notification callback defined";
+                [self.logger logWarn:message objects:objects];
             }
         }
     }
@@ -517,9 +566,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didUpdateNotificationStateForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    NSString *message = @"didUpdateNotificationStateForCharacteristic";
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:_peripheralInterface];
+    [objects addObject:characteristicInterface];
     
-    NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristicInterface, error.description];
-    [self.logger logInfo:message object:_peripheralInterface];
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse objects:objects error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse objects:objects];
+    }
     
     YMSCBCharacteristic *ct = [self characteristicForInterface:characteristicInterface];
     
@@ -536,10 +592,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didWriteValueForCharacteristic:(id<YMSCBCharacteristicInterface>)characteristicInterface error:(nullable NSError *)error {
+    NSString *message = @"didWriteValueForCharacteristic";
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:_peripheralInterface];
+    [objects addObject:characteristicInterface];
     
-    NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristicInterface, error.description];
-    [self.logger logInfo:message object:_peripheralInterface];
-    
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse objects:objects error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse objects:objects];
+    }
+
     YMSCBCharacteristic *ct = [self characteristicForInterface:characteristicInterface];
     
     if (ct.writeCallbacks && (ct.writeCallbacks.count > 0)) {
@@ -580,8 +643,17 @@ NS_ASSUME_NONNULL_BEGIN
 #if TARGET_OS_IPHONE
 
 - (void)peripheral:(id<YMSCBPeripheralInterface>)peripheralInterface didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< peripheral: %@ didReadRSSI: %@ error:%@", _peripheralInterface, RSSI, error];
-    [self.logger logInfo:message object:nil];
+    NSString *message = @"didReadRSSI";
+    NSMutableArray<id> *objects = [NSMutableArray new];
+    [objects addObject:_peripheralInterface];
+    [objects addObject:RSSI];
+    
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse objects:objects error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse objects:objects];
+    }
+
     
     if ([self.delegate respondsToSelector:@selector(peripheral:didReadRSSI:error:)]) {
         [self.delegate peripheral:self didReadRSSI:RSSI error:error];
@@ -591,9 +663,14 @@ NS_ASSUME_NONNULL_BEGIN
 #else
 
 - (void)peripheralDidUpdateRSSI:(id<YMSCBPeripheralInterface>)peripheralInterface error:(nullable NSError *)error {
-    NSString *message = [NSString stringWithFormat:@"< peripheralDidUpdateRSSI: %@ %@ error:%@", peripheralInterface, peripheralInterface.RSSI, error];
-    [self.logger logInfo:message object:nil];
-
+    NSString *message = @"peripheralDidUpdateRSSI";
+    
+    if (error) {
+        [self.logger logError:message phase:YMSCBLoggerPhaseTypeResponse object:peripheralInterface error:error];
+    } else {
+        [self.logger logInfo:message phase:YMSCBLoggerPhaseTypeResponse object:peripheralInterface];
+    }
+    
     if ([self.delegate respondsToSelector:@selector(peripheralDidUpdateRSSI:error:)]) {
         [self.delegate peripheralDidUpdateRSSI:self error:error];
     }

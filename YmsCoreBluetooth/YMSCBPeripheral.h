@@ -196,8 +196,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  */
 @property (nonatomic, weak, nullable) YMSCBCentralManager *central;
 
-
-
 /// 128 bit address base
 @property (nonatomic, assign) yms_u128_t base;
 
@@ -260,14 +258,14 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  reference a YMSCBService.
  
 
- @param yPeripheral Pointer to object which conforms to YMSCBPeripheralInterface
+ @param peripheralInterface Pointer to object which conforms to YMSCBPeripheralInterface
  @param owner Pointer to YMSCBCentralManager
  @param hi Top 64 bits of 128-bit base address value
  @param lo Bottom 64 bits of 128-bit base address value
  @return instance of this class
 
  */
-- (nullable instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>) yPeripheral
+- (nullable instancetype)initWithPeripheral:(id<YMSCBPeripheralInterface>)peripheralInterface
                                     central:(YMSCBCentralManager *)owner
                                      baseHi:(int64_t)hi
                                      baseLo:(int64_t)lo;
@@ -328,10 +326,14 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 - (void)watchdogDisconnect;
 
 /**
- Establishes connection to peripheral with callback block.
+ Connect to peripheral with callback block.
+ 
+ If the connectCallback returns an error, then a connection request has already been submitted to this peripheral.
  
  @param options A dictionary to customize the behavior of the connection. See "Peripheral Connection Options" for CBCentralManager.
  @param connectCallback Callback block to handle peripheral connection.
+ 
+
  */
 - (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(void (^)(YMSCBPeripheral * _Nullable yp, NSError * _Nullable error))connectCallback;
 
@@ -341,12 +343,27 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 - (void)cancelConnection;
 
 /**
- Executes connect callback.
- 
- @param error Error object.
+ Received didConnectPeripheral message from centralInterface
  */
-- (void)handleConnectionResponse:(nullable NSError *)error;
+- (void)didConnectPeripheral __attribute__((objc_requires_super));
 
+/**
+ Received didDisconnectPeripheral message from centralInterface
+ */
+- (void)didDisconnectPeripheral:(nullable NSError *)error __attribute__((objc_requires_super));
+
+/**
+ Received didFailToConnectPeripheral message from centralInterface
+ */
+- (void)didFailToConnectPeripheral:(nullable NSError *)error __attribute__((objc_requires_super));
+
+/**
+ Received didDiscoverPeripheral message from centralInterface
+
+ @param advertisementData BLE advertisement data
+ @param RSSI measured advertising RSSI
+ */
+- (void)didDiscoverPeripheralWithAdvertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI;
 
 /**
  Discover services using block.
@@ -355,6 +372,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
  */
 - (void)discoverServices:(nullable NSArray *)serviceUUIDs withBlock:(nullable void (^)(NSArray * _Nullable services, NSError * _Nullable error))callback;
 
+- (void)syncServices:(NSArray<id<YMSCBServiceInterface>> *)services;
 
 /**
  Add dictionary style subscripting to YMSCBPeripheral instance to access objects in serviceDict with key.
@@ -370,7 +388,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _N
 
 //- (void)replaceCBPeripheral:(CBPeripheral *)peripheral;
 
-- (void)reset;
+- (void)reset __attribute__((objc_requires_super));
 
 @end
 
