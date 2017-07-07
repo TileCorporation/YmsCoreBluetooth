@@ -102,7 +102,7 @@ typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
 
  
  @param base base address
- @param offset offset value
+ @param addrOffset offset value
  @return CBUUID
  */
 + (CBUUID *)createCBUUID:(yms_u128_t *)base withIntBLEOffset:(int)addrOffset;
