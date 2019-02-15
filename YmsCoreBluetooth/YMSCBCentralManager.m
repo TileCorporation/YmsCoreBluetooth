@@ -40,6 +40,14 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 #pragma mark - Constructors
 
+- (instancetype)init {
+    self = [super init];
+    
+    _ymsPeripherals = [NSMutableDictionary new];
+    
+    return self;
+}
+
 - (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue delegate:(id<CBCentralManagerDelegate>) delegate; {
     self = [super init];
     
