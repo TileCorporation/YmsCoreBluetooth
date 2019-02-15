@@ -26,8 +26,8 @@
 
 NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
-@interface YMSCBCentralManager () {
-}
+@interface YMSCBCentralManager ()
+@property (nonatomic, strong) NSMutableDictionary *ymsPeripherals;
 @end
 
 
@@ -44,7 +44,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     self = [super init];
     
     if (self) {
-        _ymsPeripherals = [YMSSafeMutableSet new];
+        _ymsPeripherals = [NSMutableDictionary new];
         _delegate = delegate;
         _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
         _knownPeripheralNames = nameList;
@@ -61,7 +61,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     self = [super init];
     
     if (self) {
-        _ymsPeripherals = [YMSSafeMutableSet new];
+        _ymsPeripherals = [NSMutableDictionary new];
         _delegate = delegate;
         _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue];
         _knownPeripheralNames = nameList;
@@ -82,7 +82,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     self = [super init];
     
     if (self) {
-        _ymsPeripherals = [YMSSafeMutableSet new];
+        _ymsPeripherals = [NSMutableDictionary new];
         _delegate = delegate;
         _manager = [[CBCentralManager alloc] initWithDelegate:self queue:queue options:options];
         _knownPeripheralNames = nameList;
@@ -102,15 +102,21 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 #pragma mark - Peripheral Management
 
 - (NSUInteger)count {
-    return _ymsPeripherals.count;
+    @synchronized (self) {
+        return _ymsPeripherals.count;
+    }
 }
 
 - (void)addPeripheral:(YMSCBPeripheral *)yperipheral {
-    [_ymsPeripherals addObject:yperipheral];
+    @synchronized (self) {
+        _ymsPeripherals[yperipheral.cbPeripheral.identifier] = yperipheral;
+    }
 }
 
 - (void)removePeripheral:(YMSCBPeripheral *)yperipheral {
-    [_ymsPeripherals removeObject:yperipheral];
+    @synchronized (self) {
+        _ymsPeripherals[yperipheral.cbPeripheral.identifier] = nil;
+    }
 }
 
 - (void)removeAllPeripherals {
@@ -118,7 +124,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 - (NSUInteger)countOfYmsPeripherals {
-    return _ymsPeripherals.count;
+    @synchronized (self) {
+        return _ymsPeripherals.count;
+    }
 }
 
 - (BOOL)isKnownPeripheral:(CBPeripheral *)peripheral {
@@ -179,18 +187,9 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 
 - (YMSCBPeripheral *)findPeripheral:(CBPeripheral *)peripheral {
-    YMSCBPeripheral *result = nil;
-    
-    NSArray *ymsPeripheralsCopy = [self.ymsPeripherals allObjects];
-
-    for (YMSCBPeripheral *yp in ymsPeripheralsCopy) {
-        if (yp.cbPeripheral == peripheral) {
-            result = yp;
-            break;
-        }
+    @synchronized (self) {
+        return _ymsPeripherals[peripheral.identifier];
     }
-
-    return result;
 }
 
 

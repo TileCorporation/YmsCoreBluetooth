@@ -90,7 +90,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  
  This array holds all YMSCBPeripheral instances discovered or retrieved by manager.
  */
-@property (nonatomic, strong) YMSSafeMutableSet *ymsPeripherals;
+@property (nonatomic, strong, readonly) NSDictionary *ymsPeripherals;
 
 /// Count of ymsPeripherals.
 @property (atomic, readonly, assign) NSUInteger count;
