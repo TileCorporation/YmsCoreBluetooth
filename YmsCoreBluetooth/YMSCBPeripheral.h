@@ -66,11 +66,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
  */
 @property (atomic, weak) id<CBPeripheralDelegate, YMSCBPeripheralDelegate> delegate;
 
-/**
- Flag to indicate if the watchdog timer has expired and forced a disconnect.
- */
-@property (nonatomic, assign) BOOL watchdogRaised;
-
 /** 
  Dictionary of (`key`, `value`) pairs of (NSString, YMSCBService) instances.
  
@@ -99,16 +94,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
  Pointer to an instance of YMSCBCentralManager.
  */
 @property (nonatomic, weak) YMSCBCentralManager *central;
-
-/**
- Watchdog timer for connection.
- */
-@property (nonatomic, strong) NSTimer *watchdogTimer;
-
-/**
- Watchdog timer interval in seconds. Default is 5 seconds.
- */
-@property (nonatomic, assign) NSTimeInterval watchdogTimerInterval;
 
 /// Holds callback for connection established.
 @property (nonatomic, copy) YMSCBPeripheralConnectCallbackBlockType connectCallback;
@@ -192,21 +177,6 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
  Invokes [CBPeripheral readRSSI] method to retrieve current RSSI value for cbPeripheral.
  */
 - (void)readRSSI;
-
-/**
- Initialize or reset watchdog timer.
- */
-- (void)resetWatchdog;
-
-/**
- Invalidate watchdog timer.
- */
-- (void)invalidateWatchdog;
-
-/**
- Disconnect if watchdog times out.
- */
-- (void)watchdogDisconnect;
 
 /**
  Establishes connection to peripheral with callback block.

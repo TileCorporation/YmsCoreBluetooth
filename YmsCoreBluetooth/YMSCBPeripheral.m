@@ -48,7 +48,6 @@
         _rssiPingPeriod = 2.0;
 
         //_peripheralConnectionState = YMSCBPeripheralConnectionStateUnknown;
-        _watchdogTimerInterval = 5.0;
     }
 
     return self;
@@ -152,9 +151,6 @@
 #pragma mark - Connection Methods
 
 - (void)connect {
-    // Watchdog aware method
-    [self resetWatchdog];
-
     [self connectWithOptions:nil withBlock:^(YMSCBPeripheral *yp, NSError *error) {
         if (error) {
             return;
@@ -195,46 +191,7 @@
 - (void)disconnect {
     YMSLogManager *localFileManager = [YMSLogManager sharedManager];
     [localFileManager log:@"FIRING DISCONNECT" peripheral:self.cbPeripheral];
-    // Watchdog aware method
-    if (self.watchdogTimer) {
-        [localFileManager log:@"FIRING WATCHDOG DISCONNECT" peripheral:self.cbPeripheral];
-        [self.watchdogTimer invalidate];
-        self.watchdogTimer = nil;
-    }
     [self cancelConnection];
-}
-
-- (void)resetWatchdog {
-    [[YMSLogManager sharedManager] log:@"RESET WATCHDOG" peripheral:self.cbPeripheral];
-    [self invalidateWatchdog];
-
-    NSTimer *timer = [NSTimer timerWithTimeInterval:self.watchdogTimerInterval
-                                            target:self
-                                          selector:@selector(watchdogDisconnect)
-                                          userInfo:nil
-                                           repeats:NO];
-    
-    
-    [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSDefaultRunLoopMode];
-    
-    self.watchdogTimer = timer;
-}
-
-- (void)invalidateWatchdog {
-    if (self.watchdogTimer) {
-        [self.watchdogTimer invalidate];
-        self.watchdogTimer = nil;
-        self.watchdogRaised = NO;
-    }
-}
-
-- (void)watchdogDisconnect {
-    // Watchdog aware method
-    if (self.cbPeripheral.state == CBPeripheralStateConnecting) {
-        self.watchdogRaised = YES;
-        [self disconnect];
-    }
-    self.watchdogTimer = nil;
 }
 
 - (void)connectWithOptions:(NSDictionary *)options withBlock:(void (^)(YMSCBPeripheral *, NSError *))connectCallback {
@@ -263,8 +220,6 @@
 - (void)handleConnectionResponse:(NSError *)error {
     YMSCBPeripheralConnectCallbackBlockType callback = [self.connectCallback copy];
     
-    [self invalidateWatchdog];
-
     if (callback) {
         callback(self, error);
         self.connectCallback = nil;
@@ -289,9 +244,6 @@
     self.lastValue = nil;
     self.connectCallback = nil;
     self.discoverServicesCallback = nil;
-    self.watchdogTimer = nil;
-    self.watchdogTimerInterval = 0;
-    self.watchdogRaised = NO;
 }
 
 #pragma mark - Services Discovery

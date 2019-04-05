@@ -63,10 +63,7 @@
 
 }
 
-- (void)connect {
-    // Watchdog aware method
-    [self resetWatchdog];
-    
+- (void)connect {    
     [self connectWithOptions:nil withBlock:^(YMSCBPeripheral *yp, NSError *error) {
         if (error) {
             return;
