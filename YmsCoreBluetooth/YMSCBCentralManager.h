@@ -180,6 +180,7 @@ typedef void (^YMSCBRetrieveCallbackBlockType)(CBPeripheral *);
  @return instance of YMSCBPeripheral
  */
 - (YMSCBPeripheral *)findPeripheral:(CBPeripheral *)peripheral;
+- (YMSCBPeripheral *)peripheralWithIdentifier:(NSUUID *)identifier;
 
 #pragma mark - Scan Methods
 /** @name Scanning for Peripherals */

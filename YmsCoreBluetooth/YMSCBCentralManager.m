@@ -200,7 +200,11 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     }
 }
 
-
+- (YMSCBPeripheral *)peripheralWithIdentifier:(NSUUID *)identifier {
+    @synchronized (self) {
+        return _ymsPeripherals[identifier];
+    }
+}
 
 - (void)handleFoundPeripheral:(CBPeripheral *)peripheral {
     /*
