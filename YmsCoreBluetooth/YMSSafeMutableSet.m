@@ -1,5 +1,6 @@
 #import "YMSSafeMutableSet.h"
 
+NS_ASSUME_NONNULL_BEGIN
 @interface YMSSafeMutableSet ()
 
 @property (nonatomic, strong) NSMutableSet *set;
@@ -33,7 +34,7 @@
 }
 
 
-- (id)member:(id)object {
+- (id _Nullable)member:(id)object {
     
     __block id result = nil;
     
@@ -127,3 +128,4 @@
 }
 
 @end
+NS_ASSUME_NONNULL_END

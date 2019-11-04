@@ -18,6 +18,7 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 /**
  FIFO queue implementation using NSMutableArray
  */
@@ -35,7 +36,7 @@
  Pop object from the front of the queue.
  @return object from the front of the queue.
  */
-- (id)pop;
+- (nullable id)pop;
 
 /**
  Returns a Boolean value that indicates whether a given object is present in the array.
@@ -47,3 +48,5 @@
 - (void)threadSafeRemoveObjectsInArray:(NSArray *)array;
 
 @end
+
+NS_ASSUME_NONNULL_END

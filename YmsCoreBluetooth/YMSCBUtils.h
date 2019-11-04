@@ -25,6 +25,8 @@
 
 #include "YMS128.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern NSString *const kYMSCBErrorDomain;
 
 typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
@@ -131,3 +133,4 @@ typedef NS_ENUM(NSUInteger, kYMSCBErrorCodeType) {
 + (int32_t)dataToInt32:(NSData *)data;
 
 @end
+NS_ASSUME_NONNULL_END

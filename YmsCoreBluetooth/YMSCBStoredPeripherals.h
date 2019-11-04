@@ -23,6 +23,7 @@
 #import <IOBluetooth/IOBluetooth.h>
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
 
 //#define UUID2STRING(UUID) (NSString *)CFBridgingRelease(CFUUIDCreateString(NULL, UUID))
 
@@ -57,3 +58,4 @@
 + (void)deleteUUID:(NSUUID *)UUID;
 
 @end
+NS_ASSUME_NONNULL_END

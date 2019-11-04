@@ -25,12 +25,14 @@
 
 #import "YMSCBUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class YMSCBPeripheral;
 
-typedef void (^YMSCBDiscoverDescriptorsCallbackBlockType)(NSArray *, NSError *);
+typedef void (^YMSCBDiscoverDescriptorsCallbackBlockType)(NSArray *, NSError * _Nullable);
 
-typedef void (^YMSCBReadCallbackBlockType)(NSData *, NSError *);
-typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
+typedef void (^YMSCBReadCallbackBlockType)(NSData *, NSError * _Nullable);
+typedef void (^YMSCBWriteCallbackBlockType)(NSError * _Nullable);
 
 /**
  Base class for defining a Bluetooth LE characteristic.
@@ -52,7 +54,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 @property (atomic, strong) CBUUID *uuid;
 
 /// Pointer to actual CBCharacterisic.
-@property (atomic, strong) CBCharacteristic *cbCharacteristic;
+@property (atomic, strong, nullable) CBCharacteristic *cbCharacteristic;
 
 /// Pointer to parent peripheral.
 @property (nonatomic, weak) YMSCBPeripheral *parent;
@@ -64,13 +66,13 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 @property (atomic, strong) NSArray *descriptors;
 
 /// Notification state callback
-@property (atomic, copy) YMSCBWriteCallbackBlockType notificationStateCallback;
+@property (atomic, copy, nullable) YMSCBWriteCallbackBlockType notificationStateCallback;
 
 /// Notification callback
-@property (atomic, copy) YMSCBReadCallbackBlockType notificationCallback;
+@property (atomic, copy, nullable) YMSCBReadCallbackBlockType notificationCallback;
 
 /// Callback for descriptors that are discovered.
-@property (atomic, copy) YMSCBDiscoverDescriptorsCallbackBlockType discoverDescriptorsCallback;
+@property (atomic, copy, nullable) YMSCBDiscoverDescriptorsCallbackBlockType discoverDescriptorsCallback;
 
 /// When YES, logging is enabled
 @property (atomic, assign) BOOL logEnabled;
@@ -95,7 +97,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  
  @param error Error object, if failed.
  */
-- (void)executeNotificationStateCallback:(NSError *)error;
+- (void)executeNotificationStateCallback:(nullable NSError *)error;
 
 
 /**
@@ -103,7 +105,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  
  @param error Error object, if failed.
  */
-- (void)executeWriteCallback:(NSError *)error;
+- (void)executeWriteCallback:(nullable NSError *)error;
 
 /** @name Initializing a YMSCBCharacteristic */
 /**
@@ -137,8 +139,8 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  @param notificationCallback Callback to execute upon receiving notification.
  */
 - (void)setNotifyValue:(BOOL)notifyValue
-  withStateChangeBlock:(void (^)(NSError *error))notifyStateCallback
- withNotificationBlock:(void (^)(NSData *data, NSError *error))notificationCallback;
+  withStateChangeBlock:(void (^)(NSError * _Nullable error))notifyStateCallback
+ withNotificationBlock:(nullable void (^)(NSData *data, NSError * _Nullable error))notificationCallback;
 
 /** @name Issuing a Write Request */
 /**
@@ -154,7 +156,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  @param writeCallback Callback block to execute upon response.
  
  */
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *error))writeCallback;
+- (void)writeValue:(NSData *)data withBlock:(nullable void (^)(NSError * _Nullable error))writeCallback;
 
 /**
  Issue write with byte val and execute callback block writeCallback upon response.
@@ -168,7 +170,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  @param writeCallback Callback block to execute upon response.
  
  */
-- (void)writeByte:(int8_t)val withBlock:(void (^)(NSError *error))writeCallback;
+- (void)writeByte:(int8_t)val withBlock:(nullable void (^)(NSError * _Nullable error))writeCallback;
 
 
 /** @name Issuing a Read Request */
@@ -183,7 +185,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  
  @param readCallback Callback block to execute upon response.
  */
-- (void)readValueWithBlock:(void (^)(NSData *data, NSError *error))readCallback;
+- (void)readValueWithBlock:(void (^)(NSData * _Nullable data, NSError * _Nullable error))readCallback;
 
 /** @name Discover Descriptors */
 /**
@@ -199,7 +201,7 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
  @param ydescriptors Array of YMSCBDescriptor instances.
  @param error Error object, if failure.
  */
-- (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(NSError *)error;
+- (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(nullable NSError *)error;
 
 // TODO: document
 
@@ -208,3 +210,4 @@ typedef void (^YMSCBWriteCallbackBlockType)(NSError *);
 - (void)reset;
 
 @end
+NS_ASSUME_NONNULL_END

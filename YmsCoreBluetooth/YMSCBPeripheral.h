@@ -25,16 +25,18 @@
 
 #include "YMSCBUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class YMSCBPeripheral;
 @class YMSCBCentralManager;
 @class YMSCBService;
 
-typedef void (^YMSCBPeripheralConnectCallbackBlockType)(YMSCBPeripheral *, NSError *);
-typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
+typedef void (^YMSCBPeripheralConnectCallbackBlockType)(YMSCBPeripheral *, NSError * _Nullable);
+typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError * _Nullable);
 
 @protocol YMSCBPeripheralDelegate <NSObject>
 @optional
-- (void)unconnectedPeripheralDidUpdateRSSI:(YMSCBPeripheral *)peripheral error:(NSError *)error;
+- (void)unconnectedPeripheralDidUpdateRSSI:(YMSCBPeripheral *)peripheral error:(NSError * _Nullable)error;
 @end
 
 /**
@@ -56,7 +58,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
 /**
  Convenience accessor for cbPeripheral.name.
  */
-@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly, nullable) NSString *name;
 
 /**
  Pointer to delegate.
@@ -93,13 +95,13 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
 /**
  Pointer to an instance of YMSCBCentralManager.
  */
-@property (nonatomic, weak) YMSCBCentralManager *central;
+@property (nonatomic, weak, nullable) YMSCBCentralManager *central;
 
 /// Holds callback for connection established.
-@property (nonatomic, copy) YMSCBPeripheralConnectCallbackBlockType connectCallback;
+@property (nonatomic, copy, nullable) YMSCBPeripheralConnectCallbackBlockType connectCallback;
 
 /// Holds callback for services discovered.
-@property (nonatomic, copy) YMSCBPeripheralDiscoverServicesBlockType discoverServicesCallback;
+@property (nonatomic, copy, nullable) YMSCBPeripheralDiscoverServicesBlockType discoverServicesCallback;
 
 
 /**
@@ -184,7 +186,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
  @param options A dictionary to customize the behavior of the connection. See "Peripheral Connection Options" for CBCentralManager.
  @param connectCallback Callback block to handle peripheral connection.
  */
-- (void)connectWithOptions:(NSDictionary *)options withBlock:(void (^)(YMSCBPeripheral *yp, NSError *error))connectCallback;
+- (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(nullable void (^)(YMSCBPeripheral * _Nullable yp, NSError * _Nullable error))connectCallback;
 
 /**
  Cancels an active or pending local connection to a peripheral.
@@ -213,7 +215,7 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
  @param serviceUUIDs An array of CBUUID objects that you are interested in. Here, each CBUUID object represents a UUID that identifies the type of service you want to discover.
  @param callback A 
  */
-- (void)discoverServices:(NSArray *)serviceUUIDs withBlock:(void (^)(NSArray *services, NSError *error))callback;
+- (void)discoverServices:(nullable NSArray *)serviceUUIDs withBlock:(nullable void (^)(NSArray * _Nullable services, NSError * _Nullable error))callback;
 
 
 /**
@@ -237,3 +239,4 @@ typedef void (^YMSCBPeripheralDiscoverServicesBlockType)(NSArray *, NSError *);
 
 @end
 
+NS_ASSUME_NONNULL_END

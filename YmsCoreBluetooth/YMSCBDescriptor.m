@@ -21,9 +21,9 @@
 #import "YMSCBPeripheral.h"
 #import "NSMutableArray+fifoQueue.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation YMSCBDescriptor
-
-
 
 - (CBUUID *)UUID {
     CBUUID *result = nil;
@@ -34,31 +34,32 @@
     return result;
 }
 
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *))writeCallback {
+- (void)writeValue:(NSData *)data withBlock:(nullable void (^)(NSError * _Nullable))writeCallback {
     [self.writeCallbacks push:[writeCallback copy]];
     [self.parent.cbPeripheral writeValue:data forDescriptor:self.cbDescriptor];
 }
 
 
-- (void)writeByte:(int8_t)val withBlock:(void (^)(NSError *))writeCallback {
+- (void)writeByte:(int8_t)val withBlock:(nullable void (^)(NSError * _Nullable))writeCallback {
     NSData *data = [NSData dataWithBytes:&val length:1];
     [self writeValue:data withBlock:writeCallback];
 }
 
 
-- (void)readValueWithBlock:(void (^)(NSData *, NSError *))readCallback {
+- (void)readValueWithBlock:(void (^)(NSData * _Nullable, NSError * _Nullable))readCallback {
     [self.readCallbacks push:[readCallback copy]];
     [self.parent.cbPeripheral readValueForDescriptor:self.cbDescriptor];
 }
 
-- (void)executeReadCallback:(NSData *)data error:(NSError *)error {
+- (void)executeReadCallback:(NSData *)data error:(nullable NSError *)error {
     YMSCBReadCallbackBlockType readCB = [self.readCallbacks pop];
     readCB(data, error);
 }
 
-- (void)executeWriteCallback:(NSError *)error {
+- (void)executeWriteCallback:(nullable NSError *)error {
     YMSCBWriteCallbackBlockType writeCB = [self.writeCallbacks pop];
     writeCB(error);
 }
 
 @end
+NS_ASSUME_NONNULL_END

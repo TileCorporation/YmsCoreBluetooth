@@ -19,6 +19,8 @@
 
 #import "NSMutableArray+fifoQueue.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation NSMutableArray (fifoQueue)
 
 #pragma mark - Properties
@@ -46,7 +48,7 @@
     });
 }
 
-- (id)pop {
+- (nullable id)pop {
     
     __block id result = nil;
     
@@ -85,3 +87,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

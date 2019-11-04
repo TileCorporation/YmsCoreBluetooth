@@ -25,10 +25,12 @@
 
 #import "YMSCBUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  Callback type for discovered characteristics.
  */
-typedef void (^YMSCBDiscoverCharacteristicsCallbackBlockType)(NSDictionary *, NSError *);
+typedef void (^YMSCBDiscoverCharacteristicsCallbackBlockType)(NSDictionary *, NSError * _Nullable);
 
 typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
     YMSCBWriteCallbackType,
@@ -179,15 +181,15 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  @param callback Callback block to execute upon response for discovered characteristics.
  
  */
-- (void)discoverCharacteristics:(NSArray *)characteristicUUIDs
-                      withBlock:(void (^)(NSDictionary *chDict, NSError *))callback;
+- (void)discoverCharacteristics:(nullable NSArray *)characteristicUUIDs
+                      withBlock:(nullable void (^)(NSDictionary *chDict, NSError * _Nullable))callback;
 /**
  Handler method for discovered characteristics.
  
  @param chDict Dictionary of YMSCBCharacteristics that have been discovered.
  @param error Error object, if failure.
  */
-- (void)handleDiscoveredCharacteristicsResponse:(NSDictionary *)chDict withError:(NSError *)error;
+- (void)handleDiscoveredCharacteristicsResponse:(NSDictionary *)chDict withError:(NSError * _Nullable)error;
 
 /**
  Add dictionary style subscripting to YMSCBService instance to access objects in characteristicDict with key.
@@ -202,3 +204,4 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
 - (void)reset;
 
 @end
+NS_ASSUME_NONNULL_END

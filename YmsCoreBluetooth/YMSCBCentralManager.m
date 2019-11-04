@@ -24,6 +24,8 @@
 #import "YMSLogManager.h"
 #import "YMSSafeMutableSet.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 @interface YMSCBCentralManager ()
@@ -48,7 +50,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     return self;
 }
 
-- (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue delegate:(id<CBCentralManagerDelegate>) delegate; {
+- (instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue delegate:(nullable id<CBCentralManagerDelegate>) delegate; {
     self = [super init];
     
     if (self) {
@@ -64,7 +66,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     return self;
 }
 
-- (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue useStoredPeripherals:(BOOL)useStore delegate:(id<CBCentralManagerDelegate>)delegate {
+- (instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue useStoredPeripherals:(BOOL)useStore delegate:(nullable id<CBCentralManagerDelegate>)delegate {
 
     self = [super init];
     
@@ -85,7 +87,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
     return self;
 }
 
-- (instancetype)initWithKnownPeripheralNames:(NSArray *)nameList queue:(dispatch_queue_t)queue options:(NSDictionary *)options useStoredPeripherals:(BOOL)useStore delegate:(id<CBCentralManagerDelegate>)delegate {
+- (instancetype)initWithKnownPeripheralNames:(nullable NSArray *)nameList queue:(nullable dispatch_queue_t)queue options:(nullable NSDictionary *)options useStoredPeripherals:(BOOL)useStore delegate:(nullable id<CBCentralManagerDelegate>)delegate {
     
     self = [super init];
     
@@ -164,7 +166,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 
-- (BOOL)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options {
+- (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs options:(nullable NSDictionary *)options {
     BOOL result = NO;
     NSString *message = [NSString stringWithFormat:@"BLE OPERATION: START SCAN serviceUUIDs: %@ options: %@", serviceUUIDs, options];
     [[YMSLogManager sharedManager] log:message];
@@ -180,7 +182,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 
-- (BOOL)scanForPeripheralsWithServices:(NSArray *)serviceUUIDs options:(NSDictionary *)options withBlock:(void (^)(CBPeripheral *, NSDictionary *, NSNumber *, NSError *))discoverCallback {
+- (BOOL)scanForPeripheralsWithServices:(nullable NSArray *)serviceUUIDs options:(nullable NSDictionary *)options withBlock:(nullable void (^)(CBPeripheral *, NSDictionary *, NSNumber *, NSError *))discoverCallback {
     self.discoveredCallback = discoverCallback;
     BOOL result = [self scanForPeripheralsWithServices:serviceUUIDs options:options];
     return result;
@@ -218,13 +220,13 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 
 #pragma mark - Retrieve Methods
 
-- (NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray *)serviceUUIDs {
+- (nullable NSArray *)retrieveConnectedPeripheralsWithServices:(NSArray * _Nullable)serviceUUIDs {
     NSArray *result = [self.manager retrieveConnectedPeripheralsWithServices:serviceUUIDs];
     return result;
 }
 
 
-- (NSArray *)retrievePeripheralsWithIdentifiers:(NSArray *)identifiers {
+- (nullable NSArray *)retrievePeripheralsWithIdentifiers:(NSArray * _Nullable)identifiers {
     NSArray *result = [self.manager retrievePeripheralsWithIdentifiers:identifiers];
     return result;
 }
@@ -344,7 +346,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 
-- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
+- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(nullable NSError *)error {
     
     YMSCBPeripheral *yp = [self findPeripheral:peripheral];
     yp.connectCallback = nil;
@@ -365,7 +367,7 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 
-- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
+- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(nullable NSError *)error {
     
     YMSCBPeripheral *yp = [self findPeripheral:peripheral];
     yp.connectCallback = nil;
@@ -398,3 +400,4 @@ NSString *const YMSCBVersion = @"" kYMSCBVersion;
 }
 
 @end
+NS_ASSUME_NONNULL_END

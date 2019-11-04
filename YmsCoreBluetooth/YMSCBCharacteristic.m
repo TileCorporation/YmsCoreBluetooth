@@ -22,6 +22,8 @@
 #import "YMSCBDescriptor.h"
 #import "YMSLogManager.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation YMSCBCharacteristic
 
 
@@ -43,7 +45,7 @@
 }
 
 
-- (void)setNotifyValue:(BOOL)notifyValue withStateChangeBlock:(void (^)(NSError *))notifyStateCallback withNotificationBlock:(void (^)(NSData *, NSError *))notificationCallback {
+- (void)setNotifyValue:(BOOL)notifyValue withStateChangeBlock:(void (^)(NSError * _Nullable))notifyStateCallback withNotificationBlock:(nullable void (^)(NSData *, NSError * _Nullable))notificationCallback {
     if (notifyStateCallback) {
         self.notificationStateCallback = notifyStateCallback;
     }
@@ -69,7 +71,7 @@
     [self.parent.cbPeripheral setNotifyValue:notifyValue forCharacteristic:self.cbCharacteristic];
 }
 
-- (void)executeNotificationStateCallback:(NSError *)error {
+- (void)executeNotificationStateCallback:(nullable NSError *)error {
     YMSCBWriteCallbackBlockType callback = self.notificationStateCallback;
     
     if (callback) {
@@ -80,7 +82,7 @@
     self.notificationStateCallback = nil;
 }
 
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *))writeCallback {
+- (void)writeValue:(NSData *)data withBlock:(nullable void (^)(NSError * _Nullable))writeCallback {
     NSString *message = nil;
     
     NSAssert(data != nil, @"ERROR: call to writeValue with nil data to %@", self.cbCharacteristic);
@@ -134,13 +136,13 @@
     }
 }
 
-- (void)writeByte:(int8_t)val withBlock:(void (^)(NSError *))writeCallback {
+- (void)writeByte:(int8_t)val withBlock:(nullable void (^)(NSError * _Nullable))writeCallback {
     NSData *data = [NSData dataWithBytes:&val length:1];
     [self writeValue:data withBlock:writeCallback];
 }
 
 
-- (void)readValueWithBlock:(void (^)(NSData *, NSError *))readCallback {
+- (void)readValueWithBlock:(void (^)(NSData * _Nullable, NSError * _Nullable))readCallback {
     
     if (!self.cbCharacteristic && readCallback) {
         readCallback(nil, [self nilCBCharacteristicError:NSLocalizedString(@"Diagnose in readValueWithBlock:", nil)]);
@@ -156,7 +158,7 @@
     [self.parent.cbPeripheral readValueForCharacteristic:self.cbCharacteristic];
 }
 
-- (void)executeWriteCallback:(NSError *)error {
+- (void)executeWriteCallback:(nullable NSError *)error {
     YMSCBWriteCallbackBlockType writeCB = [self.writeCallbacks pop];
     writeCB(error);
 }
@@ -172,7 +174,7 @@
 }
 
 
-- (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(NSError *)error {
+- (void)handleDiscoveredDescriptorsResponse:(NSArray *)ydescriptors withError:(nullable NSError *)error {
     YMSCBDiscoverDescriptorsCallbackBlockType callback = [self.discoverDescriptorsCallback copy];
 
     if (callback) {
@@ -223,3 +225,4 @@
 }
 
 @end
+NS_ASSUME_NONNULL_END
