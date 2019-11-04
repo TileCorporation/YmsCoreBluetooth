@@ -19,8 +19,11 @@
 #import "YMSCBService.h"
 #import "YMSCBUtils.h"
 #import "YMSCBPeripheral.h"
+#import "YMSCBCentralManager.h"
 #import "YMSCBCharacteristic.h"
 #import "YMSLogManager.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface YMSCBService ()
 @end
@@ -199,7 +202,7 @@
     return result;
 }
 
-- (void)discoverCharacteristics:(NSArray *)characteristicUUIDs withBlock:(void (^)(NSDictionary *, NSError *))callback {
+- (void)discoverCharacteristics:(nullable NSArray *)characteristicUUIDs withBlock:(nullable void (^)(NSDictionary *, NSError * _Nullable))callback {
     self.discoverCharacteristicsCallback = callback;
 
     YMSLogManager *localFileManager = [YMSLogManager sharedManager];
@@ -219,7 +222,7 @@
 
 }
 
-- (void)handleDiscoveredCharacteristicsResponse:(NSDictionary *)chDict withError:(NSError *)error {
+- (void)handleDiscoveredCharacteristicsResponse:(NSDictionary *)chDict withError:(NSError * _Nullable)error {
     YMSCBDiscoverCharacteristicsCallbackBlockType callback = [self.discoverCharacteristicsCallback copy];
     
     if (callback) {
@@ -247,3 +250,4 @@
 }
 
 @end
+NS_ASSUME_NONNULL_END

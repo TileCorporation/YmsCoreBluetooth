@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreBluetooth/CoreBluetooth.h>
 
+NS_ASSUME_NONNULL_BEGIN
 @protocol YMSLogger<NSObject>
 - (void)log:(NSString *)message;
 - (void)log:(NSString *)message peripheral:(CBPeripheral *)peripheral;
@@ -24,3 +25,4 @@
 - (void)log:(NSString *)message peripheral:(CBPeripheral *)peripheral;
 - (void)testLog:(NSString *)message peripheral:(CBPeripheral *)peripheral;
 @end
+NS_ASSUME_NONNULL_END

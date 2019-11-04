@@ -18,6 +18,7 @@
 
 #import "YMSCBUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 NSString *const kYMSCBErrorDomain = @"com.yummymelon.ymscorebluetooth.error";
 
@@ -126,3 +127,4 @@ NSString *const kYMSCBErrorDomain = @"com.yummymelon.ymscorebluetooth.error";
 
 
 @end
+NS_ASSUME_NONNULL_END

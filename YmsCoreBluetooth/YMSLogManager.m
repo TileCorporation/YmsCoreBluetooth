@@ -8,6 +8,7 @@
 
 #import "YMSLogManager.h"
 
+NS_ASSUME_NONNULL_BEGIN
 @implementation YMSLogManager
 
 + (instancetype)sharedManager {
@@ -33,3 +34,4 @@
    [self.logger testLog:message peripheral:peripheral];
 }
 @end
+NS_ASSUME_NONNULL_END

@@ -23,6 +23,7 @@
 #import "YMSCBDescriptor.h"
 #import "YMSLogManager.h"
 
+NS_ASSUME_NONNULL_BEGIN
 @interface YMSCBPeripheral ()
 @property (atomic, copy) NSData *lastValue;
 @property (atomic, assign) BOOL valueValid;
@@ -56,7 +57,7 @@
 
 #pragma mark - Peripheral Methods
 
-- (NSString *)name {
+- (nullable NSString *)name {
     NSString *result = nil;
     if (self.cbPeripheral) {
         result = self.cbPeripheral.name;
@@ -194,7 +195,7 @@
     [self cancelConnection];
 }
 
-- (void)connectWithOptions:(NSDictionary *)options withBlock:(void (^)(YMSCBPeripheral *, NSError *))connectCallback {
+- (void)connectWithOptions:(nullable NSDictionary *)options withBlock:(nullable void (^)(YMSCBPeripheral * _Nullable, NSError * _Nullable))connectCallback {
     NSString *message = @"> connectPeripheral:";
     YMSLogManager *localFileManager = [YMSLogManager sharedManager];
     [localFileManager log:message peripheral:self.cbPeripheral];
@@ -248,7 +249,7 @@
 
 #pragma mark - Services Discovery
 
-- (void)discoverServices:(NSArray *)serviceUUIDs withBlock:(void (^)(NSArray *, NSError *))callback {
+- (void)discoverServices:(nullable NSArray *)serviceUUIDs withBlock:(nullable void (^)(NSArray * _Nullable, NSError * _Nullable))callback {
     self.discoverServicesCallback = callback;
     
     NSMutableArray *bufArray = [NSMutableArray new];
@@ -283,7 +284,7 @@
  @param peripheral The peripheral that the services belong to.
  @param error If an error occurred, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError * _Nullable)error {
     NSString *message = [NSString stringWithFormat:@"< didDiscoverServices:%@", error.description];
     [[YMSLogManager sharedManager] log:message peripheral:peripheral];
     
@@ -323,7 +324,7 @@
  @param service The CBService object containing the included service.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverIncludedServicesForService:(CBService *)service error:(NSError * _Nullable)error {
     NSString *message = [NSString stringWithFormat:@"< didDiscoverIncludedServicesForService: %@ error:%@", service, error.description];
     [[YMSLogManager sharedManager] log:message peripheral:peripheral];
     // TBD
@@ -347,7 +348,7 @@
  @param service The service that the characteristics belong to.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError * _Nullable)error {
     NSString *message = [NSString stringWithFormat:@"< didDiscoverCharacteristicsForService: %@ error:%@", service, error.description];
     [[YMSLogManager sharedManager] log:message peripheral:peripheral];
     
@@ -375,7 +376,7 @@
  @param characteristic The characteristic that the characteristic descriptors belong to.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverDescriptorsForCharacteristic:(CBCharacteristic *)characteristic error:(NSError * _Nullable)error {
     NSString *message = [NSString stringWithFormat:@"< didDiscoverDescriptorsForCharacteristic: %@ error:%@", characteristic, error.description];
     [[YMSLogManager sharedManager] log:message peripheral:peripheral];
     
@@ -405,7 +406,7 @@
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
     YMSLogManager *localFileManager = [YMSLogManager sharedManager];
     NSString *message = [NSString stringWithFormat:@"< didUpdateValueForCharacteristic:%@ error:%@", characteristic, error];
     [localFileManager log:message peripheral:peripheral];
@@ -466,7 +467,7 @@
  @param descriptor The characteristic descriptor whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
     NSString *message = [NSString stringWithFormat:@"< didUpdateValueForDescriptor:%@ error:%@", descriptor, error.description];
     [[YMSLogManager sharedManager] log:message peripheral:peripheral];
 
@@ -490,7 +491,7 @@
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
     NSString *message = [NSString stringWithFormat:@"< didUpdateNotificationStateForCharacteristic: %@ error:%@", characteristic, error.description];
     [[YMSLogManager sharedManager] log:message peripheral:peripheral];
     
@@ -522,7 +523,7 @@
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(nullable NSError *)error {
     NSString *message = [NSString stringWithFormat:@"< didWriteValueForCharacteristic: %@ error:%@", characteristic, error.description];
     [[YMSLogManager sharedManager] log:message peripheral:peripheral];
     
@@ -555,7 +556,7 @@
  @param descriptor The characteristic descriptor whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
-- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForDescriptor:(CBDescriptor *)descriptor error:(nullable NSError *)error {
     NSString *message = [NSString stringWithFormat:@"< didWriteValueForDescriptor: %@ error:%@", descriptor, error.description];
     [[YMSLogManager sharedManager] log:message peripheral:peripheral];
 
@@ -578,7 +579,7 @@
  @param error If an error occured, the cause of the failure.
  */
 
-- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(NSError *)error {
+- (void)peripheral:(CBPeripheral *)peripheral didReadRSSI:(NSNumber *)RSSI error:(nullable NSError *)error {
     __weak typeof(self) weakSelf = self;
     
     _YMS_PERFORM_ON_MAIN_THREAD(^{
@@ -654,3 +655,4 @@
 
 
 @end
+NS_ASSUME_NONNULL_END

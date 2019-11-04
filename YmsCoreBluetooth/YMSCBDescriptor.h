@@ -25,6 +25,8 @@
 
 #import "YMSCBUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class YMSCBPeripheral;
 
 /**
@@ -37,7 +39,7 @@
 @interface YMSCBDescriptor : NSObject
 
 /// Pointer to actual CBDescriptor
-@property (atomic, strong) CBDescriptor *cbDescriptor;
+@property (atomic, strong, nullable) CBDescriptor *cbDescriptor;
 
 /// Descriptor UUID
 @property (atomic, readonly) CBUUID *UUID;
@@ -74,7 +76,7 @@
  @param writeCallback Callback block to execute upon response.
  
  */
-- (void)writeValue:(NSData *)data withBlock:(void (^)(NSError *error))writeCallback;
+- (void)writeValue:(NSData *)data withBlock:(nullable void (^)(NSError * _Nullable error))writeCallback;
 
 /**
  Issue write with byte val and execute callback block writeCallback upon response.
@@ -88,7 +90,7 @@
  @param writeCallback Callback block to execute upon response.
  
  */
-- (void)writeByte:(int8_t)val withBlock:(void (^)(NSError *error))writeCallback;
+- (void)writeByte:(int8_t)val withBlock:(nullable void (^)(NSError * _Nullable error))writeCallback;
 
 
 /** @name Issuing a Read Request */
@@ -103,7 +105,7 @@
  
  @param readCallback Callback block to execute upon response.
  */
-- (void)readValueWithBlock:(void (^)(NSData *data, NSError *error))readCallback;
+- (void)readValueWithBlock:(void (^)(NSData * _Nullable data, NSError * _Nullable error))readCallback;
 
 /** @name Callback Handler Methods */
 /**
@@ -112,15 +114,16 @@
  @param data Value returned from read request.
  @param error Error object, if failed.
  */
-- (void)executeReadCallback:(NSData *)data error:(NSError *)error;
+- (void)executeReadCallback:(NSData *)data error:(nullable NSError *)error;
 
 /**
  Handler method to process first callback in writeCallbacks.
  
  @param error Error object, if failed.
  */
-- (void)executeWriteCallback:(NSError *)error;
+- (void)executeWriteCallback:(nullable NSError *)error;
 
 
 
 @end
+NS_ASSUME_NONNULL_END

@@ -18,6 +18,8 @@
 
 #import "YMSCBStoredPeripherals.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation YMSCBStoredPeripherals
 
 + (void)initializeStorage {
@@ -108,3 +110,4 @@
 }
 
 @end
+NS_ASSUME_NONNULL_END
